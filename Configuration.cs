@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
 using System.Diagnostics;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace AA2Install
 {
@@ -51,6 +53,37 @@ namespace AA2Install
             }
         }
 
+        /// <summary>
+        /// Serialize an object, useful for saving as a key/value pair
+        /// </summary>
+        /// <typeparam name="T">Type of object to serialize</typeparam>
+        /// <param name="toSerialize">Object to serialize</param>
+        /// <returns>Serialized object</returns>
+        public static string SerializeObject<T>(this T toSerialize)
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
+
+            using (StringWriter textWriter = new StringWriter())
+            {
+                xmlSerializer.Serialize(textWriter, toSerialize);
+                return textWriter.ToString();
+            }
+        }
+        /// <summary>
+        /// Serialize an object, useful for saving as a key/value pair
+        /// </summary>
+        /// <typeparam name="T">Type of object to deserialize</typeparam>
+        /// <param name="toDeserialize">String to deserialize</param>
+        /// <returns>Deserialized object</returns>
+        public static T DeserializeObject<T>(string toDeserialize)
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+            using (StringReader textReader = new StringReader(toDeserialize))
+            {
+                return (T)xmlSerializer.Deserialize(textReader);
+            }
+        }
+
         #region Quick Access
         /// <summary>
         /// Retrieves the value of key in type bool
@@ -58,11 +91,26 @@ namespace AA2Install
         /// <param name="key">Key of item</param>
         /// <returns>Value of key in type bool</returns>
         public static bool getBool(string key)
-        {            
-            return bool.Parse(Configuration.ReadSetting(key) ?? "False");            
+        {
+            return bool.Parse(Configuration.ReadSetting(key) ?? "False");
         }
-
-
+        /// <summary>
+        /// Saves a list of installed mods to the "MODS" key
+        /// </summary>
+        /// <param name="list">List of installed mods</param>
+        public static void saveMods(List<Mod> list)
+        {
+            WriteSetting("MODS", SerializeObject<List<Mod>>(list));            
+        }
+        /// <summary>
+        /// Loads a list of installed mods from the "MODS" key
+        /// </summary>
+        /// <returns>List of installed mods</returns>
+        public static List<Mod> loadMods()
+        {
+            if (ReadSetting("MODS") == null) { return new List<Mod>(); }
+            return DeserializeObject<List<Mod>>(ReadSetting("MODS"));
+        }
         #endregion
     }
 }
