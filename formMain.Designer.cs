@@ -39,17 +39,21 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.listMods = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btnRefresh = new System.Windows.Forms.ToolStripButton();
+            this.btnApply = new System.Windows.Forms.ToolStripButton();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.imagePreview = new System.Windows.Forms.PictureBox();
+            this.txtDescription = new System.Windows.Forms.TextBox();
             this.statusMain = new System.Windows.Forms.StatusStrip();
             this.prgMinor = new System.Windows.Forms.ToolStripProgressBar();
             this.prgMajor = new System.Windows.Forms.ToolStripProgressBar();
             this.labelStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btnRefresh = new System.Windows.Forms.ToolStripButton();
-            this.btnApply = new System.Windows.Forms.ToolStripButton();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.rtbConsole = new System.Windows.Forms.RichTextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -62,28 +66,24 @@
             this.btnAA2PLAY = new System.Windows.Forms.Button();
             this.txtAA2PLAY = new System.Windows.Forms.TextBox();
             this.checkAA2PLAY = new System.Windows.Forms.CheckBox();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.imagePreview = new System.Windows.Forms.PictureBox();
-            this.txtDescription = new System.Windows.Forms.TextBox();
             this.imageTimer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.statusMain.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).BeginInit();
+            this.statusMain.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -168,6 +168,24 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Mods";
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.listMods);
+            this.splitContainer1.Panel1.Controls.Add(this.toolStrip1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Size = new System.Drawing.Size(745, 403);
+            this.splitContainer1.SplitterDistance = 430;
+            this.splitContainer1.TabIndex = 3;
+            // 
             // listMods
             // 
             this.listMods.CheckBoxes = true;
@@ -207,35 +225,6 @@
             this.imageList1.Images.SetKeyName(4, "accept.png");
             this.imageList1.Images.SetKeyName(5, "cross-circle.png");
             // 
-            // statusMain
-            // 
-            this.statusMain.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this.statusMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.prgMinor,
-            this.prgMajor,
-            this.labelStatus});
-            this.statusMain.Location = new System.Drawing.Point(3, 406);
-            this.statusMain.Name = "statusMain";
-            this.statusMain.Size = new System.Drawing.Size(745, 22);
-            this.statusMain.TabIndex = 1;
-            this.statusMain.Text = "statusStrip1";
-            // 
-            // prgMinor
-            // 
-            this.prgMinor.Name = "prgMinor";
-            this.prgMinor.Size = new System.Drawing.Size(100, 16);
-            // 
-            // prgMajor
-            // 
-            this.prgMajor.Name = "prgMajor";
-            this.prgMajor.Size = new System.Drawing.Size(100, 16);
-            // 
-            // labelStatus
-            // 
-            this.labelStatus.Name = "labelStatus";
-            this.labelStatus.Size = new System.Drawing.Size(26, 17);
-            this.labelStatus.Text = "Idle";
-            // 
             // toolStrip1
             // 
             this.toolStrip1.BackColor = System.Drawing.SystemColors.Control;
@@ -269,6 +258,76 @@
             this.btnApply.Size = new System.Drawing.Size(23, 22);
             this.btnApply.Text = "Apply Changes";
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.imagePreview);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.txtDescription);
+            this.splitContainer2.Size = new System.Drawing.Size(311, 403);
+            this.splitContainer2.SplitterDistance = 263;
+            this.splitContainer2.TabIndex = 0;
+            // 
+            // imagePreview
+            // 
+            this.imagePreview.BackColor = System.Drawing.Color.White;
+            this.imagePreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.imagePreview.Location = new System.Drawing.Point(0, 0);
+            this.imagePreview.Name = "imagePreview";
+            this.imagePreview.Size = new System.Drawing.Size(311, 263);
+            this.imagePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.imagePreview.TabIndex = 0;
+            this.imagePreview.TabStop = false;
+            // 
+            // txtDescription
+            // 
+            this.txtDescription.BackColor = System.Drawing.Color.White;
+            this.txtDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtDescription.Location = new System.Drawing.Point(0, 0);
+            this.txtDescription.Multiline = true;
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.ReadOnly = true;
+            this.txtDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtDescription.Size = new System.Drawing.Size(311, 136);
+            this.txtDescription.TabIndex = 0;
+            // 
+            // statusMain
+            // 
+            this.statusMain.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.statusMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.prgMinor,
+            this.prgMajor,
+            this.labelStatus});
+            this.statusMain.Location = new System.Drawing.Point(3, 406);
+            this.statusMain.Name = "statusMain";
+            this.statusMain.Size = new System.Drawing.Size(745, 22);
+            this.statusMain.TabIndex = 1;
+            this.statusMain.Text = "statusStrip1";
+            // 
+            // prgMinor
+            // 
+            this.prgMinor.Name = "prgMinor";
+            this.prgMinor.Size = new System.Drawing.Size(100, 16);
+            // 
+            // prgMajor
+            // 
+            this.prgMajor.Name = "prgMajor";
+            this.prgMajor.Size = new System.Drawing.Size(100, 16);
+            // 
+            // labelStatus
+            // 
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(26, 17);
+            this.labelStatus.Text = "Idle";
             // 
             // tabPage2
             // 
@@ -417,64 +476,6 @@
             this.checkAA2PLAY.UseVisualStyleBackColor = true;
             this.checkAA2PLAY.CheckedChanged += new System.EventHandler(this.checkAA2PLAY_CheckedChanged);
             // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.listMods);
-            this.splitContainer1.Panel1.Controls.Add(this.toolStrip1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(745, 403);
-            this.splitContainer1.SplitterDistance = 430;
-            this.splitContainer1.TabIndex = 3;
-            // 
-            // splitContainer2
-            // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer2.Panel1
-            // 
-            this.splitContainer2.Panel1.Controls.Add(this.imagePreview);
-            // 
-            // splitContainer2.Panel2
-            // 
-            this.splitContainer2.Panel2.Controls.Add(this.txtDescription);
-            this.splitContainer2.Size = new System.Drawing.Size(311, 403);
-            this.splitContainer2.SplitterDistance = 263;
-            this.splitContainer2.TabIndex = 0;
-            // 
-            // imagePreview
-            // 
-            this.imagePreview.BackColor = System.Drawing.Color.White;
-            this.imagePreview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.imagePreview.Location = new System.Drawing.Point(0, 0);
-            this.imagePreview.Name = "imagePreview";
-            this.imagePreview.Size = new System.Drawing.Size(311, 263);
-            this.imagePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.imagePreview.TabIndex = 0;
-            this.imagePreview.TabStop = false;
-            // 
-            // txtDescription
-            // 
-            this.txtDescription.BackColor = System.Drawing.Color.White;
-            this.txtDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDescription.Location = new System.Drawing.Point(0, 0);
-            this.txtDescription.Multiline = true;
-            this.txtDescription.Name = "txtDescription";
-            this.txtDescription.ReadOnly = true;
-            this.txtDescription.Size = new System.Drawing.Size(311, 136);
-            this.txtDescription.TabIndex = 0;
-            // 
             // imageTimer
             // 
             this.imageTimer.Enabled = true;
@@ -498,26 +499,26 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            this.statusMain.ResumeLayout(false);
-            this.statusMain.PerformLayout();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).EndInit();
+            this.statusMain.ResumeLayout(false);
+            this.statusMain.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
