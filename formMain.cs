@@ -166,15 +166,34 @@ namespace AA2Install
 
             modDict = Configuration.loadMods();
             lsvMods.Items.Clear();
+            foreach (Mod m in modDict.Values)
+            {
+                lsvMods.Items.Add(m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".7z", ""), 0);
+                if (m.Installed)
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.DarkGreen;
+                }
+                else
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.DarkBlue;
+                }
+                if (!File.Exists(m.Name))
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.Maroon;
+                }
+                lsvMods.Items[lsvMods.Items.Count - 1].SubItems.Add((m.size / (1024)).ToString("#,## kB"));
+                lsvMods.Items[lsvMods.Items.Count - 1].Tag = m;
+            }
+
             foreach(string path in Directory.GetFiles(Paths.MODS, "*.7z", SearchOption.TopDirectoryOnly))
             {
                 Mod m = _7z.Index(path);
                 if (modDict.ContainsKey(m.Name))
                 {
-                    m = modDict[m.Name];
+                    //m = modDict[m.Name];
+                    continue;
                 }
-                string p = path.Remove(0, path.LastIndexOf('\\')+1);
-                lsvMods.Items.Add(p.Replace(".7z", ""), 0);
+                lsvMods.Items.Add(path.Remove(0, path.LastIndexOf('\\')+1).Replace(".7z", ""), 0);
                 if (m.Installed)
                 {
                     lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.DarkGreen;
@@ -227,6 +246,7 @@ namespace AA2Install
             prgMinor.Value = 0;
             prgMajor.Value = 0;
             prgMajor.Style = ProgressBarStyle.Marquee;
+            int index = 0;
 
             //Check if directory exists
             if (!(Directory.Exists(Paths.AA2Play) && Directory.Exists(Paths.AA2Edit)))
@@ -237,52 +257,79 @@ namespace AA2Install
                 return;
             }
 
-            //Build ppIndex
-            int index = 0;
-
-            List<string> ppPlayIndex = new List<string>();
-            List<string> ppEditIndex = new List<string>();
-
-            updateStatus("Creating .pp file index...");
-            foreach (string path in Directory.GetFiles(Paths.AA2Play, "*.pp", SearchOption.TopDirectoryOnly))
-            {
-                ppPlayIndex.Add(path.Remove(0, path.LastIndexOf('\\') + 1));
-            }
-
-            foreach (string path in Directory.GetFiles(Paths.AA2Edit, "*.pp", SearchOption.TopDirectoryOnly))
-            {
-                ppEditIndex.Add(path.Remove(0, path.LastIndexOf('\\') + 1));
-            }
-
             //Clear and create temp
             updateStatus("Clearing TEMP folder...");
             if (Directory.Exists(Paths.TEMP)) { TryDeleteDirectory(Paths.TEMP); }
             if (Directory.Exists(Paths.WORKING)) { TryDeleteDirectory(Paths.WORKING); }
 
-            Directory.CreateDirectory(Paths.PP);
-            Directory.CreateDirectory(Paths.TEMP);
-            Directory.CreateDirectory(Paths.WORKING);
-            Directory.CreateDirectory(Paths.TEMP + @"\AA2_PLAY");
-            Directory.CreateDirectory(Paths.TEMP + @"\AA2_MAKE");
+            Directory.CreateDirectory(Paths.PP + @"\");
+            Directory.CreateDirectory(Paths.TEMP + @"\");
+            Directory.CreateDirectory(Paths.WORKING + @"\");
+            Directory.CreateDirectory(Paths.TEMP + @"\AA2_PLAY\");
+            Directory.CreateDirectory(Paths.TEMP + @"\AA2_MAKE\");
 
             //Reset individual statuses
             foreach (ListViewItem item in lsvMods.Items)
             {
                 lsvMods.Items[index].ImageIndex = 0; //Standby
+
+                if (modDict.ContainsKey(((Mod)lsvMods.Items[index].Tag).Name)) 
+                {
+                    lsvMods.Items[index].Checked = false; //Ignore already installed mods
+                }
                 index++;
             }
 
-            //Check conflicts (placeholder)
+            //Check conflicts
             index = 0;
             updateStatus("Checking conflicts...");
 
+            Dictionary<string, string> files = new Dictionary<string, string>();
+            foreach (Mod m in modDict.Values)
+            {
+                foreach (string s in m.Filenames)
+                {
+                    files[s] = m.Name;
+                }
+            }
+
+            bool conflict = false;
             foreach (ListViewItem item in lsvMods.Items)
             {
                 if (item.Checked)
                 {
                     lsvMods.Items[index].ImageIndex = 1; //Ready
+                    foreach (string s in ((Mod)item.Tag).Filenames)
+                    {
+                        if (files.ContainsKey(s))
+                        {
+                            conflict = true;
+
+                            foreach (ListViewItem i in lsvMods.Items) //Clusterfuck to find the other conflicting mod
+                            {
+                                Mod m = (Mod)i.Tag;
+                                if (m.Filenames.Contains(s))
+                                {
+                                    lsvMods.Items[i.Index].ImageIndex = 3; //Triangle error
+                                }
+                            }
+
+                            lsvMods.Items[item.Index].ImageIndex = 3; //Triangle error
+                        }
+                        files[s] = ((Mod)item.Tag).Name;
+                    }
                 }
                 index++;
+            }
+            if (conflict)
+            {
+                updateStatus("FAILED: The highlighted mods have conflicting files");
+                btnApply.Enabled = true;
+                btnRefresh.Enabled = true; 
+                prgMinor.Value = 0;
+                prgMajor.Value = 0;
+                prgMajor.Style = ProgressBarStyle.Continuous;
+                return;
             }
 
             //Extract all mods
@@ -325,7 +372,7 @@ namespace AA2Install
             //Process .pp files
             prgMajor.Maximum = ppQueue.Count;
             index = 0;
-            do
+            while (ppQueue.Count > 0)
             {
                 string ppRAW = ppQueue.Dequeue();
                 string ppDir = ppRAW.Remove(0, ppRAW.LastIndexOf('\\') + 1);
@@ -407,7 +454,7 @@ namespace AA2Install
                 index++;
                 prgMajor.Value = index;
             }
-            while (ppQueue.Count > 0);
+            
 
             //Finish up
             prgMinor.Style = ProgressBarStyle.Continuous;
