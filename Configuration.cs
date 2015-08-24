@@ -98,18 +98,29 @@ namespace AA2Install
         /// Saves a list of installed mods to the "MODS" key
         /// </summary>
         /// <param name="list">List of installed mods</param>
-        public static void saveMods(List<Mod> list)
+        public static void saveMods(Dictionary<string, Mod> list)
         {
-            WriteSetting("MODS", SerializeObject<List<Mod>>(list));            
+            SerializableDictionary<string, Mod> s = new SerializableDictionary<string, Mod>();
+            foreach (string key in list.Keys)
+            {
+                s[key] = list[key];
+            }
+            WriteSetting("MODS", SerializeObject<SerializableDictionary<string, Mod>>(s));            
         }
         /// <summary>
         /// Loads a list of installed mods from the "MODS" key
         /// </summary>
         /// <returns>List of installed mods</returns>
-        public static List<Mod> loadMods()
+        public static Dictionary<string, Mod> loadMods()
         {
-            if (ReadSetting("MODS") == null) { return new List<Mod>(); }
-            return DeserializeObject<List<Mod>>(ReadSetting("MODS"));
+            if (ReadSetting("MODS") == null) { return new Dictionary<string, Mod>(); }
+            Dictionary<string, Mod> d = new Dictionary<string, Mod>();
+            SerializableDictionary<string, Mod> s = DeserializeObject<SerializableDictionary<string, Mod>>(ReadSetting("MODS"));
+            foreach (string key in s.Keys)
+            {
+                d[key] = s[key];
+            }
+            return d;
         }
         #endregion
     }

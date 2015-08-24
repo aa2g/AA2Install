@@ -40,7 +40,7 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.listMods = new System.Windows.Forms.ListView();
+            this.lsvMods = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
@@ -176,7 +176,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.listMods);
+            this.splitContainer1.Panel1.Controls.Add(this.lsvMods);
             this.splitContainer1.Panel1.Controls.Add(this.toolStrip1);
             // 
             // splitContainer1.Panel2
@@ -186,23 +186,23 @@
             this.splitContainer1.SplitterDistance = 430;
             this.splitContainer1.TabIndex = 3;
             // 
-            // listMods
+            // lsvMods
             // 
-            this.listMods.CheckBoxes = true;
-            this.listMods.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.lsvMods.CheckBoxes = true;
+            this.lsvMods.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
-            this.listMods.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listMods.GridLines = true;
-            this.listMods.LargeImageList = this.imageList1;
-            this.listMods.Location = new System.Drawing.Point(0, 25);
-            this.listMods.Name = "listMods";
-            this.listMods.Size = new System.Drawing.Size(430, 378);
-            this.listMods.SmallImageList = this.imageList1;
-            this.listMods.TabIndex = 2;
-            this.listMods.UseCompatibleStateImageBehavior = false;
-            this.listMods.View = System.Windows.Forms.View.Details;
-            this.listMods.SelectedIndexChanged += new System.EventHandler(this.listMods_SelectedIndexChanged);
+            this.lsvMods.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lsvMods.GridLines = true;
+            this.lsvMods.LargeImageList = this.imageList1;
+            this.lsvMods.Location = new System.Drawing.Point(0, 25);
+            this.lsvMods.Name = "lsvMods";
+            this.lsvMods.Size = new System.Drawing.Size(430, 378);
+            this.lsvMods.SmallImageList = this.imageList1;
+            this.lsvMods.TabIndex = 2;
+            this.lsvMods.UseCompatibleStateImageBehavior = false;
+            this.lsvMods.View = System.Windows.Forms.View.Details;
+            this.lsvMods.SelectedIndexChanged += new System.EventHandler(this.listMods_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -538,7 +538,7 @@
         private System.Windows.Forms.RichTextBox rtbConsole;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ListView listMods;
+        private System.Windows.Forms.ListView lsvMods;
         private System.Windows.Forms.StatusStrip statusMain;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
