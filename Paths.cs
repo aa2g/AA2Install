@@ -21,7 +21,7 @@ namespace AA2Install
                 } 
                 else 
                 {
-                    return Environment.CurrentDirectory + @"\x86\7za.exe";
+                    return Environment.CurrentDirectory + @"\x86_64\7za.exe";
                 }
             }
         }
@@ -32,7 +32,7 @@ namespace AA2Install
         {
             get
             {
-                return Environment.CurrentDirectory + @"\x86\AA2Decrypt.exe";
+                return Environment.CurrentDirectory + @"\x86_64\AA2Decrypt.exe";
             }
         }
         /// <summary>
