@@ -52,13 +52,17 @@ namespace AA2Install
         }
 
         #region Quick Access
-        public static bool isPPRAW
-        {
-            get
-            {
-                return bool.Parse(Configuration.ReadSetting("PPRAW") ?? "False");
-            }
+        /// <summary>
+        /// Retrieves the value of key in type bool
+        /// </summary>
+        /// <param name="key">Key of item</param>
+        /// <returns>Value of key in type bool</returns>
+        public static bool getBool(string key)
+        {            
+            return bool.Parse(Configuration.ReadSetting(key) ?? "False");            
         }
+
+
         #endregion
     }
 }
