@@ -20,6 +20,7 @@ namespace AA2Install
      * Raw PP handling (Extract all of them and don't delete them when done with them)
      * Partial backups (Create a 7z archive of all modified files so they can be replaced later)
      * Check conflicting mods 
+     * Async file copying/moving
      * 
      */
 
@@ -319,7 +320,7 @@ namespace AA2Install
 
                 string destination = "";
 
-                updateStatus("(0/0) (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently unpacking " + pp + "...");
+                updateStatus( minorProgress + " (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently unpacking " + pp + "...");
 
                 //Fetch.pp file if it exists
 
@@ -346,7 +347,7 @@ namespace AA2Install
                         break;
                 }
 
-                updateStatus("(0/0) (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently merging " + pp + "...");
+                updateStatus(minorProgress + " (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently merging " + pp + "...");
                 prgMinor.Style = ProgressBarStyle.Marquee;
 
                 if (File.Exists(destination + "\\" + pp)) { //If original exists then move/copy it
@@ -374,7 +375,7 @@ namespace AA2Install
 
                 //Repackage .pp
 
-                updateStatus("(0/0) (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently re-packing " + pp + "...");
+                updateStatus(minorProgress + " (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently re-packing " + pp + "...");
                 prgMinor.Style = ProgressBarStyle.Continuous;
 
                 string newPP = PP.Create(Paths.WORKING + "\\" + ppDir);
@@ -382,7 +383,7 @@ namespace AA2Install
 
                 //Patch the new .pp back to the game files
 
-                updateStatus("(0/0) (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently installing " + pp + "...");
+                updateStatus(minorProgress + " (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently installing " + pp + "...");
                 prgMinor.Style = ProgressBarStyle.Marquee;
 
                 if (File.Exists(destination + "\\" + pp)) { File.Delete(destination + "\\" + pp); }
