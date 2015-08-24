@@ -34,7 +34,7 @@ namespace AA2Install
     {
         #region Console
 
-        string minorProgress = "(0/0)"; //When processing PP files
+        string minorProgress = "(0/0)"; //When processing PP files via console
 
         /// <summary>
         /// Handles process output to console text box
@@ -64,12 +64,12 @@ namespace AA2Install
 
         private void loadConfiguration()
         {
-            btnAA2PLAY.Enabled = txtAA2PLAY.Enabled = checkAA2PLAY.Checked = bool.Parse(Configuration.ReadSetting("AA2PLAY") ?? "False");
+            btnAA2PLAY.Enabled = txtAA2PLAY.Enabled = checkAA2PLAY.Checked = Configuration.getBool("AA2PLAY");
             txtAA2PLAY.Text = Configuration.ReadSetting("AA2PLAY_Path") ?? "";
-            btnAA2EDIT.Enabled = txtAA2EDIT.Enabled = checkAA2EDIT.Checked = bool.Parse(Configuration.ReadSetting("AA2EDIT") ?? "False");
+            btnAA2EDIT.Enabled = txtAA2EDIT.Enabled = checkAA2EDIT.Checked = Configuration.getBool("AA2EDIT");
             txtAA2EDIT.Text = Configuration.ReadSetting("AA2EDIT_Path") ?? "";
 
-            checkRAW.Checked = Configuration.isPPRAW;
+            checkRAW.Checked = Configuration.getBool("PPRAW");
         }
 
         private void btnAA2PLAY_Click(object sender, EventArgs e)
@@ -367,7 +367,7 @@ namespace AA2Install
                 CopyFilesRecursively(new DirectoryInfo(ppRAW), new DirectoryInfo(Paths.WORKING + "\\" + ppDir)); //since Directory.Move doesn't overwrite
                 Directory.Delete(ppRAW, true);
 
-                if (Configuration.isPPRAW) //If ppRAW is enabled copy back the directory
+                if (Configuration.getBool("PPRAW")) //If ppRAW is enabled copy back the directory
                 {
                     CopyFilesRecursively(new DirectoryInfo(Paths.WORKING + "\\" + ppDir), new DirectoryInfo(Paths.PP + "\\" + ppDir));
                 }
@@ -397,7 +397,7 @@ namespace AA2Install
 
             prgMinor.Style = ProgressBarStyle.Continuous;
             updateStatus("Finishing up...");
-            if (!Configuration.isPPRAW && Directory.Exists(Paths.PP))
+            if (!Configuration.getBool("PPRAW") && Directory.Exists(Paths.PP))
             {
                 TryDeleteDirectory(Paths.PP);
             }
