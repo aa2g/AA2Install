@@ -21,6 +21,7 @@ namespace AA2Install
      * Partial backups (Create a 7z archive of all modified files so they can be replaced later)
      * Check conflicting mods 
      * Async file copying/moving
+     * Console still can't scroll to bottom
      * 
      */
 
@@ -33,6 +34,8 @@ namespace AA2Install
     }
     public partial class formMain : Form
     {
+        public Dictionary<string, Mod> modDict = new Dictionary<string, Mod>();
+
         #region Console
 
         string minorProgress = "(0/0)"; //When processing PP files via console
@@ -63,7 +66,7 @@ namespace AA2Install
         #endregion
         #region Preferences
 
-        private void loadConfiguration()
+        private void loadUIConfiguration()
         {
             btnAA2PLAY.Enabled = txtAA2PLAY.Enabled = checkAA2PLAY.Checked = Configuration.getBool("AA2PLAY");
             txtAA2PLAY.Text = Configuration.ReadSetting("AA2PLAY_Path") ?? "";
@@ -157,20 +160,30 @@ namespace AA2Install
         /// </summary>
         public void refreshModList()
         {
-            listMods.Enabled = false;
+            lsvMods.Enabled = false;
             btnApply.Enabled = false;
             btnRefresh.Enabled = false;
 
-            listMods.Items.Clear();
+            modDict = Configuration.loadMods();
+            lsvMods.Items.Clear();
             foreach(string path in Directory.GetFiles(Paths.MODS, "*.7z", SearchOption.TopDirectoryOnly))
             {
                 Mod m = _7z.Index(path);
+                if (modDict.ContainsKey(m.Name))
+                {
+                    m = modDict[m.Name];
+                }
                 string p = path.Remove(0, path.LastIndexOf('\\')+1);
-                listMods.Items.Add(p.Replace(".7z", ""), 0);
-                listMods.Items[listMods.Items.Count - 1].SubItems.Add((m.size/(1024)).ToString("#,## kB"));
+                lsvMods.Items.Add(p.Replace(".7z", ""), 0);
+                if (m.Installed)
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.DarkGreen;
+                }
+                lsvMods.Items[lsvMods.Items.Count - 1].SubItems.Add((m.size/(1024)).ToString("#,## kB"));
+                lsvMods.Items[lsvMods.Items.Count - 1].Tag = m;
             }
 
-            listMods.Enabled = true;
+            lsvMods.Enabled = true;
             btnApply.Enabled = true;
             btnRefresh.Enabled = true;
         }
@@ -243,8 +256,8 @@ namespace AA2Install
 
             //Clear and create temp
             updateStatus("Clearing TEMP folder...");
-            if (Directory.Exists(Paths.TEMP)) { Directory.Delete(Paths.TEMP, true); }
-            if (Directory.Exists(Paths.WORKING)) { Directory.Delete(Paths.WORKING, true); }
+            if (Directory.Exists(Paths.TEMP)) { TryDeleteDirectory(Paths.TEMP); }
+            if (Directory.Exists(Paths.WORKING)) { TryDeleteDirectory(Paths.WORKING); }
 
             Directory.CreateDirectory(Paths.PP);
             Directory.CreateDirectory(Paths.TEMP);
@@ -253,9 +266,9 @@ namespace AA2Install
             Directory.CreateDirectory(Paths.TEMP + @"\AA2_MAKE");
 
             //Reset individual statuses
-            foreach (ListViewItem item in listMods.Items)
+            foreach (ListViewItem item in lsvMods.Items)
             {
-                listMods.Items[index].ImageIndex = 0; //Standby
+                lsvMods.Items[index].ImageIndex = 0; //Standby
                 index++;
             }
 
@@ -263,27 +276,27 @@ namespace AA2Install
             index = 0;
             updateStatus("Checking conflicts...");
 
-            foreach (ListViewItem item in listMods.Items)
+            foreach (ListViewItem item in lsvMods.Items)
             {
                 if (item.Checked)
                 {
-                    listMods.Items[index].ImageIndex = 1; //Ready
+                    lsvMods.Items[index].ImageIndex = 1; //Ready
                 }
                 index++;
             }
 
             //Extract all mods
             index = 0;
-            prgMinor.Maximum = listMods.Items.Count;
+            prgMinor.Maximum = lsvMods.Items.Count;
 
-            foreach (ListViewItem item in listMods.Items)
+            foreach (ListViewItem item in lsvMods.Items)
             {
                 if (item.Checked)
                 {
-                    listMods.Items[index].ImageIndex = 2; //Processing
+                    lsvMods.Items[index].ImageIndex = 2; //Processing
                     updateStatus("Extracting " + item.Text + "...");
                     _7z.Extract(Paths.MODS + "\\" + item.Text + ".7z");
-                    listMods.Items[index].ImageIndex = 4; //Done
+                    lsvMods.Items[index].ImageIndex = 4; //Done
                 }
                 index++;
                 prgMinor.Value = index;
@@ -324,7 +337,7 @@ namespace AA2Install
 
                 //Fetch.pp file if it exists
 
-                switch (pp[3]) //jg2[e/p]01_...
+                switch (pp[3]) //jg2[e/p]0x_...
                 {
                     case 'e':
                         //AA2EDIT
@@ -396,6 +409,7 @@ namespace AA2Install
             }
             while (ppQueue.Count > 0);
 
+            //Finish up
             prgMinor.Style = ProgressBarStyle.Continuous;
             updateStatus("Finishing up...");
             if (!Configuration.getBool("PPRAW") && Directory.Exists(Paths.PP))
@@ -406,9 +420,24 @@ namespace AA2Install
             TryDeleteDirectory(Paths.TEMP);
             TryDeleteDirectory(Paths.WORKING);
 
+            //Add installed mods to the modlist
+            index = 0;
+
+            foreach (ListViewItem item in lsvMods.Items)
+            {
+                if (item.Checked)
+                {
+                    Mod m = ((Mod)item.Tag);
+                    m.Installed = true;
+                    modDict[m.Name] = m;
+                }
+                index++;
+            }
+
+            Configuration.saveMods(modDict);
+
             updateStatus("Success!");
-            btnApply.Enabled = true;
-            btnRefresh.Enabled = true;
+            refreshModList();
         }
         
         #endregion
@@ -469,7 +498,7 @@ namespace AA2Install
             PP.OutputDataRecieved += new DataReceivedEventHandler(ProcessOutputHandler);
 
             //Start program
-            loadConfiguration();
+            loadUIConfiguration();
             refreshModList();
 
             //Get the damn console to scroll to bottom
@@ -488,13 +517,13 @@ namespace AA2Install
         List<string> imageLoop = new List<string>();
         private void listMods_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listMods.SelectedItems.Count > 0)
+            if (lsvMods.SelectedItems.Count > 0)
             {
                 imagePreview.Image = null;
                 imageLoop.Clear();
                 txtDescription.Text = "Loading...";
 
-                string name = listMods.SelectedItems[0].Text;
+                string name = lsvMods.SelectedItems[0].Text;
                 _7z.ExtractWildcard(Paths.MODS + "\\" + name + ".7z", name + "*");
 
                 if (File.Exists(Paths.TEMP + "\\" + name + ".txt"))

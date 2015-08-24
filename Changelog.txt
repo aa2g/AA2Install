@@ -1,0 +1,6 @@
+﻿Pre2
++ Added a scrollbar for the description
++ Meta mod info is now stored in config
+
+Pre1
++ First prerelease
