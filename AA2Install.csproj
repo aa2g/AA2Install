@@ -109,20 +109,20 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="x86\7za.exe">
+    <None Include="x86_64\7za.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="x86\7za.dll">
+    <None Include="x86_64\7za.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="x86\7zxa.dll">
+    <None Include="x86_64\7zxa.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="x86\AA2Decrypt.exe">
+    <None Include="x86_64\AA2Decrypt.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
