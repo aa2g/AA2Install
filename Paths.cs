@@ -111,6 +111,16 @@ namespace AA2Install
                 return Environment.CurrentDirectory + @"\compile";
             }
         }
+        /// <summary>
+        /// Backup 7z location
+        /// </summary>
+        public static string BACKUP
+        {
+            get
+            {
+                return Environment.CurrentDirectory + @"\backup";
+            }
+        }
 
     }
 }
