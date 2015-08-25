@@ -51,7 +51,7 @@ namespace AA2Install.Archives
                     string[] ss = s.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
                     if (ss[2] == "....A")
                     {
-                        m.Filenames.Add(ss[4]);
+                        m.Filenames.Add(ss[ss.Length - 1]);
                     }
                 }
             }
@@ -106,6 +106,39 @@ namespace AA2Install.Archives
             {
                 p.StartInfo.FileName = Paths._7Za;
                 p.StartInfo.Arguments = "x \"" + filename + "\" \"" + wildcard + "\" -aos -mmt -o\"" + Paths.TEMP + "\"";
+                p.StartInfo.CreateNoWindow = true;
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.RedirectStandardOutput = true;
+
+                p.OutputDataReceived += OutputDataRecieved;
+                p.Start();
+                p.BeginOutputReadLine();
+
+                while (!p.HasExited)
+                {
+                    Application.DoEvents();
+                }
+            }
+            return Paths.TEMP;
+        }
+        /// <summary>
+        /// Compresses a specified list of files into a 7z archive
+        /// </summary>
+        /// <param name="filename">Location to save the 7Z file</param>
+        /// <param name="filenames">Files to compress into the archive</param>
+        /// <returns>Location of extracted contents</returns>
+        public static string Compress(string filename, List<string> filenames)
+        {
+            using (Process p = new Process())
+            {
+                string concat = "";
+                foreach (string s in filenames)
+                {
+                    concat = concat + " \"" + s + "\"";
+                }
+
+                p.StartInfo.FileName = Paths._7Za;
+                p.StartInfo.Arguments = "a -t7z \"" + filename + "\" -mmt -o\"" + Paths.TEMP + "\"" + concat;
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.RedirectStandardOutput = true;

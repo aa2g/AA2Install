@@ -19,9 +19,9 @@ namespace AA2Install
      * 
      * Raw PP handling (Extract all of them and don't delete them when done with them)
      * Partial backups (Create a 7z archive of all modified files so they can be replaced later)
-     * Check conflicting mods 
      * Async file copying/moving
      * Console still can't scroll to bottom
+     * _7z.Index seems to collect junk
      * 
      */
 
@@ -499,6 +499,15 @@ namespace AA2Install
             labelStatus.Text = status;
         }
 
+        private void colorGuideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(@"Not installed w/ no backup: Black
+Not installed w/ backup: Dark Blue
+Installed w/ backup: Green
+Installed w/ no backup: Maroon
+Backup w/ no original: Dark Blue");
+        }
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -613,6 +622,5 @@ namespace AA2Install
             }
         }
         #endregion
-
     }
 }
