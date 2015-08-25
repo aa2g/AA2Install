@@ -21,7 +21,6 @@ namespace AA2Install
      * Partial backups (Create a 7z archive of all modified files so they can be replaced later)
      * Async file copying/moving
      * Console still can't scroll to bottom
-     * _7z.Index seems to collect junk
      * 
      */
 
@@ -261,6 +260,7 @@ namespace AA2Install
             updateStatus("Clearing TEMP folder...");
             if (Directory.Exists(Paths.TEMP)) { TryDeleteDirectory(Paths.TEMP); }
             if (Directory.Exists(Paths.WORKING)) { TryDeleteDirectory(Paths.WORKING); }
+            if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
 
             Directory.CreateDirectory(Paths.PP + @"\");
             Directory.CreateDirectory(Paths.TEMP + @"\");
@@ -325,7 +325,7 @@ namespace AA2Install
             {
                 updateStatus("FAILED: The highlighted mods have conflicting files");
                 btnApply.Enabled = true;
-                btnRefresh.Enabled = true; 
+                btnRefresh.Enabled = true;
                 prgMinor.Value = 0;
                 prgMajor.Value = 0;
                 prgMajor.Style = ProgressBarStyle.Continuous;
@@ -383,26 +383,31 @@ namespace AA2Install
                 updateStatus( minorProgress + " (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently unpacking " + pp + "...");
 
                 //Fetch.pp file if it exists
+                bool AA2PLAY;
 
                 switch (pp[3]) //jg2[e/p]0x_...
                 {
                     case 'e':
                         //AA2EDIT
                         destination = Paths.AA2Edit;
+                        AA2PLAY = false;
                         break;
                     case 'p':
                         //AA2PLAY
                         destination = Paths.AA2Play;
+                        AA2PLAY = true;
                         break;
                     default:
                         //Unknown, check both folders
                         if (tempPLAY.Contains(pp))
-                        {                            
+                        {
                             destination = Paths.AA2Play;
+                            AA2PLAY = true;
                         } 
                         else 
                         {
                             destination = Paths.AA2Edit;
+                            AA2PLAY = false;
                         }
                         break;
                 }
@@ -417,6 +422,40 @@ namespace AA2Install
                         File.Copy(destination + "\\" + pp, Paths.PP + "\\" + pp);
                         PP.Extract(Paths.PP + "\\" + pp);
                         File.Delete(Paths.PP + "\\" + pp);
+                    }
+
+                    foreach (ListViewItem item in lsvMods.Items)
+                    {
+                        if (item.Checked)
+                        {
+                            //List<string> currentFiles = new List<string>();
+                            foreach (string s in ((Mod)item.Tag).Filenames)
+                            {
+                                if (s.Contains(ppDir))
+                                {
+                                    string r = s.Remove(0, 9);
+                                    string rs = r.Remove(0, r.LastIndexOf('\\') + 1);
+                                    string archive = Paths.BACKUP + "\\" + item.Text + ".7z";
+                                    string workingdir = Paths.WORKING + "\\BACKUP\\";
+                                    string directory;
+                                    if (AA2PLAY)
+                                    {
+                                        directory = workingdir + "AA2_PLAY\\" + r.Remove(r.LastIndexOf('\\') + 1);
+                                    }
+                                    else
+                                    {
+                                        directory = workingdir + "AA2_MAKE\\" + r.Remove(r.LastIndexOf('\\') + 1);
+                                    }
+
+                                    Directory.CreateDirectory(directory);
+                                    File.Copy(ppRAW + "\\" + rs, directory + "\\" + rs);
+
+                                    _7z.Compress(archive, workingdir, directory.Remove(0, workingdir.Length));
+
+                                    TryDeleteDirectory(workingdir);
+                                }
+                            }
+                        }
                     }
 
                     Directory.Move(Paths.PP + "\\" + ppDir, Paths.WORKING + "\\" + ppDir);                 
