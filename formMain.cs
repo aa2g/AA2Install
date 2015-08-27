@@ -162,24 +162,32 @@ namespace AA2Install
             lsvMods.Enabled = false;
             btnApply.Enabled = false;
             btnRefresh.Enabled = false;
+            btnUninstall.Enabled = false;
 
             modDict = Configuration.loadMods();
             lsvMods.Items.Clear();
             foreach (Mod m in modDict.Values)
             {
                 lsvMods.Items.Add(m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".7z", ""), 0);
-                if (m.Installed)
-                {
-                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.DarkGreen;
-                }
-                else
-                {
-                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.DarkBlue;
-                }
-                if (!File.Exists(m.Name))
+                bool backup = File.Exists(Paths.BACKUP + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1));
+
+                if (m.Installed && !File.Exists(m.Name) && !backup)
                 {
                     lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.Maroon;
                 }
+                else if (m.Installed && File.Exists(m.Name) && !backup)
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.Goldenrod;
+                }
+                else if ((!m.Installed || !File.Exists(m.Name)) && backup)
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.DarkBlue;
+                }
+                else if (m.Installed && backup)
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.DarkGreen;
+                }
+
                 lsvMods.Items[lsvMods.Items.Count - 1].SubItems.Add((m.size / (1024)).ToString("#,## kB"));
                 lsvMods.Items[lsvMods.Items.Count - 1].Tag = m;
             }
@@ -189,21 +197,64 @@ namespace AA2Install
                 Mod m = _7z.Index(path);
                 if (modDict.ContainsKey(m.Name))
                 {
-                    //m = modDict[m.Name];
                     continue;
                 }
                 lsvMods.Items.Add(path.Remove(0, path.LastIndexOf('\\')+1).Replace(".7z", ""), 0);
-                if (m.Installed)
+                bool backup = File.Exists(Paths.BACKUP + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1));
+
+                if (m.Installed && !File.Exists(m.Name) && !backup)
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.Maroon;
+                }
+                else if (m.Installed && File.Exists(m.Name) && !backup)
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.Goldenrod;
+                }
+                else if ((!m.Installed || !File.Exists(m.Name)) && backup)
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.DarkBlue;
+                }
+                else if (m.Installed && backup)
                 {
                     lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.DarkGreen;
                 }
+
                 lsvMods.Items[lsvMods.Items.Count - 1].SubItems.Add((m.size/(1024)).ToString("#,## kB"));
+                lsvMods.Items[lsvMods.Items.Count - 1].Tag = m;
+            }
+
+            foreach (string path in Directory.GetFiles(Paths.BACKUP, "*.7z", SearchOption.TopDirectoryOnly))
+            {
+                Mod m = _7z.Index(path);
+                m.Name = Paths.MODS + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1);
+                if (modDict.ContainsKey(m.Name) || File.Exists(Paths.MODS + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1)))
+                {
+                    continue;
+                }
+                m.Name = path;
+                lsvMods.Items.Add(path.Remove(0, path.LastIndexOf('\\') + 1).Replace(".7z", ""), 0);
+
+                if (!File.Exists(m.Name))
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.Purple;
+                }
+                else if (!m.Installed)
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.DarkBlue;
+                }
+                else
+                {
+                    lsvMods.Items[lsvMods.Items.Count - 1].ForeColor = Color.Goldenrod;
+                }
+
+                lsvMods.Items[lsvMods.Items.Count - 1].SubItems.Add((m.size / (1024)).ToString("#,## kB"));
                 lsvMods.Items[lsvMods.Items.Count - 1].Tag = m;
             }
 
             lsvMods.Enabled = true;
             btnApply.Enabled = true;
             btnRefresh.Enabled = true;
+            btnUninstall.Enabled = true;
         }
 
         /// <summary>
@@ -242,6 +293,7 @@ namespace AA2Install
             //Reset controls
             btnApply.Enabled = false;
             btnRefresh.Enabled = false;
+            btnUninstall.Enabled = false;
             prgMinor.Value = 0;
             prgMajor.Value = 0;
             prgMajor.Style = ProgressBarStyle.Marquee;
@@ -253,6 +305,8 @@ namespace AA2Install
                 updateStatus("FAILED: AA2Play/AA2Edit is not installed/cannot be found");
                 btnApply.Enabled = true;
                 btnRefresh.Enabled = true;
+                btnUninstall.Enabled = true;
+                Paths.ISBACKUP = false;
                 return;
             }
 
@@ -267,18 +321,6 @@ namespace AA2Install
             Directory.CreateDirectory(Paths.WORKING + @"\");
             Directory.CreateDirectory(Paths.TEMP + @"\AA2_PLAY\");
             Directory.CreateDirectory(Paths.TEMP + @"\AA2_MAKE\");
-
-            //Reset individual statuses
-            foreach (ListViewItem item in lsvMods.Items)
-            {
-                lsvMods.Items[index].ImageIndex = 0; //Standby
-
-                if (modDict.ContainsKey(((Mod)lsvMods.Items[index].Tag).Name)) 
-                {
-                    lsvMods.Items[index].Checked = false; //Ignore already installed mods
-                }
-                index++;
-            }
 
             //Check conflicts
             index = 0;
@@ -321,14 +363,16 @@ namespace AA2Install
                 }
                 index++;
             }
-            if (conflict)
+            if (conflict && !Paths.ISBACKUP) //Ignore conflicts if uninstalling
             {
                 updateStatus("FAILED: The highlighted mods have conflicting files");
                 btnApply.Enabled = true;
                 btnRefresh.Enabled = true;
+                btnUninstall.Enabled = true;
                 prgMinor.Value = 0;
                 prgMajor.Value = 0;
                 prgMajor.Style = ProgressBarStyle.Continuous;
+                Paths.ISBACKUP = false;
                 return;
             }
 
@@ -520,6 +564,30 @@ namespace AA2Install
             //Finish up
             prgMinor.Style = ProgressBarStyle.Continuous;
             updateStatus("Finishing up...");
+            if (Paths.ISBACKUP) //If uninstalling remove all trace of existance
+            {
+                foreach (ListViewItem item in lsvMods.Items)
+                {
+                    if (item.Checked)
+                    {
+                        Mod m = ((Mod)item.Tag);
+                        Paths.ISBACKUP = false;
+                        string r = Paths.MODS + m.Name.Remove(0, m.Name.LastIndexOf("\\"));
+                        Paths.ISBACKUP = true;
+                        string s = Paths.MODS + m.Name.Remove(0, m.Name.LastIndexOf("\\"));
+                        if (modDict.ContainsKey(r))
+                        {
+                           modDict.Remove(r);
+                        }
+                        if (File.Exists(s))
+                        {
+                            File.Delete(s);
+                        }
+                        lsvMods.Items[item.Index].Checked = false;
+                    }
+                }
+                Paths.ISBACKUP = false;
+            }
             if (!Configuration.getBool("PPRAW") && Directory.Exists(Paths.PP))
             {
                 TryDeleteDirectory(Paths.PP);
@@ -529,7 +597,6 @@ namespace AA2Install
             TryDeleteDirectory(Paths.WORKING);
 
             //Add installed mods to the modlist
-            index = 0;
 
             foreach (ListViewItem item in lsvMods.Items)
             {
@@ -539,7 +606,6 @@ namespace AA2Install
                     m.Installed = true;
                     modDict[m.Name] = m;
                 }
-                index++;
             }
 
             Configuration.saveMods(modDict);
@@ -558,15 +624,6 @@ namespace AA2Install
         void updateStatus(string status)
         {
             labelStatus.Text = status;
-        }
-
-        private void colorGuideToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show(@"Not installed w/ no backup: Black
-Not installed w/ backup: Dark Blue
-Installed w/ backup: Green
-Installed w/ no backup: Maroon
-Backup w/ no original: Dark Blue");
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -591,7 +648,31 @@ Backup w/ no original: Dark Blue");
 
         private void btnApply_Click(object sender, EventArgs e)
         {
-            install();
+            //Reset individual statuses
+            int count = 0;
+            foreach (ListViewItem item in lsvMods.Items)
+            {
+                int index = item.Index;
+                lsvMods.Items[index].ImageIndex = 0; //Standby
+
+                if (modDict.ContainsKey(((Mod)lsvMods.Items[index].Tag).Name) || !File.Exists(((Mod)lsvMods.Items[index].Tag).Name))
+                {
+                    lsvMods.Items[index].Checked = false; //Ignore already installed mods
+                }
+
+                if (lsvMods.Items[index].Checked)
+                {
+                    count++;
+                }
+            }
+            if (count > 0)
+            {
+              install();
+            }
+            else
+            {
+                updateStatus("ERROR: No mods have been selected (mods that have been already installed / cannot be found have been deselected)");
+            }
         }
 
         #endregion
@@ -683,5 +764,47 @@ Backup w/ no original: Dark Blue");
             }
         }
         #endregion
+
+        private void colorGuideToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            MessageBox.Show(@"Not installed w/ no backup: Black
+Not installed w/ backup: Dark Blue
+No original w/ backup: Purple
+Installed w/ backup: Green
+Installed w/ no backup: Gold
+Installed w/ no backup and no original: Maroon");
+        }
+
+        private void btnUninstall_Click(object sender, EventArgs e)
+        {
+            //Reset individual statuses
+            int count = 0;
+            foreach (ListViewItem item in lsvMods.Items)
+            {
+                int index = item.Index;
+                lsvMods.Items[index].ImageIndex = 0; //Standby
+
+                string name = ((Mod)lsvMods.Items[index].Tag).Name;
+                string path = Paths.BACKUP + name.Remove(0, name.LastIndexOf("\\"));
+                if (!File.Exists(path))
+                {
+                    lsvMods.Items[index].Checked = false; //Ignore already uninstalled mods
+                }
+
+                if (lsvMods.Items[index].Checked)
+                {
+                    count++;
+                }
+            }
+            if (count > 0)
+            {
+                Paths.ISBACKUP = true;
+                install();
+            }
+            else
+            {
+                updateStatus("ERROR: No mods have been selected (mods that have been already installed / cannot be found have been deselected)");
+            }
+        }
     }
 }

@@ -67,6 +67,8 @@
             this.txtAA2PLAY = new System.Windows.Forms.TextBox();
             this.checkAA2PLAY = new System.Windows.Forms.CheckBox();
             this.imageTimer = new System.Windows.Forms.Timer(this.components);
+            this.colorGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnUninstall = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -95,7 +97,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(759, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(864, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -132,6 +134,7 @@
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.colorGuideToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -140,7 +143,7 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -153,7 +156,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 24);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(759, 457);
+            this.tabControl1.Size = new System.Drawing.Size(864, 457);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -164,7 +167,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(751, 431);
+            this.tabPage1.Size = new System.Drawing.Size(856, 431);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Mods";
             // 
@@ -182,8 +185,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(745, 403);
-            this.splitContainer1.SplitterDistance = 430;
+            this.splitContainer1.Size = new System.Drawing.Size(850, 403);
+            this.splitContainer1.SplitterDistance = 461;
             this.splitContainer1.TabIndex = 3;
             // 
             // lsvMods
@@ -197,7 +200,7 @@
             this.lsvMods.LargeImageList = this.imageList1;
             this.lsvMods.Location = new System.Drawing.Point(0, 25);
             this.lsvMods.Name = "lsvMods";
-            this.lsvMods.Size = new System.Drawing.Size(430, 378);
+            this.lsvMods.Size = new System.Drawing.Size(461, 378);
             this.lsvMods.SmallImageList = this.imageList1;
             this.lsvMods.TabIndex = 2;
             this.lsvMods.UseCompatibleStateImageBehavior = false;
@@ -231,11 +234,12 @@
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnRefresh,
-            this.btnApply});
+            this.btnApply,
+            this.btnUninstall});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(430, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(461, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -256,7 +260,7 @@
             this.btnApply.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(23, 22);
-            this.btnApply.Text = "Apply Changes";
+            this.btnApply.Text = "Install Checked";
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // splitContainer2
@@ -273,7 +277,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.txtDescription);
-            this.splitContainer2.Size = new System.Drawing.Size(311, 403);
+            this.splitContainer2.Size = new System.Drawing.Size(385, 403);
             this.splitContainer2.SplitterDistance = 263;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -283,7 +287,7 @@
             this.imagePreview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.imagePreview.Location = new System.Drawing.Point(0, 0);
             this.imagePreview.Name = "imagePreview";
-            this.imagePreview.Size = new System.Drawing.Size(311, 263);
+            this.imagePreview.Size = new System.Drawing.Size(385, 263);
             this.imagePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.imagePreview.TabIndex = 0;
             this.imagePreview.TabStop = false;
@@ -297,7 +301,7 @@
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.ReadOnly = true;
             this.txtDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtDescription.Size = new System.Drawing.Size(311, 136);
+            this.txtDescription.Size = new System.Drawing.Size(385, 136);
             this.txtDescription.TabIndex = 0;
             // 
             // statusMain
@@ -309,7 +313,7 @@
             this.labelStatus});
             this.statusMain.Location = new System.Drawing.Point(3, 406);
             this.statusMain.Name = "statusMain";
-            this.statusMain.Size = new System.Drawing.Size(745, 22);
+            this.statusMain.Size = new System.Drawing.Size(850, 22);
             this.statusMain.TabIndex = 1;
             this.statusMain.Text = "statusStrip1";
             // 
@@ -482,15 +486,32 @@
             this.imageTimer.Interval = 3000;
             this.imageTimer.Tick += new System.EventHandler(this.imageTimer_Tick);
             // 
+            // colorGuideToolStripMenuItem
+            // 
+            this.colorGuideToolStripMenuItem.Name = "colorGuideToolStripMenuItem";
+            this.colorGuideToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.colorGuideToolStripMenuItem.Text = "Color Guide";
+            this.colorGuideToolStripMenuItem.Click += new System.EventHandler(this.colorGuideToolStripMenuItem_Click_1);
+            // 
+            // btnUninstall
+            // 
+            this.btnUninstall.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnUninstall.Image = ((System.Drawing.Image)(resources.GetObject("btnUninstall.Image")));
+            this.btnUninstall.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnUninstall.Name = "btnUninstall";
+            this.btnUninstall.Size = new System.Drawing.Size(23, 22);
+            this.btnUninstall.Text = "Uninstall Checked";
+            this.btnUninstall.Click += new System.EventHandler(this.btnUninstall_Click);
+            // 
             // formMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(759, 481);
+            this.ClientSize = new System.Drawing.Size(864, 481);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.MinimumSize = new System.Drawing.Size(648, 394);
+            this.MinimumSize = new System.Drawing.Size(880, 519);
             this.Name = "formMain";
             this.Text = "AA2Install";
             this.Shown += new System.EventHandler(this.formMain_Shown);
@@ -563,6 +584,8 @@
         private System.Windows.Forms.PictureBox imagePreview;
         private System.Windows.Forms.TextBox txtDescription;
         private System.Windows.Forms.Timer imageTimer;
+        private System.Windows.Forms.ToolStripMenuItem colorGuideToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton btnUninstall;
     }
 }
 
