@@ -82,13 +82,25 @@ namespace AA2Install
             }
         }
         /// <summary>
+        /// If mods is reversed with backup for uninstallation
+        /// </summary>
+        public static bool ISBACKUP = false;
+        /// <summary>
         /// 7z mods location
         /// </summary>
         public static string MODS
         {
             get
             {
-                return Environment.CurrentDirectory + @"\mods";
+                if (ISBACKUP)
+                {
+                    return BACKUP;
+                }
+                else
+                {
+                    return Environment.CurrentDirectory + @"\mods";
+                }
+                
             }
         }
         /// <summary>
