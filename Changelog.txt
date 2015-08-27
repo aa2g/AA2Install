@@ -2,6 +2,8 @@
 + Added a scrollbar for the description
 + Meta mod info is now stored in config
 + Detects conflicts (when installing, still needs to be tested further)
++ Can create partial backups and uninstall mods using them
++ Mod installtion states are now shown via colors on the mod list
 
 Pre1
 + First prerelease
