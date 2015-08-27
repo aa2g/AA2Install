@@ -18,7 +18,6 @@ namespace AA2Install
     /* TODO:
      * 
      * Raw PP handling (Extract all of them and don't delete them when done with them)
-     * Partial backups (Create a 7z archive of all modified files so they can be replaced later)
      * Async file copying/moving
      * Console still can't scroll to bottom
      * 
