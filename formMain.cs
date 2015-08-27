@@ -436,7 +436,7 @@ namespace AA2Install
                                     string r = s.Remove(0, 9);
                                     string rs = r.Remove(0, r.LastIndexOf('\\') + 1);
                                     string archive = Paths.BACKUP + "\\" + item.Text + ".7z";
-                                    string workingdir = Paths.WORKING + "\\BACKUP\\";
+                                    string workingdir = Paths.WORKING + "\\BACKUP\\" + item.Text + "\\";
                                     string directory;
                                     if (AA2PLAY)
                                     {
@@ -448,11 +448,10 @@ namespace AA2Install
                                     }
 
                                     Directory.CreateDirectory(directory);
-                                    File.Copy(ppRAW + "\\" + rs, directory + "\\" + rs);
+                                    File.Copy(Paths.PP + "\\" + ppDir + "\\" + rs, directory + rs);
 
-                                    _7z.Compress(archive, workingdir, directory.Remove(0, workingdir.Length));
-
-                                    TryDeleteDirectory(workingdir);
+                                    //_7z.Compress(archive, workingdir, directory.Remove(0, workingdir.Length)); //old inefficient method
+                                    //TryDeleteDirectory(workingdir);
                                 }
                             }
                         }
@@ -493,7 +492,30 @@ namespace AA2Install
                 index++;
                 prgMajor.Value = index;
             }
-            
+
+
+            //Archive backups
+            List<string> tempBackup = new List<string>(Directory.GetDirectories(Paths.WORKING + "\\BACKUP\\"));
+            foreach (string s in tempBackup)
+            {
+                string item = s.Remove(0, s.LastIndexOf('\\') + 1);
+                string archive = Paths.BACKUP + "\\" + item + ".7z";
+                if (Directory.Exists(s + "\\AA2_PLAY\\"))
+                {
+                    foreach (string sub in Directory.GetDirectories(s + "\\AA2_PLAY\\")) {
+                        string g = sub.Remove(0, s.Length);
+                        _7z.Compress(archive, s, sub.Remove(0, s.Length + 1) + "\\");
+                    }
+                }
+                if (Directory.Exists(s + "\\AA2_MAKE\\"))
+                {
+                    foreach (string sub in Directory.GetDirectories(s + "\\AA2_MAKE\\"))
+                    {
+                        string g = sub.Remove(0, s.Length);
+                        _7z.Compress(archive, s, sub.Remove(0, s.Length + 1) + "\\");
+                    }
+                }
+            }
 
             //Finish up
             prgMinor.Style = ProgressBarStyle.Continuous;
