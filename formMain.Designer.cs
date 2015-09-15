@@ -36,6 +36,7 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.colorGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -47,6 +48,8 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnRefresh = new System.Windows.Forms.ToolStripButton();
             this.btnApply = new System.Windows.Forms.ToolStripButton();
+            this.btnUninstall = new System.Windows.Forms.ToolStripButton();
+            this.btnInject = new System.Windows.Forms.ToolStripButton();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.imagePreview = new System.Windows.Forms.PictureBox();
             this.txtDescription = new System.Windows.Forms.TextBox();
@@ -57,8 +60,6 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.rtbConsole = new System.Windows.Forms.RichTextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.btnRAW = new System.Windows.Forms.Button();
-            this.checkRAW = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnAA2EDIT = new System.Windows.Forms.Button();
             this.txtAA2EDIT = new System.Windows.Forms.TextBox();
@@ -67,8 +68,6 @@
             this.txtAA2PLAY = new System.Windows.Forms.TextBox();
             this.checkAA2PLAY = new System.Windows.Forms.CheckBox();
             this.imageTimer = new System.Windows.Forms.Timer(this.components);
-            this.colorGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnUninstall = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -140,10 +139,17 @@
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
+            // colorGuideToolStripMenuItem
+            // 
+            this.colorGuideToolStripMenuItem.Name = "colorGuideToolStripMenuItem";
+            this.colorGuideToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.colorGuideToolStripMenuItem.Text = "Color Guide";
+            this.colorGuideToolStripMenuItem.Click += new System.EventHandler(this.colorGuideToolStripMenuItem_Click_1);
+            // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -235,7 +241,8 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnRefresh,
             this.btnApply,
-            this.btnUninstall});
+            this.btnUninstall,
+            this.btnInject});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -262,6 +269,26 @@
             this.btnApply.Size = new System.Drawing.Size(23, 22);
             this.btnApply.Text = "Install Checked";
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
+            // btnUninstall
+            // 
+            this.btnUninstall.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnUninstall.Image = ((System.Drawing.Image)(resources.GetObject("btnUninstall.Image")));
+            this.btnUninstall.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnUninstall.Name = "btnUninstall";
+            this.btnUninstall.Size = new System.Drawing.Size(23, 22);
+            this.btnUninstall.Text = "Uninstall Checked";
+            this.btnUninstall.Click += new System.EventHandler(this.btnUninstall_Click);
+            // 
+            // btnInject
+            // 
+            this.btnInject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnInject.Image = ((System.Drawing.Image)(resources.GetObject("btnInject.Image")));
+            this.btnInject.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnInject.Name = "btnInject";
+            this.btnInject.Size = new System.Drawing.Size(23, 22);
+            this.btnInject.Text = "Inject Selected";
+            this.btnInject.Click += new System.EventHandler(this.btnInject_Click);
             // 
             // splitContainer2
             // 
@@ -340,7 +367,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(751, 431);
+            this.tabPage2.Size = new System.Drawing.Size(856, 431);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Console Output";
             // 
@@ -355,45 +382,19 @@
             this.rtbConsole.Location = new System.Drawing.Point(3, 3);
             this.rtbConsole.Name = "rtbConsole";
             this.rtbConsole.ReadOnly = true;
-            this.rtbConsole.Size = new System.Drawing.Size(745, 425);
+            this.rtbConsole.Size = new System.Drawing.Size(850, 425);
             this.rtbConsole.TabIndex = 0;
             this.rtbConsole.Text = "";
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.btnRAW);
-            this.tabPage3.Controls.Add(this.checkRAW);
             this.tabPage3.Controls.Add(this.groupBox1);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(751, 431);
+            this.tabPage3.Size = new System.Drawing.Size(856, 431);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Preferences";
             this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // btnRAW
-            // 
-            this.btnRAW.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRAW.Enabled = false;
-            this.btnRAW.Location = new System.Drawing.Point(388, 118);
-            this.btnRAW.Name = "btnRAW";
-            this.btnRAW.Size = new System.Drawing.Size(355, 23);
-            this.btnRAW.TabIndex = 2;
-            this.btnRAW.Text = "Uncompress All Now";
-            this.btnRAW.UseVisualStyleBackColor = true;
-            // 
-            // checkRAW
-            // 
-            this.checkRAW.AutoSize = true;
-            this.checkRAW.Enabled = false;
-            this.checkRAW.Location = new System.Drawing.Point(8, 122);
-            this.checkRAW.Name = "checkRAW";
-            this.checkRAW.Size = new System.Drawing.Size(374, 17);
-            this.checkRAW.TabIndex = 1;
-            this.checkRAW.Text = "Keep .pp files uncompressed (Faster, but requires 10-30gb of HDD space)";
-            this.checkRAW.UseVisualStyleBackColor = true;
-            this.checkRAW.CheckedChanged += new System.EventHandler(this.checkRAW_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -486,23 +487,6 @@
             this.imageTimer.Interval = 3000;
             this.imageTimer.Tick += new System.EventHandler(this.imageTimer_Tick);
             // 
-            // colorGuideToolStripMenuItem
-            // 
-            this.colorGuideToolStripMenuItem.Name = "colorGuideToolStripMenuItem";
-            this.colorGuideToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.colorGuideToolStripMenuItem.Text = "Color Guide";
-            this.colorGuideToolStripMenuItem.Click += new System.EventHandler(this.colorGuideToolStripMenuItem_Click_1);
-            // 
-            // btnUninstall
-            // 
-            this.btnUninstall.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnUninstall.Image = ((System.Drawing.Image)(resources.GetObject("btnUninstall.Image")));
-            this.btnUninstall.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnUninstall.Name = "btnUninstall";
-            this.btnUninstall.Size = new System.Drawing.Size(23, 22);
-            this.btnUninstall.Text = "Uninstall Checked";
-            this.btnUninstall.Click += new System.EventHandler(this.btnUninstall_Click);
-            // 
             // formMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -537,7 +521,6 @@
             this.statusMain.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -575,8 +558,6 @@
         private System.Windows.Forms.Button btnAA2EDIT;
         private System.Windows.Forms.TextBox txtAA2EDIT;
         private System.Windows.Forms.CheckBox checkAA2EDIT;
-        private System.Windows.Forms.Button btnRAW;
-        private System.Windows.Forms.CheckBox checkRAW;
         private System.Windows.Forms.ToolStripProgressBar prgMinor;
         private System.Windows.Forms.ToolStripProgressBar prgMajor;
         private System.Windows.Forms.SplitContainer splitContainer1;
@@ -586,6 +567,7 @@
         private System.Windows.Forms.Timer imageTimer;
         private System.Windows.Forms.ToolStripMenuItem colorGuideToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnUninstall;
+        private System.Windows.Forms.ToolStripButton btnInject;
     }
 }
 
