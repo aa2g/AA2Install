@@ -129,6 +129,12 @@
   <ItemGroup>
     <Content Include="Changelog.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="SB3UtilityPP\SB3UtilityPP.csproj">
+      <Project>{5647b104-8f58-4867-b849-dac65d5243bd}</Project>
+      <Name>SB3UtilityPP</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
