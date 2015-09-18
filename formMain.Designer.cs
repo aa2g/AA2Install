@@ -49,7 +49,6 @@
             this.btnRefresh = new System.Windows.Forms.ToolStripButton();
             this.btnApply = new System.Windows.Forms.ToolStripButton();
             this.btnUninstall = new System.Windows.Forms.ToolStripButton();
-            this.btnInject = new System.Windows.Forms.ToolStripButton();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.imagePreview = new System.Windows.Forms.PictureBox();
             this.txtDescription = new System.Windows.Forms.TextBox();
@@ -241,8 +240,7 @@
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnRefresh,
             this.btnApply,
-            this.btnUninstall,
-            this.btnInject});
+            this.btnUninstall});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -267,7 +265,7 @@
             this.btnApply.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(23, 22);
-            this.btnApply.Text = "Install Checked";
+            this.btnApply.Text = "Inject Checked";
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // btnUninstall
@@ -279,16 +277,6 @@
             this.btnUninstall.Size = new System.Drawing.Size(23, 22);
             this.btnUninstall.Text = "Uninstall Checked";
             this.btnUninstall.Click += new System.EventHandler(this.btnUninstall_Click);
-            // 
-            // btnInject
-            // 
-            this.btnInject.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnInject.Image = ((System.Drawing.Image)(resources.GetObject("btnInject.Image")));
-            this.btnInject.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnInject.Name = "btnInject";
-            this.btnInject.Size = new System.Drawing.Size(23, 22);
-            this.btnInject.Text = "Inject Selected";
-            this.btnInject.Click += new System.EventHandler(this.btnInject_Click);
             // 
             // splitContainer2
             // 
@@ -408,7 +396,7 @@
             this.groupBox1.Controls.Add(this.checkAA2PLAY);
             this.groupBox1.Location = new System.Drawing.Point(8, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(735, 113);
+            this.groupBox1.Size = new System.Drawing.Size(840, 113);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Paths";
@@ -417,7 +405,7 @@
             // 
             this.btnAA2EDIT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAA2EDIT.Enabled = false;
-            this.btnAA2EDIT.Location = new System.Drawing.Point(705, 81);
+            this.btnAA2EDIT.Location = new System.Drawing.Point(810, 81);
             this.btnAA2EDIT.Name = "btnAA2EDIT";
             this.btnAA2EDIT.Size = new System.Drawing.Size(24, 23);
             this.btnAA2EDIT.TabIndex = 4;
@@ -432,7 +420,7 @@
             this.txtAA2EDIT.Enabled = false;
             this.txtAA2EDIT.Location = new System.Drawing.Point(6, 83);
             this.txtAA2EDIT.Name = "txtAA2EDIT";
-            this.txtAA2EDIT.Size = new System.Drawing.Size(693, 20);
+            this.txtAA2EDIT.Size = new System.Drawing.Size(798, 20);
             this.txtAA2EDIT.TabIndex = 3;
             this.txtAA2EDIT.TextChanged += new System.EventHandler(this.txtAA2EDIT_TextChanged);
             // 
@@ -451,7 +439,7 @@
             // 
             this.btnAA2PLAY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAA2PLAY.Enabled = false;
-            this.btnAA2PLAY.Location = new System.Drawing.Point(705, 36);
+            this.btnAA2PLAY.Location = new System.Drawing.Point(810, 36);
             this.btnAA2PLAY.Name = "btnAA2PLAY";
             this.btnAA2PLAY.Size = new System.Drawing.Size(24, 23);
             this.btnAA2PLAY.TabIndex = 1;
@@ -466,7 +454,7 @@
             this.txtAA2PLAY.Enabled = false;
             this.txtAA2PLAY.Location = new System.Drawing.Point(6, 38);
             this.txtAA2PLAY.Name = "txtAA2PLAY";
-            this.txtAA2PLAY.Size = new System.Drawing.Size(693, 20);
+            this.txtAA2PLAY.Size = new System.Drawing.Size(798, 20);
             this.txtAA2PLAY.TabIndex = 1;
             this.txtAA2PLAY.TextChanged += new System.EventHandler(this.txtAA2PLAY_TextChanged);
             // 
@@ -567,7 +555,6 @@
         private System.Windows.Forms.Timer imageTimer;
         private System.Windows.Forms.ToolStripMenuItem colorGuideToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnUninstall;
-        private System.Windows.Forms.ToolStripButton btnInject;
     }
 }
 
