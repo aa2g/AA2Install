@@ -17,22 +17,12 @@ namespace AA2Install
             {
                 if (Environment.Is64BitOperatingSystem)
                 {
-                    return Environment.CurrentDirectory + @"\tools\x64\7za.exe";
+                    return Environment.CurrentDirectory + @"\tools\7z\x64\7za.exe";
                 } 
                 else 
                 {
-                    return Environment.CurrentDirectory + @"\tools\x86_64\7za.exe";
+                    return Environment.CurrentDirectory + @"\tools\7z\x86\7za.exe";
                 }
-            }
-        }
-        /// <summary>
-        /// AA2Decrypt location
-        /// </summary>
-        public static string AA2Decrypt
-        {
-            get
-            {
-                return Environment.CurrentDirectory + @"\tools\x86_64\AA2Decrypt.exe";
             }
         }
         /// <summary>
@@ -101,16 +91,6 @@ namespace AA2Install
                     return Environment.CurrentDirectory + @"\mods";
                 }
                 
-            }
-        }
-        /// <summary>
-        /// PP non-working directory
-        /// </summary>
-        public static string PP
-        {
-            get
-            {
-                return Environment.CurrentDirectory + @"\PP";
             }
         }
         /// <summary>

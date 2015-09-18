@@ -150,6 +150,7 @@ namespace AA2Install
             btnApply.Enabled = false;
             btnRefresh.Enabled = false;
             btnUninstall.Enabled = false;
+            Paths.ISBACKUP = false;
 
             modDict = Configuration.loadMods();
             lsvMods.Items.Clear();
@@ -275,220 +276,7 @@ namespace AA2Install
         /// <summary>
         /// Injects mods
         /// </summary>
-        public void inject()
-        {
-            //Reset controls
-            btnApply.Enabled = false;
-            btnRefresh.Enabled = false;
-            btnUninstall.Enabled = false;
-            prgMinor.Value = 0;
-            prgMajor.Value = 0;
-            prgMajor.Style = ProgressBarStyle.Marquee;
-            int index = 0;
-
-            //Check if directory exists
-            if (!(Directory.Exists(Paths.AA2Play) && Directory.Exists(Paths.AA2Edit)))
-            {
-                updateStatus("FAILED: AA2Play/AA2Edit is not installed/cannot be found");
-                btnApply.Enabled = true;
-                btnRefresh.Enabled = true;
-                btnUninstall.Enabled = true;
-                return;
-            }
-
-            //Clear and create temp
-            updateStatus("Clearing TEMP folder...");
-            if (Directory.Exists(Paths.TEMP)) { TryDeleteDirectory(Paths.TEMP); }
-            //if (Directory.Exists(Paths.WORKING)) { TryDeleteDirectory(Paths.WORKING); }
-            //if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
-
-            //Directory.CreateDirectory(Paths.PP + @"\");
-            Directory.CreateDirectory(Paths.TEMP + @"\");
-            //Directory.CreateDirectory(Paths.WORKING + @"\");
-            Directory.CreateDirectory(Paths.TEMP + @"\AA2_PLAY\");
-            Directory.CreateDirectory(Paths.TEMP + @"\AA2_MAKE\");
-
-            //Check conflicts
-            index = 0;
-            updateStatus("Checking conflicts...");
-
-            Dictionary<string, string> files = new Dictionary<string, string>();
-            foreach (Mod m in modDict.Values)
-            {
-                foreach (string s in m.Filenames)
-                {
-                    files[s] = m.Name;
-                }
-            }
-
-            bool conflict = false;
-            foreach (ListViewItem item in lsvMods.Items)
-            {
-                if (item.Checked)
-                {
-                    lsvMods.Items[index].ImageIndex = 1; //Ready
-                    foreach (string s in ((Mod)item.Tag).Filenames)
-                    {
-                        if (files.ContainsKey(s))
-                        {
-                            conflict = true;
-
-                            foreach (ListViewItem i in lsvMods.Items) //Clusterfuck to find the other conflicting mod
-                            {
-                                Mod m = (Mod)i.Tag;
-                                if (m.Filenames.Contains(s))
-                                {
-                                    lsvMods.Items[i.Index].ImageIndex = 3; //Triangle error
-                                }
-                            }
-
-                            lsvMods.Items[item.Index].ImageIndex = 3; //Triangle error
-                        }
-                        files[s] = ((Mod)item.Tag).Name;
-                    }
-                }
-                index++;
-            }
-            if (conflict)
-            {
-                updateStatus("FAILED: The highlighted mods have conflicting files");
-                btnApply.Enabled = true;
-                btnRefresh.Enabled = true;
-                btnUninstall.Enabled = true;
-                prgMinor.Value = 0;
-                prgMajor.Value = 0;
-                prgMajor.Style = ProgressBarStyle.Continuous;
-                return;
-            }
-
-            //Extract all mods
-            index = 0;
-            prgMinor.Maximum = lsvMods.Items.Count;
-
-            foreach (ListViewItem item in lsvMods.Items)
-            {
-                if (item.Checked)
-                {
-                    lsvMods.Items[index].ImageIndex = 2; //Processing
-                    updateStatus("Extracting " + item.Text + "...");
-                    _7z.Extract(Paths.MODS + "\\" + item.Text + ".7z");
-                    lsvMods.Items[index].ImageIndex = 4; //Done
-                }
-                index++;
-                prgMinor.Value = index;
-            }
-
-            //Build ppQueue
-            index = 0;
-
-            Queue<string> ppQueue = new Queue<string>();
-            updateStatus("Creating .pp file queue...");
-            List<string> tempPLAY = new List<string>(Directory.GetDirectories(Paths.TEMP + @"\AA2_PLAY", "jg2*", SearchOption.TopDirectoryOnly));
-            List<string> tempEDIT = new List<string>(Directory.GetDirectories(Paths.TEMP + @"\AA2_MAKE", "jg2*", SearchOption.TopDirectoryOnly));
-
-            foreach (string path in tempPLAY)
-            {
-                ppQueue.Enqueue(path);
-            }
-            foreach (string path in tempEDIT)
-            {
-                ppQueue.Enqueue(path);
-            }
-
-            prgMinor.Value = 0;
-            prgMajor.Style = ProgressBarStyle.Continuous;
-
-            //Process .pp files
-            prgMajor.Maximum = ppQueue.Count;
-            index = 0;
-            while (ppQueue.Count > 0)
-            {
-                string ppRAW = ppQueue.Dequeue();
-                string ppDir = ppRAW.Remove(0, ppRAW.LastIndexOf('\\') + 1);
-                string pp = ppDir + ".pp";
-
-                string destination = "";
-
-                updateStatus(minorProgress + " (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently unpacking " + pp + "...");
-
-                //Fetch.pp file if it exists
-
-                switch (pp[3]) //jg2[e/p]0x_...
-                {
-                    case 'e':
-                        //AA2EDIT
-                        destination = Paths.AA2Edit;
-                        break;
-                    case 'p':
-                        //AA2PLAY
-                        destination = Paths.AA2Play;
-                        break;
-                    default:
-                        //Unknown, check both folders
-                        if (tempPLAY.Contains(pp))
-                        {
-                            destination = Paths.AA2Play;
-                        }
-                        else
-                        {
-                            destination = Paths.AA2Edit;
-                        }
-                        break;
-                }
-
-                updateStatus(minorProgress + " (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently injecting " + pp + "...");
-                prgMinor.Style = ProgressBarStyle.Marquee;
-
-                ppParser p = new ppParser(destination + "\\" + pp, new ppFormat_AA2());
-                foreach (string s in Directory.GetFiles(ppRAW))
-                {
-                    string fname = s.Remove(0, s.LastIndexOf('\\')+1);
-                    foreach (IWriteFile sub in p.Subfiles)
-                    {
-                        if (fname == sub.Name)
-                        {
-                            p.Subfiles.Remove(sub);
-                            break;
-                        }
-                    }
-                    p.Subfiles.Add(new Subfile(s));
-                }
-                p.WriteArchive(destination + "\\" + pp, true, "", false);
-                //Loop complete
-
-                index++;
-                prgMajor.Value = index;
-            }
-
-            //Finish up
-            prgMinor.Style = ProgressBarStyle.Continuous;
-            updateStatus("Finishing up...");
-
-            TryDeleteDirectory(Paths.TEMP);
-            TryDeleteDirectory(Paths.WORKING);
-
-            //Add installed mods to the modlist
-
-            foreach (ListViewItem item in lsvMods.Items)
-            {
-                if (item.Checked)
-                {
-                    Mod m = ((Mod)item.Tag);
-                    m.Installed = true;
-                    modDict[m.Name] = m;
-                }
-            }
-
-            Configuration.saveMods(modDict);
-
-            updateStatus("Success!");
-            refreshModList();
-        }
-        
-        /// <summary>
-        /// Applies mods
-        /// </summary>
-        public void install()
+        public void inject(bool createBackup = true)
         {
             //Reset controls
             btnApply.Enabled = false;
@@ -516,7 +304,6 @@ namespace AA2Install
             if (Directory.Exists(Paths.WORKING)) { TryDeleteDirectory(Paths.WORKING); }
             if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
 
-            Directory.CreateDirectory(Paths.PP + @"\");
             Directory.CreateDirectory(Paths.TEMP + @"\");
             Directory.CreateDirectory(Paths.WORKING + @"\");
             Directory.CreateDirectory(Paths.TEMP + @"\AA2_PLAY\");
@@ -569,10 +356,10 @@ namespace AA2Install
                 btnApply.Enabled = true;
                 btnRefresh.Enabled = true;
                 btnUninstall.Enabled = true;
+                Paths.ISBACKUP = false;
                 prgMinor.Value = 0;
                 prgMajor.Value = 0;
                 prgMajor.Style = ProgressBarStyle.Continuous;
-                Paths.ISBACKUP = false;
                 return;
             }
 
@@ -624,129 +411,122 @@ namespace AA2Install
 
                 string destination = "";
 
-                updateStatus( minorProgress + " (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently unpacking " + pp + "...");
+                updateStatus("(" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently injecting " + pp + "...");
 
                 //Fetch.pp file if it exists
-                bool AA2PLAY;
 
                 switch (pp[3]) //jg2[e/p]0x_...
                 {
                     case 'e':
                         //AA2EDIT
                         destination = Paths.AA2Edit;
-                        AA2PLAY = false;
                         break;
                     case 'p':
                         //AA2PLAY
                         destination = Paths.AA2Play;
-                        AA2PLAY = true;
                         break;
                     default:
                         //Unknown, check both folders
                         if (tempPLAY.Contains(pp))
                         {
                             destination = Paths.AA2Play;
-                            AA2PLAY = true;
-                        } 
-                        else 
+                        }
+                        else
                         {
                             destination = Paths.AA2Edit;
-                            AA2PLAY = false;
                         }
                         break;
                 }
 
-                updateStatus(minorProgress + " (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently merging " + pp + "...");
-                prgMinor.Style = ProgressBarStyle.Marquee;
+                prgMinor.Style = ProgressBarStyle.Continuous;
+                prgMinor.Maximum = Directory.GetFiles(ppRAW).Length;
+                int i = 1;
 
-                if (File.Exists(destination + "\\" + pp)) { //If original exists then move/copy it
+                ppParser p = new ppParser(destination + "\\" + pp, new ppFormat_AA2());
 
-                    if (!Directory.Exists(Paths.PP + "\\" + ppDir)) //Don't overwrite if rawPP is enabled
-                    {  
-                        File.Copy(destination + "\\" + pp, Paths.PP + "\\" + pp);
-                        PP.Extract(Paths.PP + "\\" + pp);
-                        File.Delete(Paths.PP + "\\" + pp);
-                    }
-
-                    foreach (ListViewItem item in lsvMods.Items)
+                foreach (ListViewItem item in lsvMods.Items)
+                {
+                    if (item.Checked)
                     {
-                        if (item.Checked)
+                        foreach (string s in ((Mod)item.Tag).Filenames)
                         {
-                            //List<string> currentFiles = new List<string>();
-                            foreach (string s in ((Mod)item.Tag).Filenames)
+                            if (s.Contains(ppDir))
                             {
-                                if (s.Contains(ppDir))
+                                string r = s.Remove(0, 9);
+                                string rs = r.Remove(0, r.LastIndexOf('\\') + 1);
+                                string workingdir = Paths.WORKING + "\\BACKUP\\" + item.Text + "\\";
+                                string directory;
+                                if (destination == Paths.AA2Play)
                                 {
-                                    string r = s.Remove(0, 9);
-                                    string rs = r.Remove(0, r.LastIndexOf('\\') + 1);
-                                    string archive = Paths.BACKUP + "\\" + item.Text + ".7z";
-                                    string workingdir = Paths.WORKING + "\\BACKUP\\" + item.Text + "\\";
-                                    string directory;
-                                    if (AA2PLAY)
-                                    {
-                                        directory = workingdir + "AA2_PLAY\\" + r.Remove(r.LastIndexOf('\\') + 1);
-                                    }
-                                    else
-                                    {
-                                        directory = workingdir + "AA2_MAKE\\" + r.Remove(r.LastIndexOf('\\') + 1);
-                                    }
+                                    directory = workingdir + "AA2_PLAY\\" + r.Remove(r.LastIndexOf('\\') + 1);
+                                }
+                                else
+                                {
+                                    directory = workingdir + "AA2_MAKE\\" + r.Remove(r.LastIndexOf('\\') + 1);
+                                }
 
-                                    Directory.CreateDirectory(directory);
-                                    File.Copy(Paths.PP + "\\" + ppDir + "\\" + rs, directory + rs);
-
-                                    //_7z.Compress(archive, workingdir, directory.Remove(0, workingdir.Length)); //old inefficient method
-                                    //TryDeleteDirectory(workingdir);
+                                Directory.CreateDirectory(directory);
+                                //File.Copy(Paths.PP + "\\" + ppDir + "\\" + rs, directory + rs);
+                                foreach (IWriteFile iw in p.Subfiles)
+                                {
+                                    if (iw.Name == rs)
+                                    {
+                                        using (FileStream fs = new FileStream(directory + rs, FileMode.Create))
+                                        {
+                                            iw.WriteTo(fs);
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-
-                    Directory.Move(Paths.PP + "\\" + ppDir, Paths.WORKING + "\\" + ppDir);                 
-                    
                 }
 
-                //Overwrite .pp with contents of mod
-
-                CopyFilesRecursively(new DirectoryInfo(ppRAW), new DirectoryInfo(Paths.WORKING + "\\" + ppDir)); //since Directory.Move doesn't overwrite
-                Directory.Delete(ppRAW, true);
-
-                if (Configuration.getBool("PPRAW")) //If ppRAW is enabled copy back the directory
+                foreach (string s in Directory.GetFiles(ppRAW))
                 {
-                    CopyFilesRecursively(new DirectoryInfo(Paths.WORKING + "\\" + ppDir), new DirectoryInfo(Paths.PP + "\\" + ppDir));
+                    string fname = s.Remove(0, s.LastIndexOf('\\')+1);
+                    foreach (IWriteFile sub in p.Subfiles)
+                    {
+                        if (fname == sub.Name)
+                        {
+                            p.Subfiles.Remove(sub);
+                            break;
+                        }
+                    }
+                    prgMinor.Value = i;
+                    p.Subfiles.Add(new Subfile(s));
+                    i++;
                 }
-
-                //Repackage .pp
-
-                updateStatus(minorProgress + " (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently re-packing " + pp + "...");
-                prgMinor.Style = ProgressBarStyle.Continuous;
-
-                string newPP = PP.Create(Paths.WORKING + "\\" + ppDir);
-                Directory.Delete(Paths.WORKING + "\\" + ppDir, true);
-
-                //Patch the new .pp back to the game files
-
-                updateStatus(minorProgress + " (" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Currently installing " + pp + "...");
-                prgMinor.Style = ProgressBarStyle.Marquee;
-
-                if (File.Exists(destination + "\\" + pp)) { File.Delete(destination + "\\" + pp); }
-                File.Move(newPP, destination + "\\" + pp);
-
+                BackgroundWorker b = p.WriteArchive(destination + "\\" + pp, createBackup, "", true);
+                b.RunWorkerAsync();
+                while (b.IsBusy)
+                {
+                    Application.DoEvents();
+                }
                 //Loop complete
 
                 index++;
                 prgMajor.Value = index;
             }
 
-
+            int ind = 0;
+            prgMinor.Value = 0;
             //Archive backups
+            prgMinor.Value = 0;
             List<string> tempBackup = new List<string>(Directory.GetDirectories(Paths.WORKING + "\\BACKUP\\"));
+            prgMinor.Maximum = tempBackup.Count;
             foreach (string s in tempBackup)
             {
+                ind++;
+                prgMinor.Value = ind;
+                updateStatus("(" + ind.ToString() + "/" + tempBackup.Count.ToString() + ") Archiving backup of " + s + "...");
+
                 string item = s.Remove(0, s.LastIndexOf('\\') + 1);
                 string archive = Paths.BACKUP + "\\" + item + ".7z";
                 if (Directory.Exists(s + "\\AA2_PLAY\\"))
                 {
-                    foreach (string sub in Directory.GetDirectories(s + "\\AA2_PLAY\\")) {
+                    foreach (string sub in Directory.GetDirectories(s + "\\AA2_PLAY\\"))
+                    {
                         string g = sub.Remove(0, s.Length);
                         _7z.Compress(archive, s, sub.Remove(0, s.Length + 1) + "\\");
                     }
@@ -777,7 +557,7 @@ namespace AA2Install
                         string s = Paths.MODS + m.Name.Remove(0, m.Name.LastIndexOf("\\"));
                         if (modDict.ContainsKey(r))
                         {
-                           modDict.Remove(r);
+                            modDict.Remove(r);
                         }
                         if (File.Exists(s))
                         {
@@ -787,10 +567,6 @@ namespace AA2Install
                     }
                 }
                 Paths.ISBACKUP = false;
-            }
-            if (!Configuration.getBool("PPRAW") && Directory.Exists(Paths.PP))
-            {
-                TryDeleteDirectory(Paths.PP);
             }
 
             TryDeleteDirectory(Paths.TEMP);
@@ -855,11 +631,6 @@ namespace AA2Install
                 int index = item.Index;
                 lsvMods.Items[index].ImageIndex = 0; //Standby
 
-                if (modDict.ContainsKey(((Mod)lsvMods.Items[index].Tag).Name) || !File.Exists(((Mod)lsvMods.Items[index].Tag).Name))
-                {
-                    lsvMods.Items[index].Checked = false; //Ignore already installed mods
-                }
-
                 if (lsvMods.Items[index].Checked)
                 {
                     count++;
@@ -867,31 +638,7 @@ namespace AA2Install
             }
             if (count > 0)
             {
-              install();
-            }
-            else
-            {
-                updateStatus("ERROR: No mods have been selected (mods that have been already installed / cannot be found have been deselected)");
-            }
-        }
-
-        private void btnInject_Click(object sender, EventArgs e)
-        {
-            //Reset individual statuses
-            int count = 0;
-            foreach (ListViewItem item in lsvMods.Items)
-            {
-                int index = item.Index;
-                lsvMods.Items[index].ImageIndex = 0; //Standby
-
-                if (lsvMods.Items[index].Checked)
-                {
-                    count++;
-                }
-            }
-            if (count > 0)
-            {
-                inject();
+                inject(false);
             }
             else
             {
@@ -917,7 +664,6 @@ namespace AA2Install
 
             //Set event handlers
             _7z.OutputDataRecieved += new DataReceivedEventHandler(ProcessOutputHandler);
-            PP.OutputDataRecieved += new DataReceivedEventHandler(ProcessOutputHandler);
 
             //Create necessary folders
             if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
@@ -983,10 +729,14 @@ namespace AA2Install
         {
             if (imageLoop.Count > 0)
             {
-                imagePreview.Image.Dispose();
-                imagePreview.Image = new Bitmap(imageLoop[(imageIndex % imageLoop.Count)]);
-                GC.Collect();
-                imageIndex++;
+                if (File.Exists(imageLoop[(imageIndex % imageLoop.Count)]))
+                {
+                    imagePreview.Image.Dispose();
+                    imagePreview.Image = new Bitmap(imageLoop[(imageIndex % imageLoop.Count)]);
+                    GC.Collect();
+                    imageIndex++;
+                }
+                
             }
             else
             {
@@ -1029,7 +779,7 @@ Installed w/ no backup and no original: Maroon");
             if (count > 0)
             {
                 Paths.ISBACKUP = true;
-                install();
+                inject(false);
             }
             else
             {

@@ -1,4 +1,11 @@
-﻿Pre3
+﻿Pre4
++ Injection now supports backups
++ Properly shows progress when injecting
++ Fixed crash when previewing image when installing
++ Injection now (partially) runs on another thread
++ Injection buttons now disable normally
+
+Pre3
 + Imported code from enimaroah/SB3Utility, tweaked to get it to work standalone
 + Memory leaks found in image previews patched
 + .pp direct injection (beta)
