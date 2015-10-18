@@ -15,12 +15,9 @@ using SB3Utility;
 
 namespace AA2Install
 {
-    #warning Unfinished features still remain
     /* TODO:
      * 
-     * Raw PP handling (Extract all of them and don't delete them when done with them)
-     * Async file copying/moving
-     * Console still can't scroll to bottom
+     * Nothing
      * 
      */
 
@@ -466,7 +463,6 @@ namespace AA2Install
                                 }
 
                                 Directory.CreateDirectory(directory);
-                                //File.Copy(Paths.PP + "\\" + ppDir + "\\" + rs, directory + rs);
                                 foreach (IWriteFile iw in p.Subfiles)
                                 {
                                     if (iw.Name == rs)
