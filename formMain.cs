@@ -15,12 +15,6 @@ using SB3Utility;
 
 namespace AA2Install
 {
-    /* TODO:
-     * 
-     * Nothing
-     * 
-     */
-
     [Serializable()] public struct Mod
     {
         public string Name;
@@ -412,27 +406,14 @@ namespace AA2Install
 
                 //Fetch.pp file if it exists
 
-                switch (pp[3]) //jg2[e/p]0x_...
+                
+                if (tempPLAY.Contains(ppRAW))
                 {
-                    case 'e':
-                        //AA2EDIT
-                        destination = Paths.AA2Edit;
-                        break;
-                    case 'p':
-                        //AA2PLAY
-                        destination = Paths.AA2Play;
-                        break;
-                    default:
-                        //Unknown, check both folders
-                        if (tempPLAY.Contains(pp))
-                        {
-                            destination = Paths.AA2Play;
-                        }
-                        else
-                        {
-                            destination = Paths.AA2Edit;
-                        }
-                        break;
+                    destination = Paths.AA2Play;
+                }
+                else
+                {
+                    destination = Paths.AA2Edit;
                 }
 
                 prgMinor.Style = ProgressBarStyle.Continuous;
@@ -509,6 +490,7 @@ namespace AA2Install
             prgMinor.Value = 0;
             //Archive backups
             prgMinor.Value = 0;
+            if (!Directory.Exists(Paths.WORKING + "\\BACKUP\\")) { Directory.CreateDirectory(Paths.WORKING + "\\BACKUP\\"); }
             List<string> tempBackup = new List<string>(Directory.GetDirectories(Paths.WORKING + "\\BACKUP\\"));
             prgMinor.Maximum = tempBackup.Count;
             foreach (string s in tempBackup)
