@@ -35,23 +35,20 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.flushCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.colorGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.lsvMods = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnRefresh = new System.Windows.Forms.ToolStripButton();
             this.btnApply = new System.Windows.Forms.ToolStripButton();
-            this.btnUninstall = new System.Windows.Forms.ToolStripButton();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.imagePreview = new System.Windows.Forms.PictureBox();
-            this.txtDescription = new System.Windows.Forms.TextBox();
+            this.rtbDescription = new System.Windows.Forms.RichTextBox();
             this.statusMain = new System.Windows.Forms.StatusStrip();
             this.prgMinor = new System.Windows.Forms.ToolStripProgressBar();
             this.prgMajor = new System.Windows.Forms.ToolStripProgressBar();
@@ -59,13 +56,18 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.rtbConsole = new System.Windows.Forms.RichTextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkConflicts = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblEditPath = new System.Windows.Forms.Label();
+            this.lblPlayPath = new System.Windows.Forms.Label();
             this.btnAA2EDIT = new System.Windows.Forms.Button();
             this.txtAA2EDIT = new System.Windows.Forms.TextBox();
             this.checkAA2EDIT = new System.Windows.Forms.CheckBox();
             this.btnAA2PLAY = new System.Windows.Forms.Button();
             this.txtAA2PLAY = new System.Windows.Forms.TextBox();
             this.checkAA2PLAY = new System.Windows.Forms.CheckBox();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.imageTimer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -83,6 +85,7 @@
             this.statusMain.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -117,7 +120,8 @@
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.clearConsoleToolStripMenuItem});
+            this.clearConsoleToolStripMenuItem,
+            this.flushCacheToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
@@ -129,26 +133,25 @@
             this.clearConsoleToolStripMenuItem.Text = "Clear Console";
             this.clearConsoleToolStripMenuItem.Click += new System.EventHandler(this.clearConsoleToolStripMenuItem_Click);
             // 
+            // flushCacheToolStripMenuItem
+            // 
+            this.flushCacheToolStripMenuItem.Name = "flushCacheToolStripMenuItem";
+            this.flushCacheToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.flushCacheToolStripMenuItem.Text = "Flush Cache";
+            this.flushCacheToolStripMenuItem.Click += new System.EventHandler(this.flushCacheToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.colorGuideToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
-            // colorGuideToolStripMenuItem
-            // 
-            this.colorGuideToolStripMenuItem.Name = "colorGuideToolStripMenuItem";
-            this.colorGuideToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.colorGuideToolStripMenuItem.Text = "Color Guide";
-            this.colorGuideToolStripMenuItem.Click += new System.EventHandler(this.colorGuideToolStripMenuItem_Click_1);
-            // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -192,46 +195,34 @@
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
             this.splitContainer1.Size = new System.Drawing.Size(850, 403);
             this.splitContainer1.SplitterDistance = 461;
+            this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 3;
             // 
             // lsvMods
             // 
+            this.lsvMods.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lsvMods.CheckBoxes = true;
             this.lsvMods.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2});
+            this.columnHeader1});
             this.lsvMods.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lsvMods.GridLines = true;
-            this.lsvMods.LargeImageList = this.imageList1;
             this.lsvMods.Location = new System.Drawing.Point(0, 25);
             this.lsvMods.Name = "lsvMods";
+            this.lsvMods.OwnerDraw = true;
             this.lsvMods.Size = new System.Drawing.Size(461, 378);
-            this.lsvMods.SmallImageList = this.imageList1;
-            this.lsvMods.TabIndex = 2;
+            this.lsvMods.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.lsvMods.TabIndex = 1;
             this.lsvMods.UseCompatibleStateImageBehavior = false;
             this.lsvMods.View = System.Windows.Forms.View.Details;
-            this.lsvMods.SelectedIndexChanged += new System.EventHandler(this.listMods_SelectedIndexChanged);
+            this.lsvMods.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.lsvMods_DrawColumnHeader);
+            this.lsvMods.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.lsvMods_DrawItem);
+            this.lsvMods.SelectedIndexChanged += new System.EventHandler(this.lsvMods_SelectedIndexChanged);
+            this.lsvMods.SizeChanged += new System.EventHandler(this.lsvMods_SizeChanged);
             // 
             // columnHeader1
             // 
             this.columnHeader1.Text = "Name";
-            this.columnHeader1.Width = 308;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Estimated Size";
-            this.columnHeader2.Width = 103;
-            // 
-            // imageList1
-            // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "bullet_black.png");
-            this.imageList1.Images.SetKeyName(1, "bullet_green.png");
-            this.imageList1.Images.SetKeyName(2, "bullet_go.png");
-            this.imageList1.Images.SetKeyName(3, "bullet_error.png");
-            this.imageList1.Images.SetKeyName(4, "accept.png");
-            this.imageList1.Images.SetKeyName(5, "cross-circle.png");
+            this.columnHeader1.Width = 428;
             // 
             // toolStrip1
             // 
@@ -239,8 +230,7 @@
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnRefresh,
-            this.btnApply,
-            this.btnUninstall});
+            this.btnApply});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -250,33 +240,23 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
             this.btnRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(23, 22);
-            this.btnRefresh.Text = "Refresh Mods";
+            this.btnRefresh.Size = new System.Drawing.Size(66, 22);
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.ToolTipText = "Refresh Mods";
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // btnApply
             // 
-            this.btnApply.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.btnApply.Image = ((System.Drawing.Image)(resources.GetObject("btnApply.Image")));
             this.btnApply.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(23, 22);
-            this.btnApply.Text = "Inject Checked";
+            this.btnApply.Size = new System.Drawing.Size(91, 22);
+            this.btnApply.Text = "Synchronize";
+            this.btnApply.ToolTipText = "Synchronize checked";
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
-            // 
-            // btnUninstall
-            // 
-            this.btnUninstall.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnUninstall.Image = ((System.Drawing.Image)(resources.GetObject("btnUninstall.Image")));
-            this.btnUninstall.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnUninstall.Name = "btnUninstall";
-            this.btnUninstall.Size = new System.Drawing.Size(23, 22);
-            this.btnUninstall.Text = "Uninstall Checked";
-            this.btnUninstall.Click += new System.EventHandler(this.btnUninstall_Click);
             // 
             // splitContainer2
             // 
@@ -291,9 +271,10 @@
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.txtDescription);
-            this.splitContainer2.Size = new System.Drawing.Size(385, 403);
+            this.splitContainer2.Panel2.Controls.Add(this.rtbDescription);
+            this.splitContainer2.Size = new System.Drawing.Size(388, 403);
             this.splitContainer2.SplitterDistance = 263;
+            this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 0;
             // 
             // imagePreview
@@ -302,22 +283,23 @@
             this.imagePreview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.imagePreview.Location = new System.Drawing.Point(0, 0);
             this.imagePreview.Name = "imagePreview";
-            this.imagePreview.Size = new System.Drawing.Size(385, 263);
+            this.imagePreview.Size = new System.Drawing.Size(388, 263);
             this.imagePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.imagePreview.TabIndex = 0;
             this.imagePreview.TabStop = false;
             // 
-            // txtDescription
+            // rtbDescription
             // 
-            this.txtDescription.BackColor = System.Drawing.Color.White;
-            this.txtDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDescription.Location = new System.Drawing.Point(0, 0);
-            this.txtDescription.Multiline = true;
-            this.txtDescription.Name = "txtDescription";
-            this.txtDescription.ReadOnly = true;
-            this.txtDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtDescription.Size = new System.Drawing.Size(385, 136);
-            this.txtDescription.TabIndex = 0;
+            this.rtbDescription.BackColor = System.Drawing.SystemColors.Window;
+            this.rtbDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.rtbDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbDescription.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.rtbDescription.Location = new System.Drawing.Point(0, 0);
+            this.rtbDescription.Name = "rtbDescription";
+            this.rtbDescription.ReadOnly = true;
+            this.rtbDescription.Size = new System.Drawing.Size(388, 139);
+            this.rtbDescription.TabIndex = 0;
+            this.rtbDescription.Text = "";
             // 
             // statusMain
             // 
@@ -376,6 +358,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.groupBox2);
             this.tabPage3.Controls.Add(this.groupBox1);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
@@ -384,10 +367,33 @@
             this.tabPage3.Text = "Preferences";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.checkConflicts);
+            this.groupBox2.Location = new System.Drawing.Point(8, 122);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(840, 49);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Installation";
+            // 
+            // checkConflicts
+            // 
+            this.checkConflicts.AutoSize = true;
+            this.checkConflicts.Location = new System.Drawing.Point(6, 19);
+            this.checkConflicts.Name = "checkConflicts";
+            this.checkConflicts.Size = new System.Drawing.Size(302, 17);
+            this.checkConflicts.TabIndex = 0;
+            this.checkConflicts.Text = "Ignore conflicts (Uninstallation results will be unpredictable)";
+            this.checkConflicts.UseVisualStyleBackColor = true;
+            this.checkConflicts.CheckedChanged += new System.EventHandler(this.checkConflicts_CheckedChanged);
+            // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.lblEditPath);
+            this.groupBox1.Controls.Add(this.lblPlayPath);
             this.groupBox1.Controls.Add(this.btnAA2EDIT);
             this.groupBox1.Controls.Add(this.txtAA2EDIT);
             this.groupBox1.Controls.Add(this.checkAA2EDIT);
@@ -400,6 +406,24 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Paths";
+            // 
+            // lblEditPath
+            // 
+            this.lblEditPath.AutoSize = true;
+            this.lblEditPath.Location = new System.Drawing.Point(195, 65);
+            this.lblEditPath.Name = "lblEditPath";
+            this.lblEditPath.Size = new System.Drawing.Size(125, 13);
+            this.lblEditPath.TabIndex = 6;
+            this.lblEditPath.Text = "Current AA2_EDIT path: ";
+            // 
+            // lblPlayPath
+            // 
+            this.lblPlayPath.AutoSize = true;
+            this.lblPlayPath.Location = new System.Drawing.Point(195, 20);
+            this.lblPlayPath.Name = "lblPlayPath";
+            this.lblPlayPath.Size = new System.Drawing.Size(127, 13);
+            this.lblPlayPath.TabIndex = 5;
+            this.lblPlayPath.Text = "Current AA2_PLAY path: ";
             // 
             // btnAA2EDIT
             // 
@@ -469,6 +493,17 @@
             this.checkAA2PLAY.UseVisualStyleBackColor = true;
             this.checkAA2PLAY.CheckedChanged += new System.EventHandler(this.checkAA2PLAY_CheckedChanged);
             // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "bullet_black.png");
+            this.imageList1.Images.SetKeyName(1, "bullet_green.png");
+            this.imageList1.Images.SetKeyName(2, "bullet_go.png");
+            this.imageList1.Images.SetKeyName(3, "bullet_error.png");
+            this.imageList1.Images.SetKeyName(4, "accept.png");
+            this.imageList1.Images.SetKeyName(5, "cross-circle.png");
+            // 
             // imageTimer
             // 
             this.imageTimer.Enabled = true;
@@ -501,7 +536,6 @@
             this.toolStrip1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
-            this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).EndInit();
@@ -509,6 +543,8 @@
             this.statusMain.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -530,11 +566,8 @@
         private System.Windows.Forms.RichTextBox rtbConsole;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ListView lsvMods;
         private System.Windows.Forms.StatusStrip statusMain;
         private System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ToolStripButton btnRefresh;
         private System.Windows.Forms.ToolStripButton btnApply;
         private System.Windows.Forms.ToolStripStatusLabel labelStatus;
@@ -551,10 +584,15 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.PictureBox imagePreview;
-        private System.Windows.Forms.TextBox txtDescription;
         private System.Windows.Forms.Timer imageTimer;
-        private System.Windows.Forms.ToolStripMenuItem colorGuideToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton btnUninstall;
+        private System.Windows.Forms.Label lblEditPath;
+        private System.Windows.Forms.Label lblPlayPath;
+        private System.Windows.Forms.RichTextBox rtbDescription;
+        private System.Windows.Forms.ListView lsvMods;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ToolStripMenuItem flushCacheToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.CheckBox checkConflicts;
     }
 }
 

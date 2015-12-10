@@ -39,7 +39,7 @@ namespace AA2Install
                 else 
                 {
                     object dir = Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Software\illusion\AA2Play", "INSTALLDIR", "NULL");
-                    return dir + @"\data";
+                    return dir + @"data";
                 }
             }
         }
@@ -57,7 +57,7 @@ namespace AA2Install
                 else 
                 {
                     object dir = Microsoft.Win32.Registry.GetValue(@"HKEY_CURRENT_USER\Software\illusion\AA2Edit", "INSTALLDIR", "NULL");
-                    return dir + @"\data";
+                    return dir + @"data";
                 }
             }
         }
@@ -72,25 +72,13 @@ namespace AA2Install
             }
         }
         /// <summary>
-        /// If mods is reversed with backup for uninstallation
-        /// </summary>
-        public static bool ISBACKUP = false;
-        /// <summary>
         /// 7z mods location
         /// </summary>
         public static string MODS
         {
             get
             {
-                if (ISBACKUP)
-                {
-                    return BACKUP;
-                }
-                else
-                {
-                    return Environment.CurrentDirectory + @"\mods";
-                }
-                
+                return Environment.CurrentDirectory + @"\mods";
             }
         }
         /// <summary>
@@ -111,6 +99,26 @@ namespace AA2Install
             get
             {
                 return Environment.CurrentDirectory + @"\backup";
+            }
+        }
+        /// <summary>
+        /// Image and description cache
+        /// </summary>
+        public static string CACHE
+        {
+            get
+            {
+                return Environment.CurrentDirectory + @"\cache";
+            }
+        }
+        /// <summary>
+        /// Config file path
+        /// </summary>
+        public static string CONFIG
+        {
+            get
+            {
+                return Environment.CurrentDirectory + @"\config.json";
             }
         }
 

@@ -1,4 +1,26 @@
-﻿Pre4
+﻿Pre5
++ Added text to UI buttons
++ Supports .zip mods
++ Added autosorting to main view
++ New popup when mods have installed successfully
++ Preferences now show what path is being used internally for the data folders
++ Description box has had a visual overhaul, and mod details have been moved there
++ Changed how mods are displayed, still experimenting with how it looks
++ Mods can now be both installed and uninstalled simulatneously
++ Images and descriptions are now properly cached
++ Mods are now installed on a "synchronization" basis, similar to iTunes
++ Option to disable conflict checks
++ Fixed an issue where backups were stored all in the MAKE section of the archive
++ Fixed issues where the 7z wrapper would pick up junk data as subfiles
++ Fixed (?) an issue related to which mods are being detected as conflicting
+
+Pre4.1.1
++ Git had discarded my changes to where 7z was stored, so there have been issues trying to use the program with mods placed in the /mods folder. I have renamed the folders and hopefully this shouldn't happen again.
+
+Pre4.1
++ Fixed issues where it would install some mods all to the AA2_Make folder
+
+Pre4
 + Injection now supports backups
 + Properly shows progress when injecting
 + Fixed crash when previewing image when installing

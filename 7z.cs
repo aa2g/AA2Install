@@ -51,12 +51,26 @@ namespace AA2Install.Archives
                     string[] ss = s.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
                     if (ss[2] == "....A")
                     {
-                        m.Filenames.Add(ss[ss.Length - 1]);
+                        string name = "";
+                        if (Regex.IsMatch(ss[4], @"^\d+$"))
+                            for (int i = 5; i < ss.Length; i++)
+                            {
+                                name = name + ss[i] + " ";
+                            }
+                        else
+                            for (int i = 4; i < ss.Length; i++)
+                            {
+                                name = name + ss[i] + " ";
+                            }
+
+                        if (name.StartsWith(@"AA2_MAKE\") || name.StartsWith(@"AA2_PLAY\"))
+                            m.Filenames.Add(ss.Last());
                     }
                 }
             }
             Console.Log = oldlist;
             m.Name = filename;
+            m.Properties = new SerializableDictionary<string, string>();
             if (ModItems.Count > 3)
             {
                 string[] ee = ModItems[ModItems.Count - 1].Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
@@ -66,6 +80,7 @@ namespace AA2Install.Archives
             {
                 m.size = 0;
             }
+            m.Properties["Estimated Size"] = (m.size / (1024)).ToString("#,## kB");
             return m;
         }
         /// <summary>
@@ -73,12 +88,15 @@ namespace AA2Install.Archives
         /// </summary>
         /// <param name="filename">Location of the 7Zip file</param>
         /// <returns>Location of extracted contents</returns>
-        public static string Extract(string filename)
+        public static string Extract(string filename, string dest = "")
         {
+            if (dest == "")
+                dest = Paths.TEMP;
+
             using (Process p = new Process())
             {
                 p.StartInfo.FileName = Paths._7Za;
-                p.StartInfo.Arguments = "x \"" + filename + "\" AA2* -aos -mmt -o\"" + Paths.TEMP + "\"";
+                p.StartInfo.Arguments = "x \"" + filename + "\" AA2* -aos -mmt -o\"" + dest + "\"";
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.RedirectStandardOutput = true;
@@ -100,12 +118,15 @@ namespace AA2Install.Archives
         /// <param name="filename">Location of the 7Zip file</param>
         /// <param name="wildcard">Wildcard</param>
         /// <returns>Location of extracted contents</returns>
-        public static string ExtractWildcard(string filename, string wildcard)
+        public static string ExtractWildcard(string filename, string wildcard, string dest = "")
         {
+            if (dest == "")
+                dest = Paths.TEMP;
+
             using (Process p = new Process())
             {
                 p.StartInfo.FileName = Paths._7Za;
-                p.StartInfo.Arguments = "x \"" + filename + "\" \"" + wildcard + "\" -aos -mmt -o\"" + Paths.TEMP + "\"";
+                p.StartInfo.Arguments = "x \"" + filename + "\" \"" + wildcard + "\" -aos -mmt -o\"" + dest + "\"";
                 p.StartInfo.CreateNoWindow = true;
                 p.StartInfo.UseShellExecute = false;
                 p.StartInfo.RedirectStandardOutput = true;
