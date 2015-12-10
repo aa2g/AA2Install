@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Xml.Serialization;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace AA2Install
 {
@@ -16,14 +17,22 @@ namespace AA2Install
         {
             try
             {
-                var appSettings = ConfigurationManager.AppSettings;
+                if (!File.Exists(Paths.CONFIG))
+                    return null;
+
+                string json = File.ReadAllText(Paths.CONFIG);
+                var appSettings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
+
+                if (!appSettings.ContainsKey(key))
+                    return null;
+
                 string result = appSettings[key];
                 Trace.WriteLine(key + " : " + result);
                 return result;
             }
-            catch (ConfigurationErrorsException)
+            catch (Exception ex)
             {
-                Trace.WriteLine("Error reading app settings");
+                Trace.WriteLine("Error reading app settings: " + ex.Message);
                 return null;
             }
         }
@@ -32,23 +41,20 @@ namespace AA2Install
             try
             {
                 Trace.WriteLine(key + " : " + value);
-                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                var settings = configFile.AppSettings.Settings;
-                if (settings[key] == null)
-                {
-                    settings.Add(key, value);
-                }
-                else
-                {
-                    settings[key].Value = value;
-                }
-                configFile.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+                string json = "";
+                if (File.Exists(Paths.CONFIG))
+                    json = File.ReadAllText(Paths.CONFIG);
+                var settings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
+                if (settings == null)
+                    settings = new SerializableDictionary<string, string>();
+                settings[key] = value;
+
+                File.WriteAllText(Paths.CONFIG, JsonConvert.SerializeObject(settings));
                 return true;
             }
-            catch (ConfigurationErrorsException)
+            catch (Exception ex)
             {
-                Trace.WriteLine("Error writing app settings");
+                Trace.WriteLine("Error writing app settings: " + ex.Message);
                 return false;
             }
         }
