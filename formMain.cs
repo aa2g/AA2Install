@@ -23,7 +23,7 @@ namespace AA2Install
         public bool Installed;
         public ulong size;
         public List<string> Filenames;
-        public SerializableDictionary<string, string> Properties;
+        public SerializableDictionary<string> Properties;
     }
 
     public partial class formMain : Form
@@ -219,29 +219,29 @@ namespace AA2Install
                     continue;
                 }
 
-                lsvMods.Items.Add(m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".7z", "").Replace(".zip", ""), 0);                
+                lsvMods.Items.Add(m.Name, m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".7z", "").Replace(".zip", ""), 0);
+                int index = lsvMods.Items.IndexOfKey(m.Name);          
 
                 if (m.Installed && !File.Exists(m.Name) && !backup)
                 {
-                    //lsvMods.Items[lsvMods.Items.Count - 1].BackColor = Color.Maroon;
+                    //lsvMods.Items[index].BackColor = Color.Maroon;
                 }
                 else if (m.Installed && File.Exists(m.Name) && !backup)
                 {
-                    //lsvMods.Items[lsvMods.Items.Count - 1].BackColor = Color.Goldenrod;
+                    //lsvMods.Items[index].BackColor = Color.Goldenrod;
                 }
                 else if ((!m.Installed || !File.Exists(m.Name)) && backup)
                 {
-                    //lsvMods.Items[lsvMods.Items.Count - 1].BackColor = Color.DarkBlue;
+                    //lsvMods.Items[index].BackColor = Color.DarkBlue;
                 }
                 else if (m.Installed && backup)
                 {
-                    lsvMods.Items[lsvMods.Items.Count - 1].BackColor = Color.LightGreen;
-                    lsvMods.Items[lsvMods.Items.Count - 1].Checked = true;
+                    lsvMods.Items[index].BackColor = Color.LightGreen;
+                    lsvMods.Items[index].Checked = true;
                 }
 
                 m.Properties["Estimated Size"] = (m.size / (1024)).ToString("#,## kB");
-                lsvMods.Items[lsvMods.Items.Count - 1].Tag = m;
-                lsvMods.Items[lsvMods.Items.Count - 1].Name = m.Name;
+                lsvMods.Items[index].Tag = m;
             }
 
             Configuration.saveMods(modDict);
@@ -441,7 +441,7 @@ namespace AA2Install
 
             foreach (string item in prearc)
             {
-                updateStatus("(" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Extracting " + item.Remove(0, item.LastIndexOf('\\') + 1) + "...");
+                updateStatus("(" + (index + 1).ToString() + "/" + prgMinor.Maximum.ToString() + ") Extracting " + item.Remove(0, item.LastIndexOf('\\') + 1) + "...");
                 _7z.Extract(item, Paths.TEMP + @"\BACKUP\");
                 index++;
                 prgMinor.Value = index;
@@ -449,7 +449,7 @@ namespace AA2Install
 
             foreach (string item in postarc)
             {
-                updateStatus("(" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Extracting " + item.Remove(0, item.LastIndexOf('\\') + 1) + "...");
+                updateStatus("(" + (index + 1).ToString() + "/" + prgMinor.Maximum.ToString() + ") Extracting " + item.Remove(0, item.LastIndexOf('\\') + 1) + "...");
                 _7z.Extract(item);
                 index++;
                 prgMinor.Value = index;
@@ -541,7 +541,7 @@ namespace AA2Install
                 ppQueue.Enqueue(p);
             }
 
-            int ii = 1;
+            int ii = 0;
             prgMinor.Maximum = ppList.Count();
             foreach (basePP b in ppList)
             {

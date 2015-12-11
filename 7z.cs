@@ -70,7 +70,7 @@ namespace AA2Install.Archives
             }
             Console.Log = oldlist;
             m.Name = filename;
-            m.Properties = new SerializableDictionary<string, string>();
+            m.Properties = new SerializableDictionary<string>();
             if (ModItems.Count > 3)
             {
                 string[] ee = ModItems[ModItems.Count - 1].Split(new char[0], StringSplitOptions.RemoveEmptyEntries);

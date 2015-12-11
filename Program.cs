@@ -18,5 +18,7 @@ namespace AA2Install
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new formMain());
         }
+
+
     }
 }
