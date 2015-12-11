@@ -21,7 +21,7 @@ namespace AA2Install
                     return null;
 
                 string json = File.ReadAllText(Paths.CONFIG);
-                var appSettings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
+                var appSettings = JsonConvert.DeserializeObject<SerializableDictionary<string>>(json);
 
                 if (!appSettings.ContainsKey(key))
                     return null;
@@ -44,9 +44,9 @@ namespace AA2Install
                 string json = "";
                 if (File.Exists(Paths.CONFIG))
                     json = File.ReadAllText(Paths.CONFIG);
-                var settings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
+                var settings = JsonConvert.DeserializeObject<SerializableDictionary<string>>(json);
                 if (settings == null)
-                    settings = new SerializableDictionary<string, string>();
+                    settings = new SerializableDictionary<string>();
                 settings[key] = value;
 
                 File.WriteAllText(Paths.CONFIG, JsonConvert.SerializeObject(settings));
@@ -106,12 +106,12 @@ namespace AA2Install
         /// <param name="list">List of installed mods</param>
         public static void saveMods(Dictionary<string, Mod> list)
         {
-            SerializableDictionary<string, Mod> s = new SerializableDictionary<string, Mod>();
+            SerializableDictionary<Mod> s = new SerializableDictionary<Mod>();
             foreach (string key in list.Keys)
             {
                 s[key] = list[key];
             }
-            WriteSetting("MODS", SerializeObject<SerializableDictionary<string, Mod>>(s));            
+            WriteSetting("MODS", SerializeObject<SerializableDictionary<Mod>>(s));            
         }
         /// <summary>
         /// Loads a list of installed mods from the "MODS" key
@@ -121,7 +121,7 @@ namespace AA2Install
         {
             if (ReadSetting("MODS") == null) { return new Dictionary<string, Mod>(); }
             Dictionary<string, Mod> d = new Dictionary<string, Mod>();
-            SerializableDictionary<string, Mod> s = DeserializeObject<SerializableDictionary<string, Mod>>(ReadSetting("MODS"));
+            SerializableDictionary<Mod> s = DeserializeObject<SerializableDictionary<Mod>>(ReadSetting("MODS"));
             foreach (string key in s.Keys)
             {
                 d[key] = s[key];

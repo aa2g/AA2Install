@@ -1,4 +1,9 @@
-﻿Pre5
+﻿Pre5.1
++ Fixed wrong progress counter when reverting mods
++ Fixed issues with using the Wizzard Migrator
++ Fixed other small issues
+
+Pre5
 + Added text to UI buttons
 + Supports .zip mods
 + Added autosorting to main view
@@ -6,8 +11,8 @@
 + Preferences now show what path is being used internally for the data folders
 + Description box has had a visual overhaul, and mod details have been moved there
 + Changed how mods are displayed, still experimenting with how it looks
-+ Mods can now be both installed and uninstalled simulatneously
-+ Images and descriptions are now properly cached
++ Mods can now be both installed and uninstalled simultaneously
++ Images, descriptions and most data are now properly cached for insane speedups
 + Mods are now installed on a "synchronization" basis, similar to iTunes
 + Option to disable conflict checks
 + Fixed an issue where backups were stored all in the MAKE section of the archive
