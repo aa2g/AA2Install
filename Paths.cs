@@ -64,63 +64,27 @@ namespace AA2Install
         /// <summary>
         /// Temporary files location
         /// </summary>
-        public static string TEMP
-        {
-            get
-            {
-                return Environment.CurrentDirectory + @"\temp";
-            }
-        }
+        public static string TEMP => Environment.CurrentDirectory + @"\temp";
         /// <summary>
         /// 7z mods location
         /// </summary>
-        public static string MODS
-        {
-            get
-            {
-                return Environment.CurrentDirectory + @"\mods";
-            }
-        }
+        public static string MODS => Environment.CurrentDirectory + @"\mods";
         /// <summary>
         /// PP working directory
         /// </summary>
-        public static string WORKING
-        {
-            get
-            {
-                return Environment.CurrentDirectory + @"\compile";
-            }
-        }
+        public static string WORKING => Environment.CurrentDirectory + @"\compile";
         /// <summary>
         /// Backup 7z location
         /// </summary>
-        public static string BACKUP
-        {
-            get
-            {
-                return Environment.CurrentDirectory + @"\backup";
-            }
-        }
+        public static string BACKUP => Environment.CurrentDirectory + @"\backup";
         /// <summary>
         /// Image and description cache
         /// </summary>
-        public static string CACHE
-        {
-            get
-            {
-                return Environment.CurrentDirectory + @"\cache";
-            }
-        }
+        public static string CACHE => Environment.CurrentDirectory + @"\cache";
         /// <summary>
         /// Config file path
         /// </summary>
-        public static string CONFIG
-        {
-            get
-            {
-                return Environment.CurrentDirectory + @"\config.json";
-            }
-        }
+        public static string CONFIG => Environment.CurrentDirectory + @"\config.json";
 
     }
 }
