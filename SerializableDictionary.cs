@@ -9,37 +9,13 @@ public class SerializableDictionary<TValue>
     : IDictionary<string, TValue>, IXmlSerializable
 {
     public Dictionary<string, TValue> baseDict = new Dictionary<string, TValue>();
-    public ICollection<string> Keys
-    {
-        get
-        {
-            return baseDict.Keys;
-        }
-    }
+    public ICollection<string> Keys => baseDict.Keys;
 
-    public ICollection<TValue> Values
-    {
-        get
-        {
-            return baseDict.Values;
-        }
-    }
+    public ICollection<TValue> Values => baseDict.Values;
 
-    public int Count
-    {
-        get
-        {
-            return baseDict.Count;
-        }
-    }
+    public int Count => baseDict.Count;
 
-    public bool IsReadOnly
-    {
-        get
-        {
-            return false;
-        }
-    }
+    public bool IsReadOnly => false;
 
     public TValue this[string key]
     {
@@ -54,10 +30,7 @@ public class SerializableDictionary<TValue>
         }
     }
     #region IXmlSerializable Members
-    public System.Xml.Schema.XmlSchema GetSchema()
-    {
-        return null;
-    }
+    public System.Xml.Schema.XmlSchema GetSchema() => null;
 
     public void ReadXml(System.Xml.XmlReader reader)
     {
@@ -117,20 +90,11 @@ public class SerializableDictionary<TValue>
         baseDict.Add(key.ToLower(), value);
     }
 
-    public bool ContainsKey(string key)
-    {
-        return baseDict.ContainsKey(key.ToLower());
-    }
+    public bool ContainsKey(string key) => baseDict.ContainsKey(key.ToLower());
 
-    public bool Remove(string key)
-    {
-        return baseDict.Remove(key.ToLower());
-    }
+    public bool Remove(string key) => baseDict.Remove(key.ToLower());
 
-    public bool TryGetValue(string key, out TValue value)
-    {
-        return baseDict.TryGetValue(key.ToLower(), out value);
-    }
+    public bool TryGetValue(string key, out TValue value) => baseDict.TryGetValue(key.ToLower(), out value);
 
     public void Add(KeyValuePair<string, TValue> item)
     {
@@ -142,10 +106,7 @@ public class SerializableDictionary<TValue>
         baseDict.Clear();
     }
 
-    public bool Contains(KeyValuePair<string, TValue> item)
-    {
-        return (baseDict.ContainsKey(item.Key) && baseDict.ContainsValue(item.Value));
-    }
+    public bool Contains(KeyValuePair<string, TValue> item) => (baseDict.ContainsKey(item.Key) && baseDict.ContainsValue(item.Value));
 
     public void CopyTo(KeyValuePair<string, TValue>[] array, int arrayIndex)
     {
@@ -157,13 +118,7 @@ public class SerializableDictionary<TValue>
         throw new NotImplementedException();
     }
 
-    public IEnumerator<KeyValuePair<string, TValue>> GetEnumerator()
-    {
-        return baseDict.GetEnumerator();
-    }
+    public IEnumerator<KeyValuePair<string, TValue>> GetEnumerator() => baseDict.GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return baseDict.GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => baseDict.GetEnumerator();
 }

@@ -96,10 +96,7 @@ namespace AA2Install
         /// </summary>
         /// <param name="key">Key of item</param>
         /// <returns>Value of key in type bool</returns>
-        public static bool getBool(string key)
-        {
-            return bool.Parse(Configuration.ReadSetting(key) ?? "False");
-        }
+        public static bool getBool(string key) => bool.Parse(ReadSetting(key) ?? "False");
         /// <summary>
         /// Saves a list of installed mods to the "MODS" key
         /// </summary>
@@ -111,7 +108,7 @@ namespace AA2Install
             {
                 s[key] = list[key];
             }
-            WriteSetting("MODS", SerializeObject<SerializableDictionary<Mod>>(s));            
+            WriteSetting("MODS", SerializeObject(s));            
         }
         /// <summary>
         /// Loads a list of installed mods from the "MODS" key

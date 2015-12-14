@@ -17,15 +17,6 @@ using System.Collections;
 
 namespace AA2Install
 {
-    [Serializable()] public struct Mod
-    {
-        public string Name;
-        public bool Installed;
-        public ulong size;
-        public List<string> Filenames;
-        public SerializableDictionary<string> Properties;
-    }
-
     public partial class formMain : Form
     {
         public Dictionary<string, Mod> modDict = new Dictionary<string, Mod>();
@@ -211,13 +202,17 @@ namespace AA2Install
                 prgMajor.Value = i;
             }
 
-            foreach (Mod m in modDict.Values)
+            foreach (Mod mn in modDict.Values.ToList())
             {
+                Mod m = mn;
                 bool backup = File.Exists(Paths.BACKUP + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".zip", ".7z"));
+                
                 if (!File.Exists(m.Name) && !(m.Installed && backup))
                 {
                     continue;
                 }
+
+                m.Installed = backup;
 
                 lsvMods.Items.Add(m.Name, m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".7z", "").Replace(".zip", ""), 0);
                 int index = lsvMods.Items.IndexOfKey(m.Name);          
@@ -242,6 +237,8 @@ namespace AA2Install
 
                 m.Properties["Estimated Size"] = (m.size / (1024)).ToString("#,## kB");
                 lsvMods.Items[index].Tag = m;
+
+                modDict[m.Name] = m;
             }
 
             Configuration.saveMods(modDict);
@@ -638,6 +635,8 @@ namespace AA2Install
                 }
                 //Loop complete
 
+                TryDeleteDirectory(b.ppRAW + "\\");
+
                 index++;
                 prgMajor.Value = index;
             }
@@ -747,13 +746,62 @@ namespace AA2Install
             refreshModList();
         }
 
+        private void lsvMods_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
+        {
+            e.DrawDefault = true;
+        }
+        private void lsvMods_DrawItem(object sender, DrawListViewItemEventArgs e)
+        {
+            e.DrawDefault = true;
+            if (e.Item.Index != -1)
+            {
+                if (lsvMods.Enabled)
+                    e.DrawBackground();
+
+                if ((e.State & ListViewItemStates.Selected) > 0)
+                {
+                    Color c = Color.FromKnownColor(KnownColor.Highlight);
+                    Brush brush = new LinearGradientBrush(e.Bounds, c, c, LinearGradientMode.Horizontal);
+                    e.Graphics.FillRectangle(brush, e.Bounds);
+                }
+            }
+        }
+
+        private void lsvMods_SizeChanged(object sender, EventArgs e)
+        {
+            lsvMods.Columns[0].Width = lsvMods.Width - 5;
+        }
+
+        private void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            imageTimer.Enabled = false;
+
+            if (imagePreview.Image != null)
+                imagePreview.Image.Dispose();
+            imagePreview.Image = null;
+
+            imageLoop.Clear();
+            if (Directory.Exists(Paths.CACHE))
+                TryDeleteDirectory(Paths.CACHE);
+            Directory.CreateDirectory(Paths.CACHE + "\\");
+
+            var iter = modDict.ToDictionary(entry => entry.Key,
+                entry => entry.Value);
+            foreach (Mod m in iter.Values)
+                if (!m.Installed)
+                    modDict.Remove(m.Name);
+
+            Configuration.saveMods(modDict);
+            refreshModList();
+        }
+
         private void btnApply_Click(object sender, EventArgs e)
         {
             inject(false, !checkConflicts.Checked);
         }
 
         #endregion
-
+        #region Form Events
         public formMain()
         {
             InitializeComponent();
@@ -792,7 +840,7 @@ namespace AA2Install
                 }
             };
         }
-
+        #endregion
         #region Image and Description
         int imageIndex = 1;
         List<string> imageLoop = new List<string>();
@@ -800,6 +848,8 @@ namespace AA2Install
         {
             if (lsvMods.SelectedItems.Count > 0)
             {
+                if (imagePreview.Image != null) 
+                    imagePreview.Image.Dispose();
                 imagePreview.Image = null;
                 imageLoop.Clear();
                 rtbDescription.Clear();
@@ -892,56 +942,18 @@ namespace AA2Install
                 imagePreview.Image = null;
             }
         }
-        #endregion
-
-        private void lsvMods_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
-        {
-            e.DrawDefault = true;
-        }
-        private void lsvMods_DrawItem(object sender, DrawListViewItemEventArgs e)
-        {
-            e.DrawDefault = true;
-            if (e.Item.Index != -1)
-            {
-                if (lsvMods.Enabled)
-                    e.DrawBackground();
-                
-                if ((e.State & ListViewItemStates.Selected) > 0)
-                {
-                    Color c = Color.FromKnownColor(KnownColor.Highlight);
-                    Brush brush = new LinearGradientBrush(e.Bounds, c, c, LinearGradientMode.Horizontal);
-                    e.Graphics.FillRectangle(brush, e.Bounds);
-                }
-            }
-        }
-
-        private void lsvMods_SizeChanged(object sender, EventArgs e)
-        {
-            lsvMods.Columns[0].Width = lsvMods.Width - 5;
-        }
-
-        private void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            imageTimer.Enabled = false;
-
-            if (imagePreview.Image != null)
-                imagePreview.Image.Dispose();
-            imagePreview.Image = null;
-
-            imageLoop.Clear();
-            if (Directory.Exists(Paths.CACHE))
-                Directory.Delete(Paths.CACHE + "\\", true);
-            Directory.CreateDirectory(Paths.CACHE + "\\");
-
-            var iter = modDict.ToDictionary(entry => entry.Key,
-                entry => entry.Value);
-            foreach (Mod m in iter.Values)
-                if (!m.Installed)
-                    modDict.Remove(m.Name);
-
-            Configuration.saveMods(modDict);
-            refreshModList();
-        }
+        #endregion        
+    }
+    #region Structures
+    [Serializable()]
+    [DebuggerDisplay("{Name}")]
+    public struct Mod
+    {
+        public string Name;
+        public bool Installed;
+        public ulong size;
+        public List<string> Filenames;
+        public SerializableDictionary<string> Properties;
     }
     public class basePP
     {
@@ -954,21 +966,10 @@ namespace AA2Install
             pp = new ppParser(destination + "\\" + ppFile, new ppFormat_AA2());
         }
 
-        public string ppDir
-        {
-            get
-            {
-                return ppRAW.Remove(0, ppRAW.LastIndexOf('\\') + 1);
-            }
-        }
+        public string ppDir => ppRAW.Remove(0, ppRAW.LastIndexOf('\\') + 1);
 
-        public string ppFile
-        {
-            get
-            {
-                return ppDir + ".pp";
-            }
-        }
+        public string ppFile => ppDir + ".pp";
     }
+    #endregion
 }
 
