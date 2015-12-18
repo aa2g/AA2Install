@@ -17,16 +17,18 @@ public class SerializableDictionary<TValue>
 
     public bool IsReadOnly => false;
 
+    private string getKey(string key) => key.ToLower().Remove(0, key.ToLower().LastIndexOf('\\') + 1);
+
     public TValue this[string key]
     {
         get
         {
-            return baseDict[key.ToLower()];
+            return baseDict[getKey(key)];
         }
 
         set
         {
-            baseDict[key.ToLower()] = value;
+            baseDict[getKey(key)] = value;
         }
     }
     #region IXmlSerializable Members
@@ -87,18 +89,18 @@ public class SerializableDictionary<TValue>
     #endregion
     public void Add(string key, TValue value)
     {
-        baseDict.Add(key.ToLower(), value);
+        baseDict.Add(getKey(key), value);
     }
 
-    public bool ContainsKey(string key) => baseDict.ContainsKey(key.ToLower());
+    public bool ContainsKey(string key) => baseDict.ContainsKey(getKey(key));
 
-    public bool Remove(string key) => baseDict.Remove(key.ToLower());
+    public bool Remove(string key) => baseDict.Remove(getKey(key));
 
-    public bool TryGetValue(string key, out TValue value) => baseDict.TryGetValue(key.ToLower(), out value);
+    public bool TryGetValue(string key, out TValue value) => baseDict.TryGetValue(getKey(key), out value);
 
     public void Add(KeyValuePair<string, TValue> item)
     {
-        baseDict.Add(item.Key.ToLower(), item.Value);
+        baseDict.Add(getKey(item.Key), item.Value);
     }
 
     public void Clear()

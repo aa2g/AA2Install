@@ -46,6 +46,9 @@
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnRefresh = new System.Windows.Forms.ToolStripButton();
             this.btnApply = new System.Windows.Forms.ToolStripButton();
+            this.btnCancel = new System.Windows.Forms.ToolStripButton();
+            this.cmbSorting = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.imagePreview = new System.Windows.Forms.PictureBox();
             this.rtbDescription = new System.Windows.Forms.RichTextBox();
@@ -67,6 +70,15 @@
             this.btnAA2PLAY = new System.Windows.Forms.Button();
             this.txtAA2PLAY = new System.Windows.Forms.TextBox();
             this.checkAA2PLAY = new System.Windows.Forms.CheckBox();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.txtMigrate = new System.Windows.Forms.TextBox();
+            this.btnMigrate = new System.Windows.Forms.Button();
+            this.btnBrowseMigrate = new System.Windows.Forms.Button();
+            this.txtBrowseMigrate = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.lsvLog = new System.Windows.Forms.ListView();
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.imageTimer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
@@ -87,6 +99,8 @@
             this.tabPage3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -160,6 +174,8 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 24);
             this.tabControl1.Name = "tabControl1";
@@ -230,7 +246,10 @@
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnRefresh,
-            this.btnApply});
+            this.btnApply,
+            this.btnCancel,
+            this.cmbSorting,
+            this.toolStripLabel1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -257,6 +276,33 @@
             this.btnApply.Text = "Synchronize";
             this.btnApply.ToolTipText = "Synchronize checked";
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Image = ((System.Drawing.Image)(resources.GetObject("btnCancel.Image")));
+            this.btnCancel.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(63, 22);
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // cmbSorting
+            // 
+            this.cmbSorting.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.cmbSorting.Items.AddRange(new object[] {
+            "Name",
+            "Date"});
+            this.cmbSorting.Name = "cmbSorting";
+            this.cmbSorting.Size = new System.Drawing.Size(75, 25);
+            this.cmbSorting.Text = "Name";
+            this.cmbSorting.SelectedIndexChanged += new System.EventHandler(this.cmbSorting_SelectedIndexChanged);
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(47, 22);
+            this.toolStripLabel1.Text = "Sort by:";
             // 
             // splitContainer2
             // 
@@ -493,6 +539,105 @@
             this.checkAA2PLAY.UseVisualStyleBackColor = true;
             this.checkAA2PLAY.CheckedChanged += new System.EventHandler(this.checkAA2PLAY_CheckedChanged);
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.txtMigrate);
+            this.tabPage4.Controls.Add(this.btnMigrate);
+            this.tabPage4.Controls.Add(this.btnBrowseMigrate);
+            this.tabPage4.Controls.Add(this.txtBrowseMigrate);
+            this.tabPage4.Controls.Add(this.label1);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(856, 431);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Wizzard Migration";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // txtMigrate
+            // 
+            this.txtMigrate.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMigrate.Location = new System.Drawing.Point(0, 63);
+            this.txtMigrate.Multiline = true;
+            this.txtMigrate.Name = "txtMigrate";
+            this.txtMigrate.ReadOnly = true;
+            this.txtMigrate.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtMigrate.Size = new System.Drawing.Size(856, 368);
+            this.txtMigrate.TabIndex = 12;
+            // 
+            // btnMigrate
+            // 
+            this.btnMigrate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnMigrate.Location = new System.Drawing.Point(11, 33);
+            this.btnMigrate.Name = "btnMigrate";
+            this.btnMigrate.Size = new System.Drawing.Size(837, 23);
+            this.btnMigrate.TabIndex = 11;
+            this.btnMigrate.Text = "Migrate";
+            this.btnMigrate.UseVisualStyleBackColor = true;
+            this.btnMigrate.Click += new System.EventHandler(this.btnMigrate_Click);
+            // 
+            // btnBrowseMigrate
+            // 
+            this.btnBrowseMigrate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowseMigrate.Location = new System.Drawing.Point(824, 5);
+            this.btnBrowseMigrate.Name = "btnBrowseMigrate";
+            this.btnBrowseMigrate.Size = new System.Drawing.Size(24, 23);
+            this.btnBrowseMigrate.TabIndex = 10;
+            this.btnBrowseMigrate.Text = "...";
+            this.btnBrowseMigrate.UseVisualStyleBackColor = true;
+            this.btnBrowseMigrate.Click += new System.EventHandler(this.btnBrowseMigrate_Click);
+            // 
+            // txtBrowseMigrate
+            // 
+            this.txtBrowseMigrate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtBrowseMigrate.Location = new System.Drawing.Point(106, 7);
+            this.txtBrowseMigrate.Name = "txtBrowseMigrate";
+            this.txtBrowseMigrate.Size = new System.Drawing.Size(712, 20);
+            this.txtBrowseMigrate.TabIndex = 9;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 10);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(92, 13);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Wizzard Location:";
+            // 
+            // tabPage5
+            // 
+            this.tabPage5.Controls.Add(this.lsvLog);
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage5.Size = new System.Drawing.Size(856, 431);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "Log";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // lsvLog
+            // 
+            this.lsvLog.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2});
+            this.lsvLog.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lsvLog.GridLines = true;
+            this.lsvLog.LargeImageList = this.imageList1;
+            this.lsvLog.Location = new System.Drawing.Point(3, 3);
+            this.lsvLog.Name = "lsvLog";
+            this.lsvLog.Size = new System.Drawing.Size(850, 425);
+            this.lsvLog.SmallImageList = this.imageList1;
+            this.lsvLog.TabIndex = 0;
+            this.lsvLog.UseCompatibleStateImageBehavior = false;
+            this.lsvLog.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Entry";
+            this.columnHeader2.Width = 716;
+            // 
             // imageList1
             // 
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
@@ -547,6 +692,9 @@
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
+            this.tabPage5.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -593,6 +741,18 @@
         private System.Windows.Forms.ToolStripMenuItem flushCacheToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox checkConflicts;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.TextBox txtMigrate;
+        private System.Windows.Forms.Button btnMigrate;
+        private System.Windows.Forms.Button btnBrowseMigrate;
+        private System.Windows.Forms.TextBox txtBrowseMigrate;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.ListView lsvLog;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.ToolStripButton btnCancel;
+        private System.Windows.Forms.ToolStripComboBox cmbSorting;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
     }
 }
 
