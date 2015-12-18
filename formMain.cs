@@ -846,6 +846,12 @@ namespace AA2Install
             inject(false, !checkConflicts.Checked);
         }
 
+        private void cmbSorting_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Configuration.WriteSetting("SORTMODE", cmbSorting.SelectedIndex.ToString());
+            lsvMods.ListViewItemSorter = new CustomListViewSorter(cmbSorting.SelectedIndex);
+            lsvMods.Sort();
+        }
         #endregion
         #region Form Events
         public formMain()
@@ -1042,7 +1048,7 @@ namespace AA2Install
                 bool ins = File.Exists(txtBrowseMigrate.Text + @"\AA2_PLAY\backups\" + r);
                 updateLog("Installed status: " + ins.ToString());
                 if (ins)
-                    File.Copy(txtBrowseMigrate.Text + @"\AA2_PLAY\backups\" + r, Paths.BACKUP + "\\" + r, true);
+                    File.Copy(txtBrowseMigrate.Text + @"\AA2_PLAY\backups\" + r, Paths.BACKUP + "\\" + r.Replace(".zip", ".7z"), true);
                 Mod mm = _7z.Index(Paths.MODS + "\\" + r);
                 mm.Installed = ins;
                 mods[Paths.MODS + "\\" + r] = mm;
@@ -1101,13 +1107,6 @@ namespace AA2Install
             
         }
         #endregion
-
-        private void cmbSorting_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Configuration.WriteSetting("SORTMODE", cmbSorting.SelectedIndex.ToString());
-            lsvMods.ListViewItemSorter = new CustomListViewSorter(cmbSorting.SelectedIndex);
-            lsvMods.Sort();
-        }
     }
     #region Structures
     [Serializable()]
