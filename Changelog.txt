@@ -1,4 +1,12 @@
-﻿Pre5.1
+﻿Pre5.2
++ Merged Wizzard Migrator into the main program
++ Added a (proper) logging system
++ Added the ability to be able to cancel an operation (provided it's at a possible time)
++ Added tracking for when mods have been installed
++ Added a warning when collisions are detected and how the user can resolve it
++ Added the option to switch between sorting via name or install date
+
+Pre5.1
 + Fixed wrong progress counter when reverting mods
 + Fixed issues with using the Wizzard Migrator
 + Fixed other small issues

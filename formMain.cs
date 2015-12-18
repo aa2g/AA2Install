@@ -148,6 +148,19 @@ namespace AA2Install
 
         #endregion
         #region Methods
+        /// <summary>
+        /// Sets enabled status of essential controls to variable
+        /// </summary>
+        /// <param name="enabled"></param>
+        public void setEnabled(bool enabled)
+        {
+            lsvMods.Enabled = btnApply.Enabled = btnRefresh.Enabled =
+                checkAA2EDIT.Enabled = txtAA2EDIT.Enabled = btnAA2EDIT.Enabled =
+                checkAA2PLAY.Enabled = txtAA2PLAY.Enabled = btnAA2PLAY.Enabled =
+                checkConflicts.Enabled = btnMigrate.Enabled = btnBrowseMigrate.Enabled =
+                txtMigrate.Enabled = txtBrowseMigrate.Enabled = btnCancel.Enabled = 
+                cmbSorting.Enabled = enabled;
+        }
 
         public string[] getFiles(string SourceFolder, string Filter, System.IO.SearchOption searchOption)
         {
@@ -160,14 +173,33 @@ namespace AA2Install
             return (string[])alFiles.ToArray(typeof(string));
         }
 
+        public bool cancelPending = false;
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            cancelPending = true;
+            updateStatus("Pending cancellation...", LogIcon.Warning);
+            updateStatus("Pending cancellation...", LogIcon.Warning, false, true);
+        }
+        public bool tryCancel()
+        {
+            if (cancelPending)
+            {
+                setEnabled(true);
+                updateStatus("User cancelled operation.", LogIcon.Error);
+                updateStatus("User cancelled operation.", LogIcon.Error, false, true);
+                refreshModList();
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Refreshes the list from the /mods/ directory
         /// </summary>
         public void refreshModList()
         {
-            lsvMods.Enabled = false;
-            btnApply.Enabled = false;
-            btnRefresh.Enabled = false;
+            setEnabled(false);
+            initializeBench();
 
             modDict = Configuration.loadMods();
             lsvMods.Items.Clear();
@@ -236,6 +268,17 @@ namespace AA2Install
                 }
 
                 m.Properties["Estimated Size"] = (m.size / (1024)).ToString("#,## kB");
+
+                if (m.Installed && m.InstallTime.Year > 2000)
+                    m.Properties["Installed on"] = m.InstallTime.ToString();
+                else if (backup)
+                {
+                    m.InstallTime = (new FileInfo(m.Name)).LastWriteTime;
+                    m.Properties["Installed on"] = m.InstallTime.ToString();
+                }
+                else
+                    m.Properties.Remove("Installed on");
+
                 lsvMods.Items[index].Tag = m;
 
                 modDict[m.Name] = m;
@@ -246,27 +289,10 @@ namespace AA2Install
             prgMinor.Style = ProgressBarStyle.Continuous;
             
             prgMinor.Value = prgMinor.Maximum;
-            updateStatus("Ready.");
-            
+            updateStatus("Ready.", LogIcon.OK);
 
-            lsvMods.Enabled = true;
-            btnApply.Enabled = true;
-            btnRefresh.Enabled = true;
-        }
 
-        /// <summary>
-        /// Copies a directory since C# doesn't have an inbuilt method
-        /// </summary>
-        /// <param name="source">Source Directory</param>
-        /// <param name="target">Target Directory</param>
-        public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
-        {
-            if (!Directory.Exists(target.FullName)) { Directory.CreateDirectory(target.FullName); }
-            foreach (DirectoryInfo dir in source.GetDirectories())
-                CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
-            foreach (FileInfo file in source.GetFiles())
-                File.Copy(file.FullName, Path.Combine(target.FullName, file.Name), true);
-                //file.CopyTo(Path.Combine(target.FullName, file.Name), true);
+            setEnabled(true);
         }
 
         /// <summary>
@@ -287,6 +313,9 @@ namespace AA2Install
         /// </summary>
         public bool inject(bool createBackup = false, bool checkConflicts = true)
         {
+            initializeBench();
+            cancelPending = false;
+            updateStatus("Compiling changes...", LogIcon.Processing);
             //Compile changes
             Queue<string> prearc = new Queue<string>();
             Queue<string> postarc = new Queue<string>();
@@ -317,17 +346,18 @@ namespace AA2Install
             if (prearc.Count + postarc.Count == 0)
             {
                 updateStatus("FAILED: No changes in selected mods");
+                updateStatus("No changes in selected mods found.", LogIcon.Error);
                 return false;
             }
 
             //while (prearc.Count > 0)
-                //arc.Add(prearc.Dequeue());
+            //arc.Add(prearc.Dequeue());
             //while (postarc.Count > 0)
-                //arc.Add(postarc.Dequeue());
+            //arc.Add(postarc.Dequeue());
 
             //Reset controls
-            btnApply.Enabled = false;
-            btnRefresh.Enabled = false;
+            setEnabled(false);
+            btnCancel.Enabled = true;
             prgMinor.Value = 0;
             prgMajor.Value = 0;
             prgMajor.Style = ProgressBarStyle.Marquee;
@@ -341,9 +371,10 @@ namespace AA2Install
                 btnRefresh.Enabled = true;
                 return false;
             }
-
+            
             //Clear and create temp
             updateStatus("Clearing TEMP folder...");
+            updateStatus("Clearing temporary folders...");
 
             if (Directory.Exists(Paths.TEMP))
                 TryDeleteDirectory(Paths.TEMP);
@@ -369,6 +400,7 @@ namespace AA2Install
                 updateStatus("Checking conflicts...");
 
                 Dictionary<string, string> files = new Dictionary<string, string>();
+                List<string> conflicts = new List<string>();
                 foreach (Mod m in modDict.Values)
                 {
                     if (!m.Installed || 
@@ -406,11 +438,19 @@ namespace AA2Install
                                     if (m.Filenames.Contains(s) && i.Checked)
                                     {
                                         //lsvMods.Items[i.Index].ImageIndex = 3; //Triangle error
+                                        //updateStatus(i.Text + ": " + s, LogIcon.Error);
+                                        string temp = i.Text + ": " + s;
+                                        if (!conflicts.Contains(temp))
+                                            conflicts.Add(temp);
                                         lsvMods.Items[i.Index].BackColor = Color.FromArgb(255, 255, 111);
                                     }
                                 }
 
                                 //lsvMods.Items[item.Index].ImageIndex = 3; //Triangle error
+                                //updateStatus(item.Text + ": " + s, LogIcon.Error);
+                                string temp2 = item.Text + ": " + s;
+                                if (!conflicts.Contains(temp2))
+                                    conflicts.Add(temp2);
                                 lsvMods.Items[item.Index].BackColor = Color.FromArgb(255, 255, 111);
                             }
                             files[s] = ((Mod)item.Tag).Name;
@@ -420,9 +460,12 @@ namespace AA2Install
                 }
                 if (conflict)
                 {
-                    updateStatus("FAILED: The highlighted mods have conflicting files");
-                    btnApply.Enabled = true;
-                    btnRefresh.Enabled = true;
+                    foreach (string c in conflicts)
+                        updateStatus(c, LogIcon.Error);
+                    updateStatus("FAILED: The highlighted mods have conflicting files", LogIcon.Ready, false, true);
+                    updateStatus("Collision detected.", LogIcon.Error);
+                    MessageBox.Show("Some mods have been detected to have conflicting files.\nYou can use the log to manually fix the conflicting files in the mods (if they can be fixed) or you can proceed anyway by changing the relevant setting in the preferences.\nNote: if you proceed anyway, to uninstall you must uninstall mods in the reverse order you installed them to ensure that wrong files are not left behind.", "Collision detected", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    setEnabled(true);
                     prgMinor.Value = 0;
                     prgMajor.Value = 0;
                     prgMajor.Style = ProgressBarStyle.Continuous;
@@ -442,6 +485,8 @@ namespace AA2Install
                 _7z.Extract(item, Paths.TEMP + @"\BACKUP\");
                 index++;
                 prgMinor.Value = index;
+                if (tryCancel())
+                    return false;
             }
 
             foreach (string item in postarc)
@@ -450,7 +495,15 @@ namespace AA2Install
                 _7z.Extract(item);
                 index++;
                 prgMinor.Value = index;
+                if (tryCancel())
+                    return false;
             }
+
+            if (tryCancel())
+                return false;
+
+            //Reached point of no return.
+            btnCancel.Enabled = false;
 
             //Build ppQueue
             index = 0;
@@ -693,11 +746,13 @@ namespace AA2Install
                         {
                             File.Delete(s);
                         }
+                        mm.InstallTime = new DateTime(1991, 9, 8);
                         modDict[m.Name] = mm;
                     }
                     else
                     {
                         mm.Installed = true;
+                        mm.InstallTime = DateTime.Now;
                         modDict[m.Name] = mm;
                     }
                 }
@@ -708,7 +763,7 @@ namespace AA2Install
             TryDeleteDirectory(Paths.TEMP);
             TryDeleteDirectory(Paths.WORKING);
 
-            updateStatus("Success!");
+            updateStatus("Success!", LogIcon.OK);
             MessageBox.Show("Mods successfully synced.");
             refreshModList();
             return true;
@@ -716,15 +771,6 @@ namespace AA2Install
         
         #endregion
         #region UI
-
-        /// <summary>
-        /// Updates status bar
-        /// </summary>
-        /// <param name="status">Current status</param>
-        void updateStatus(string status)
-        {
-            labelStatus.Text = status;
-        }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -826,6 +872,10 @@ namespace AA2Install
             if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
             if (!Directory.Exists(Paths.MODS)) { Directory.CreateDirectory(Paths.MODS + @"\"); }
 
+            //Setup sorting
+            lsvMods.ListViewItemSorter = new CustomListViewSorter(int.Parse(Configuration.ReadSetting("SORTMODE") ?? "0"));
+            cmbSorting.SelectedIndex = int.Parse(Configuration.ReadSetting("SORTMODE") ?? "0");
+
             //Start program
             loadUIConfiguration();
             refreshModList();
@@ -865,9 +915,12 @@ namespace AA2Install
                 StringBuilder ustr = new StringBuilder();
                 rtbDescription.SelectionFont = new Font(temp, FontStyle.Bold);
                 str.AppendLine(name);
+                
                 foreach (KeyValuePair<string, string> kv in ((Mod)lsvMods.SelectedItems[0].Tag).Properties)
                 {
-                    str.AppendLine(kv.Key + ": " + kv.Value);
+                    str.AppendLine(System.Threading.Thread.CurrentThread
+           .CurrentCulture.TextInfo.ToTitleCase(kv.Key.ToLower())
+           + ": " + kv.Value);
                 }
                 rtbDescription.AppendText(str.ToString());
                 str.Clear();
@@ -942,7 +995,119 @@ namespace AA2Install
                 imagePreview.Image = null;
             }
         }
-        #endregion        
+        #endregion
+
+        #region Wizzard Migrate
+        void updateLog(string l)
+        {
+            txtMigrate.Text = txtMigrate.Text + l + Environment.NewLine;
+        }
+
+        private void btnBrowseMigrate_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fold = new FolderBrowserDialog();
+            fold.Description = @"Locate the Wizzard install folder (where Illusion_Wizzard.exe is)";
+            DialogResult result = fold.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                txtBrowseMigrate.Text = fold.SelectedPath;
+            }
+        }
+
+        private void btnMigrate_Click(object sender, EventArgs e)
+        {
+            setEnabled(false);
+
+            var mods = Configuration.loadMods();
+
+            txtMigrate.Clear();
+
+            if (!Directory.Exists(txtBrowseMigrate.Text + @"\AA2_PLAY\"))
+            {
+                updateLog("ERROR: " + txtBrowseMigrate.Text + @"\AA2_PLAY\ not found!");
+                setEnabled(true);
+                return;
+            }
+            updateLog("Starting migration..");
+            List<string> smods = new List<string>(Directory.GetFiles(txtBrowseMigrate.Text + @"\AA2_PLAY\mods\"));
+            List<string> backups = new List<string>(Directory.GetFiles(txtBrowseMigrate.Text + @"\AA2_PLAY\backups\"));
+
+            int i = 0;
+            foreach (string m in smods)
+            {
+                i++;
+                string r = m.Remove(0, m.LastIndexOf('\\') + 1);
+                updateLog("(" + i.ToString() + "/" + smods.Count.ToString() + ") Processing " + r);
+                File.Copy(m, Paths.MODS + "\\" + r, true);
+                bool ins = File.Exists(txtBrowseMigrate.Text + @"\AA2_PLAY\backups\" + r);
+                updateLog("Installed status: " + ins.ToString());
+                if (ins)
+                    File.Copy(txtBrowseMigrate.Text + @"\AA2_PLAY\backups\" + r, Paths.BACKUP + "\\" + r, true);
+                Mod mm = _7z.Index(Paths.MODS + "\\" + r);
+                mm.Installed = ins;
+                mods[Paths.MODS + "\\" + r] = mm;
+            }
+
+            Configuration.saveMods(mods);
+            //setEnabled(true);
+
+            updateLog("Done!");
+
+            refreshModList();
+        }
+        #endregion
+
+        #region Log
+        public enum LogIcon
+        {
+            Idle = 0,
+            Ready = 1,
+            Processing = 2,
+            Warning = 3,
+            OK = 4,
+            Error = 5
+        }
+        public DateTime bench = new DateTime(1991, 9, 8);
+        public void initializeBench()
+        {
+            bench = DateTime.Now;
+        }
+        public TimeSpan getTimeSinceLastCheck()
+        {
+            var diff = DateTime.Now - bench;
+            bench = DateTime.Now;
+            return diff;
+        }
+        public void updateStatus(string entry, LogIcon icon = LogIcon.Ready, bool displayTime = true, bool onlyStatusBar = false)
+        {
+            if (onlyStatusBar)
+            {
+                labelStatus.Text = entry;
+            }
+            else
+            {
+                switch (icon)
+                {
+                    case LogIcon.Error:
+                    case LogIcon.Warning:
+                        lsvLog.Items.Add(entry, (int)icon);
+                        break;
+                    default:
+                        lsvLog.Items.Add("(" + Math.Round(getTimeSinceLastCheck().TotalMilliseconds / 1000, 2).ToString() + "s) " + entry, (int)icon);
+                        labelStatus.Text = entry;
+                        break;
+                }
+            }
+            
+        }
+        #endregion
+
+        private void cmbSorting_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Configuration.WriteSetting("SORTMODE", cmbSorting.SelectedIndex.ToString());
+            lsvMods.ListViewItemSorter = new CustomListViewSorter(cmbSorting.SelectedIndex);
+            lsvMods.Sort();
+        }
     }
     #region Structures
     [Serializable()]
@@ -954,6 +1119,7 @@ namespace AA2Install
         public ulong size;
         public List<string> Filenames;
         public SerializableDictionary<string> Properties;
+        public DateTime InstallTime;
     }
     public class basePP
     {
@@ -969,6 +1135,37 @@ namespace AA2Install
         public string ppDir => ppRAW.Remove(0, ppRAW.LastIndexOf('\\') + 1);
 
         public string ppFile => ppDir + ".pp";
+    }
+    public class CustomListViewSorter : IComparer
+    {
+        private int mode = 0;
+        public CustomListViewSorter(int _mode = 0)
+        {
+            mode = _mode;
+        }
+        public int Compare(object x, object y)
+        {
+            if (x == y)
+                return 0;
+
+            if (x == null)
+                return 1;
+            if (y == null)
+                return -1;
+
+            switch (mode)
+            {
+                case 0: //Text sorting
+                default:
+                    return string.Compare(((ListViewItem)x).Text, ((ListViewItem)y).Text);
+                case 1: //Install date sorting
+                    if (((ListViewItem)x).Tag == null || !((Mod)((ListViewItem)x).Tag).Installed)
+                        return 1;
+                    if (((ListViewItem)y).Tag == null || !((Mod)((ListViewItem)y).Tag).Installed)
+                        return -1;
+                    return (int)(((Mod)((ListViewItem)y).Tag).InstallTime - ((Mod)((ListViewItem)x).Tag).InstallTime).TotalSeconds;
+            }
+        }
     }
     #endregion
 }

@@ -81,6 +81,7 @@ namespace AA2Install.Archives
                 m.size = 0;
             }
             m.Properties["Estimated Size"] = (m.size / (1024)).ToString("#,## kB");
+            m.InstallTime = new DateTime(1991, 9, 8);
             return m;
         }
         /// <summary>
