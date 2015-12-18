@@ -662,6 +662,7 @@
             this.ClientSize = new System.Drawing.Size(864, 481);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(880, 519);
             this.Name = "formMain";

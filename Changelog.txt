@@ -1,4 +1,10 @@
-﻿Pre5.2
+﻿Pre5.2.1
++ Fixed more issues with Wizzard Migrator
++ Fixed popup asking if it had installed correctly (for Win 7 - 10)
++ Removed the requirement for administrator access
++ Added a mediocre icon
+
+Pre5.2
 + Merged Wizzard Migrator into the main program
 + Added a (proper) logging system
 + Added the ability to be able to cancel an operation (provided it's at a possible time)
