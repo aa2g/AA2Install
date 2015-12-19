@@ -196,49 +196,53 @@ namespace AA2Install
         /// <summary>
         /// Refreshes the list from the /mods/ directory
         /// </summary>
-        public void refreshModList()
+        public void refreshModList(bool skipReload = false, string filter = "")
         {
-            setEnabled(false);
-            initializeBench();
-
-            modDict = Configuration.loadMods();
             lsvMods.Items.Clear();
-            string[] paths = getFiles(Paths.MODS, "*.7z|*.zip", SearchOption.TopDirectoryOnly);
-            prgMajor.Maximum = paths.Length;
-            prgMinor.Style = ProgressBarStyle.Marquee;
-            
-            int i = 0;
-            
-            foreach (string path in paths)
+            modDict = Configuration.loadMods();
+            if (!skipReload)
             {
-                i++;
-                updateStatus("(" + i.ToString() + "/" + prgMajor.Maximum.ToString() + ") Processing " + path.Remove(0, path.LastIndexOf('\\') + 1) + "...");
-
-                bool flag = false;
-                foreach (Mod m in modDict.Values)
+                setEnabled(false);
+                initializeBench();
+                
+                string[] paths = getFiles(Paths.MODS, "*.7z|*.zip", SearchOption.TopDirectoryOnly);
+                prgMajor.Maximum = paths.Length;
+                prgMinor.Style = ProgressBarStyle.Marquee;
+            
+                int i = 0;
+            
+                foreach (string path in paths)
                 {
-                    if (path == m.Name)
+                    i++;
+                    updateStatus("(" + i.ToString() + "/" + prgMajor.Maximum.ToString() + ") Processing " + path.Remove(0, path.LastIndexOf('\\') + 1) + "...");
+
+                    bool flag = false;
+                    foreach (Mod m in modDict.Values)
                     {
-                        flag = true;
-                        break;
+                        if (path == m.Name)
+                        {
+                            flag = true;
+                            break;
+                        }
                     }
-                }
-                if (flag)
-                {
+                    if (flag)
+                    {
+                        prgMajor.Value = i;
+                        continue;
+                    }
+
+                    modDict[path] = _7z.Index(path);
+
                     prgMajor.Value = i;
-                    continue;
                 }
-
-                modDict[path] = _7z.Index(path);
-
-                prgMajor.Value = i;
             }
 
             foreach (Mod mn in modDict.Values.ToList())
             {
                 Mod m = mn;
                 bool backup = File.Exists(Paths.BACKUP + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".zip", ".7z"));
-                
+                string shortName = m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1);
+
                 if (!File.Exists(m.Name) && !(m.Installed && backup))
                 {
                     continue;
@@ -246,8 +250,11 @@ namespace AA2Install
 
                 m.Installed = backup;
 
+                if (!shortName.ToLower().Contains(filter.ToLower()) && filter != "")
+                    continue;
+
                 lsvMods.Items.Add(m.Name, m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".7z", "").Replace(".zip", ""), 0);
-                int index = lsvMods.Items.IndexOfKey(m.Name);          
+                int index = lsvMods.Items.IndexOfKey(m.Name);
 
                 if (m.Installed && !File.Exists(m.Name) && !backup)
                 {
@@ -280,19 +287,22 @@ namespace AA2Install
                     m.Properties.Remove("Installed on");
 
                 lsvMods.Items[index].Tag = m;
-
+                
                 modDict[m.Name] = m;
             }
 
-            Configuration.saveMods(modDict);
+            if (!skipReload)
+            {
+                Configuration.saveMods(modDict);
 
-            prgMinor.Style = ProgressBarStyle.Continuous;
-            
-            prgMinor.Value = prgMinor.Maximum;
-            updateStatus("Ready.", LogIcon.OK);
+                prgMinor.Style = ProgressBarStyle.Continuous;
+
+                prgMinor.Value = prgMinor.Maximum;
+                updateStatus("Ready.", LogIcon.OK);
 
 
-            setEnabled(true);
+                setEnabled(true);
+            }            
         }
 
         /// <summary>
@@ -596,13 +606,19 @@ namespace AA2Install
             foreach (basePP b in ppList)
             {
                 updateStatus("(" + (ii + 1).ToString() + "/" + prgMinor.Maximum.ToString() + ") Reverting " + b.ppFile + "...");
-                BackgroundWorker bg = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true);
-                bg.RunWorkerAsync();
-                while (bg.IsBusy)
+                if (b.pp.Subfiles.Count > 0)
                 {
-                    Application.DoEvents();
+                    BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true);
+                    bb.RunWorkerAsync();
+                    while (bb.IsBusy)
+                    {
+                        Application.DoEvents();
+                    }
                 }
-                index++;
+                else
+                {
+                    File.Delete(b.pp.FilePath);
+                }
             }
 
             prgMinor.Value = 0;
@@ -680,11 +696,18 @@ namespace AA2Install
                     b.pp.Subfiles.Add(new Subfile(s));
                     i++;
                 }
-                BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true);
-                bb.RunWorkerAsync();
-                while (bb.IsBusy)
+                if (b.pp.Subfiles.Count > 0)
                 {
-                    Application.DoEvents();
+                    BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true);
+                    bb.RunWorkerAsync();
+                    while (bb.IsBusy)
+                    {
+                        Application.DoEvents();
+                    }
+                }
+                else
+                {
+                    File.Delete(b.pp.FilePath);
                 }
                 //Loop complete
 
@@ -851,6 +874,11 @@ namespace AA2Install
             Configuration.WriteSetting("SORTMODE", cmbSorting.SelectedIndex.ToString());
             lsvMods.ListViewItemSorter = new CustomListViewSorter(cmbSorting.SelectedIndex);
             lsvMods.Sort();
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            refreshModList(true, txtSearch.Text);
         }
         #endregion
         #region Form Events
