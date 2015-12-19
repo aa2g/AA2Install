@@ -49,6 +49,8 @@
             this.btnCancel = new System.Windows.Forms.ToolStripButton();
             this.cmbSorting = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.txtSearch = new System.Windows.Forms.ToolStripTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.imagePreview = new System.Windows.Forms.PictureBox();
             this.rtbDescription = new System.Windows.Forms.RichTextBox();
@@ -112,7 +114,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(864, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(977, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -180,7 +182,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 24);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(864, 457);
+            this.tabControl1.Size = new System.Drawing.Size(977, 457);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -191,7 +193,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(856, 431);
+            this.tabPage1.Size = new System.Drawing.Size(969, 431);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Mods";
             // 
@@ -209,8 +211,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(850, 403);
-            this.splitContainer1.SplitterDistance = 461;
+            this.splitContainer1.Size = new System.Drawing.Size(963, 403);
+            this.splitContainer1.SplitterDistance = 522;
             this.splitContainer1.SplitterWidth = 1;
             this.splitContainer1.TabIndex = 3;
             // 
@@ -225,7 +227,7 @@
             this.lsvMods.Location = new System.Drawing.Point(0, 25);
             this.lsvMods.Name = "lsvMods";
             this.lsvMods.OwnerDraw = true;
-            this.lsvMods.Size = new System.Drawing.Size(461, 378);
+            this.lsvMods.Size = new System.Drawing.Size(522, 378);
             this.lsvMods.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lsvMods.TabIndex = 1;
             this.lsvMods.UseCompatibleStateImageBehavior = false;
@@ -249,11 +251,13 @@
             this.btnApply,
             this.btnCancel,
             this.cmbSorting,
-            this.toolStripLabel1});
+            this.toolStripLabel1,
+            this.toolStripSeparator1,
+            this.txtSearch});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(461, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(522, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -304,6 +308,19 @@
             this.toolStripLabel1.Size = new System.Drawing.Size(47, 22);
             this.toolStripLabel1.Text = "Sort by:";
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // txtSearch
+            // 
+            this.txtSearch.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.Size = new System.Drawing.Size(100, 25);
+            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
+            // 
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -318,7 +335,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.rtbDescription);
-            this.splitContainer2.Size = new System.Drawing.Size(388, 403);
+            this.splitContainer2.Size = new System.Drawing.Size(440, 403);
             this.splitContainer2.SplitterDistance = 263;
             this.splitContainer2.SplitterWidth = 1;
             this.splitContainer2.TabIndex = 0;
@@ -329,7 +346,7 @@
             this.imagePreview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.imagePreview.Location = new System.Drawing.Point(0, 0);
             this.imagePreview.Name = "imagePreview";
-            this.imagePreview.Size = new System.Drawing.Size(388, 263);
+            this.imagePreview.Size = new System.Drawing.Size(440, 263);
             this.imagePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.imagePreview.TabIndex = 0;
             this.imagePreview.TabStop = false;
@@ -343,7 +360,7 @@
             this.rtbDescription.Location = new System.Drawing.Point(0, 0);
             this.rtbDescription.Name = "rtbDescription";
             this.rtbDescription.ReadOnly = true;
-            this.rtbDescription.Size = new System.Drawing.Size(388, 139);
+            this.rtbDescription.Size = new System.Drawing.Size(440, 139);
             this.rtbDescription.TabIndex = 0;
             this.rtbDescription.Text = "";
             // 
@@ -356,7 +373,7 @@
             this.labelStatus});
             this.statusMain.Location = new System.Drawing.Point(3, 406);
             this.statusMain.Name = "statusMain";
-            this.statusMain.Size = new System.Drawing.Size(850, 22);
+            this.statusMain.Size = new System.Drawing.Size(963, 22);
             this.statusMain.TabIndex = 1;
             this.statusMain.Text = "statusStrip1";
             // 
@@ -383,7 +400,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(856, 431);
+            this.tabPage2.Size = new System.Drawing.Size(969, 431);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Console Output";
             // 
@@ -398,7 +415,7 @@
             this.rtbConsole.Location = new System.Drawing.Point(3, 3);
             this.rtbConsole.Name = "rtbConsole";
             this.rtbConsole.ReadOnly = true;
-            this.rtbConsole.Size = new System.Drawing.Size(850, 425);
+            this.rtbConsole.Size = new System.Drawing.Size(963, 425);
             this.rtbConsole.TabIndex = 0;
             this.rtbConsole.Text = "";
             // 
@@ -408,17 +425,19 @@
             this.tabPage3.Controls.Add(this.groupBox1);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(856, 431);
+            this.tabPage3.Size = new System.Drawing.Size(969, 431);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Preferences";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.checkConflicts);
             this.groupBox2.Location = new System.Drawing.Point(8, 122);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(840, 49);
+            this.groupBox2.Size = new System.Drawing.Size(953, 49);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Installation";
@@ -448,7 +467,7 @@
             this.groupBox1.Controls.Add(this.checkAA2PLAY);
             this.groupBox1.Location = new System.Drawing.Point(8, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(840, 113);
+            this.groupBox1.Size = new System.Drawing.Size(953, 113);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Paths";
@@ -475,7 +494,7 @@
             // 
             this.btnAA2EDIT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAA2EDIT.Enabled = false;
-            this.btnAA2EDIT.Location = new System.Drawing.Point(810, 81);
+            this.btnAA2EDIT.Location = new System.Drawing.Point(923, 81);
             this.btnAA2EDIT.Name = "btnAA2EDIT";
             this.btnAA2EDIT.Size = new System.Drawing.Size(24, 23);
             this.btnAA2EDIT.TabIndex = 4;
@@ -490,7 +509,7 @@
             this.txtAA2EDIT.Enabled = false;
             this.txtAA2EDIT.Location = new System.Drawing.Point(6, 83);
             this.txtAA2EDIT.Name = "txtAA2EDIT";
-            this.txtAA2EDIT.Size = new System.Drawing.Size(798, 20);
+            this.txtAA2EDIT.Size = new System.Drawing.Size(911, 20);
             this.txtAA2EDIT.TabIndex = 3;
             this.txtAA2EDIT.TextChanged += new System.EventHandler(this.txtAA2EDIT_TextChanged);
             // 
@@ -509,7 +528,7 @@
             // 
             this.btnAA2PLAY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAA2PLAY.Enabled = false;
-            this.btnAA2PLAY.Location = new System.Drawing.Point(810, 36);
+            this.btnAA2PLAY.Location = new System.Drawing.Point(923, 36);
             this.btnAA2PLAY.Name = "btnAA2PLAY";
             this.btnAA2PLAY.Size = new System.Drawing.Size(24, 23);
             this.btnAA2PLAY.TabIndex = 1;
@@ -524,7 +543,7 @@
             this.txtAA2PLAY.Enabled = false;
             this.txtAA2PLAY.Location = new System.Drawing.Point(6, 38);
             this.txtAA2PLAY.Name = "txtAA2PLAY";
-            this.txtAA2PLAY.Size = new System.Drawing.Size(798, 20);
+            this.txtAA2PLAY.Size = new System.Drawing.Size(911, 20);
             this.txtAA2PLAY.TabIndex = 1;
             this.txtAA2PLAY.TextChanged += new System.EventHandler(this.txtAA2PLAY_TextChanged);
             // 
@@ -548,7 +567,7 @@
             this.tabPage4.Controls.Add(this.label1);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(856, 431);
+            this.tabPage4.Size = new System.Drawing.Size(969, 431);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Wizzard Migration";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -563,7 +582,7 @@
             this.txtMigrate.Name = "txtMigrate";
             this.txtMigrate.ReadOnly = true;
             this.txtMigrate.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMigrate.Size = new System.Drawing.Size(856, 368);
+            this.txtMigrate.Size = new System.Drawing.Size(969, 368);
             this.txtMigrate.TabIndex = 12;
             // 
             // btnMigrate
@@ -572,7 +591,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMigrate.Location = new System.Drawing.Point(11, 33);
             this.btnMigrate.Name = "btnMigrate";
-            this.btnMigrate.Size = new System.Drawing.Size(837, 23);
+            this.btnMigrate.Size = new System.Drawing.Size(950, 23);
             this.btnMigrate.TabIndex = 11;
             this.btnMigrate.Text = "Migrate";
             this.btnMigrate.UseVisualStyleBackColor = true;
@@ -581,7 +600,7 @@
             // btnBrowseMigrate
             // 
             this.btnBrowseMigrate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBrowseMigrate.Location = new System.Drawing.Point(824, 5);
+            this.btnBrowseMigrate.Location = new System.Drawing.Point(937, 5);
             this.btnBrowseMigrate.Name = "btnBrowseMigrate";
             this.btnBrowseMigrate.Size = new System.Drawing.Size(24, 23);
             this.btnBrowseMigrate.TabIndex = 10;
@@ -595,7 +614,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBrowseMigrate.Location = new System.Drawing.Point(106, 7);
             this.txtBrowseMigrate.Name = "txtBrowseMigrate";
-            this.txtBrowseMigrate.Size = new System.Drawing.Size(712, 20);
+            this.txtBrowseMigrate.Size = new System.Drawing.Size(825, 20);
             this.txtBrowseMigrate.TabIndex = 9;
             // 
             // label1
@@ -613,7 +632,7 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(856, 431);
+            this.tabPage5.Size = new System.Drawing.Size(969, 431);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "Log";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -627,7 +646,7 @@
             this.lsvLog.LargeImageList = this.imageList1;
             this.lsvLog.Location = new System.Drawing.Point(3, 3);
             this.lsvLog.Name = "lsvLog";
-            this.lsvLog.Size = new System.Drawing.Size(850, 425);
+            this.lsvLog.Size = new System.Drawing.Size(963, 425);
             this.lsvLog.SmallImageList = this.imageList1;
             this.lsvLog.TabIndex = 0;
             this.lsvLog.UseCompatibleStateImageBehavior = false;
@@ -659,7 +678,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(864, 481);
+            this.ClientSize = new System.Drawing.Size(977, 481);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -754,6 +773,8 @@
         private System.Windows.Forms.ToolStripButton btnCancel;
         private System.Windows.Forms.ToolStripComboBox cmbSorting;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripTextBox txtSearch;
     }
 }
 

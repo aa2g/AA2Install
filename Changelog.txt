@@ -1,4 +1,9 @@
-﻿Pre5.2.1
+﻿Pre5.2.2
++ Fixed not deleting files when there are no subfiles detected
++ Added a search bar
++ Built this version with optimization option in compiler
+
+Pre5.2.1
 + Fixed more issues with Wizzard Migrator
 + Fixed popup asking if it had installed correctly (for Win 7 - 10)
 + Removed the requirement for administrator access
