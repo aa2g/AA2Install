@@ -13,6 +13,12 @@ namespace AA2Install
 {
     public static class Configuration
     {
+        /// <summary>
+        /// Reads a setting from the configuration.
+        /// </summary>
+        /// <param name="key">Key of item to retrieve.</param>
+        /// <param name="configStream">If supplied, reads configuration file from this stream instead of the default path</param>
+        /// <returns>True if successful, otherwise false.</returns>
         public static string ReadSetting(string key, Stream configStream = null)
         {
             try
@@ -46,6 +52,13 @@ namespace AA2Install
                 return null;
             }
         }
+
+        /// <summary>
+        /// Writes a setting to the configuration.
+        /// </summary>
+        /// <param name="key">Key of item to write.</param>
+        /// <param name="value">Value of item to write.</param>
+        /// <returns>True if successful, otherwise false.</returns>
         public static bool WriteSetting(string key, string value)
         {
             try
@@ -68,6 +81,15 @@ namespace AA2Install
                 return false;
             }
         }
+
+        /// <summary>
+        /// Writes a setting to the configuration, using the supplied stream.
+        /// </summary>
+        /// <param name="key">Key of item to write.</param>
+        /// <param name="value">Value of item to write.</param>
+        /// <param name="input">Stream to load configuration data from.</param>
+        /// <param name="output">Output stream of new configuration data.</param>
+        /// <returns>True if successful, otherwise false.</returns>
         public static bool WriteSetting(string key, string value, Stream input, out MemoryStream output)
         {
             try
@@ -95,11 +117,11 @@ namespace AA2Install
         }
 
         /// <summary>
-        /// Serialize an object, useful for saving as a key/value pair
+        /// Serialize an object.
         /// </summary>
-        /// <typeparam name="T">Type of object to serialize</typeparam>
-        /// <param name="toSerialize">Object to serialize</param>
-        /// <returns>Serialized object</returns>
+        /// <typeparam name="T">Type of object to serialize.</typeparam>
+        /// <param name="toSerialize">Object to serialize.</param>
+        /// <returns>Serialized object.</returns>
         public static string SerializeObject<T>(this T toSerialize)
         {
             XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
@@ -111,10 +133,10 @@ namespace AA2Install
             }
         }
         /// <summary>
-        /// Serialize an object, useful for saving as a key/value pair
+        /// Deserialize an object.
         /// </summary>
-        /// <typeparam name="T">Type of object to deserialize</typeparam>
-        /// <param name="toDeserialize">String to deserialize</param>
+        /// <typeparam name="T">Type of object to deserialize.</typeparam>
+        /// <param name="toDeserialize">String to deserialize.</param>
         /// <returns>Deserialized object</returns>
         public static T DeserializeObject<T>(string toDeserialize)
         {
@@ -127,29 +149,26 @@ namespace AA2Install
 
         #region Quick Access
         /// <summary>
-        /// Retrieves the value of key in type bool
+        /// Retrieves the value of key as a bool.
         /// </summary>
-        /// <param name="key">Key of item</param>
-        /// <returns>Value of key in type bool</returns>
+        /// <param name="key">Key of item.</param>
+        /// <returns>Value of key as a bool.</returns>
         public static bool getBool(string key) => bool.Parse(ReadSetting(key) ?? "False");
         public static bool getBool(string key, Stream stream) => bool.Parse(ReadSetting(key, stream) ?? "False");
         /// <summary>
         /// Saves a list of installed mods to the "MODS" key
         /// </summary>
-        /// <param name="list">List of installed mods</param>
-        public static void saveMods(SerializableDictionary<Mod> list)
-        {
-            WriteSetting("MODS", SerializeObject(list));            
-        }
+        /// <param name="list">List of installed mods.</param>
+        /// <returns>True if successful, otherwise false</returns>
+        public static bool saveMods(SerializableDictionary<Mod> list) => WriteSetting("MODS", SerializeObject(list));
         /// <summary>
-        /// Loads a list of installed mods from the "MODS" key
+        /// Loads a list of installed mods from the "MODS" key in configuration.
         /// </summary>
-        /// <returns>List of installed mods</returns>
+        /// <returns>List of installed mods.</returns>
         public static SerializableDictionary<Mod> loadMods()
         {
             if (ReadSetting("MODS") == null) { return new SerializableDictionary<Mod>(); }
-            SerializableDictionary<Mod> s = DeserializeObject<SerializableDictionary<Mod>>(ReadSetting("MODS"));
-            return s;
+            return DeserializeObject<SerializableDictionary<Mod>>(ReadSetting("MODS"));
         }
         #endregion
     }

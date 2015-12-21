@@ -7,8 +7,10 @@ using System.Diagnostics;
 
 namespace AA2Install
 {
-    static class Console
+    public static class Console
     {
         public static List<string> Log = new List<string>();
+        
+        public static void ProcessOutputHandler(object sender, DataReceivedEventArgs e) => Log.Add(e.Data ?? string.Empty);
     }
 }

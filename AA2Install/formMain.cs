@@ -20,35 +20,7 @@ namespace AA2Install
     public partial class formMain : Form
     {
         public SerializableDictionary<Mod> modDict = new SerializableDictionary<Mod>();
-
-        #region Console
-
-        string minorProgress = "(0/0)"; //When processing PP files via console
-
-        /// <summary>
-        /// Handles process output to console text box
-        /// </summary>
-        void ProcessOutputHandler(object sender, DataReceivedEventArgs e)
-        {
-            Trace.WriteLine(e.Data);
-            string s = e.Data ?? string.Empty;
-
-            Match match = Regex.Match(s, @"^\((\d+)\/(\d+)\)"); //prgMinor gets updated directly from console output
-            
-
-            Console.Log.Add(s);
-            this.BeginInvoke(new MethodInvoker(() =>
-            {                
-                rtbConsole.AppendText((s) + Environment.NewLine);
-                if (match.Success)
-                {
-                    minorProgress = match.Value;
-                    prgMinor.Value = int.Parse(match.Groups[1].Value);
-                    prgMinor.Maximum = int.Parse(match.Groups[2].Value);
-                }
-            }));
-        }
-        #endregion
+        
         #region Preferences
 
         private void loadUIConfiguration()
@@ -149,9 +121,9 @@ namespace AA2Install
         #endregion
         #region Methods
         /// <summary>
-        /// Sets enabled status of essential controls to variable
+        /// Sets enabled status of essential controls.
         /// </summary>
-        /// <param name="enabled"></param>
+        /// <param name="enabled">Sets enabled status to this.</param>
         public void setEnabled(bool enabled)
         {
             lsvMods.Enabled = btnApply.Enabled = btnRefresh.Enabled =
@@ -162,6 +134,13 @@ namespace AA2Install
                 cmbSorting.Enabled = enabled;
         }
 
+        /// <summary>
+        /// Returns a list of files in a directory.
+        /// </summary>
+        /// <param name="SourceFolder">Directory to search.</param>
+        /// <param name="Filter">Filter; can have multiple filters split by '|'.</param>
+        /// <param name="searchOption">Option to search by.</param>
+        /// <returns>List of files in directory.</returns>
         public string[] getFiles(string SourceFolder, string Filter, System.IO.SearchOption searchOption)
         {
             ArrayList alFiles = new ArrayList();
@@ -173,6 +152,9 @@ namespace AA2Install
             return (string[])alFiles.ToArray(typeof(string));
         }
 
+        /// <summary>
+        /// Flag for if cancellation is pending.
+        /// </summary>
         public bool cancelPending = false;
         private void btnCancel_Click(object sender, EventArgs e)
         {
@@ -180,6 +162,10 @@ namespace AA2Install
             updateStatus("Pending cancellation...", LogIcon.Warning);
             updateStatus("Pending cancellation...", LogIcon.Warning, false, true);
         }
+        /// <summary>
+        /// Cancels if cancelPending is set to true.
+        /// </summary>
+        /// <returns></returns>
         public bool tryCancel()
         {
             if (cancelPending)
@@ -194,7 +180,7 @@ namespace AA2Install
         }
 
         /// <summary>
-        /// Refreshes the list from the /mods/ directory
+        /// Refreshes the list from the /mods/ directory.
         /// </summary>
         public void refreshModList(bool skipReload = false, string filter = "")
         {
@@ -306,9 +292,9 @@ namespace AA2Install
         }
 
         /// <summary>
-        /// Deletes a directory where it can fail to do so (large directories like TEMP)
+        /// Deletes a directory where it can fail to do so (large directories like TEMP).
         /// </summary>
-        /// <param name="target_dir">Target Directory</param>
+        /// <param name="target_dir">Target directory.</param>
         public static void TryDeleteDirectory(string target_dir)
         {
             try
@@ -319,8 +305,10 @@ namespace AA2Install
         }
 
         /// <summary>
-        /// Injects mods
+        /// Injects mods as per selected in lsvMods.
         /// </summary>
+        /// <param name="createBackup">Creates a backup of modified .pp files if true. Default is false.</param>
+        /// <param name="checkConflicts">Checks for conflicts in pending mods. Default is true.</param>
         public bool inject(bool createBackup = false, bool checkConflicts = true)
         {
             initializeBench();
@@ -900,7 +888,7 @@ namespace AA2Install
             }
 
             //Set event handlers
-            _7z.OutputDataRecieved += new DataReceivedEventHandler(ProcessOutputHandler);
+            _7z.OutputDataRecieved += new DataReceivedEventHandler(Console.ProcessOutputHandler);
 
             //Create necessary folders
             if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
