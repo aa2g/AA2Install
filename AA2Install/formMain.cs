@@ -614,6 +614,7 @@ namespace AA2Install
 
             //Process .pp files
             prgMajor.Maximum = ppQueue.Count;
+            updateTaskbarProgress();
             index = 0;
             while (ppQueue.Count > 0)
             {
@@ -703,6 +704,7 @@ namespace AA2Install
 
                 index++;
                 prgMajor.Value = index;
+                updateTaskbarProgress();
             }
 
             int ind = 0;
@@ -775,6 +777,7 @@ namespace AA2Install
             TryDeleteDirectory(Paths.WORKING);
 
             updateStatus("Success!", LogIcon.OK);
+            updateTaskbarProgress(TaskbarProgress.TaskbarStates.NoProgress);
             MessageBox.Show("Mods successfully synced.");
             refreshModList();
             return true;
@@ -867,6 +870,17 @@ namespace AA2Install
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             refreshModList(true, txtSearch.Text);
+        }
+
+        private void updateTaskbarProgress(TaskbarProgress.TaskbarStates state = TaskbarProgress.TaskbarStates.Normal)
+        {
+            updateTaskbarProgress(prgMajor.Value, prgMajor.Maximum, state);
+        }
+
+        private void updateTaskbarProgress(int value, int maximum, TaskbarProgress.TaskbarStates state = TaskbarProgress.TaskbarStates.Normal)
+        {
+            TaskbarProgress.SetState(this.Handle, state);
+            TaskbarProgress.SetValue(this.Handle, value, maximum);
         }
         #endregion
         #region Form Events
