@@ -79,6 +79,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializableDictionary.cs" />
+    <Compile Include="TaskbarProgress.cs" />
     <EmbeddedResource Include="formAbout.resx">
       <DependentUpon>formAbout.cs</DependentUpon>
     </EmbeddedResource>
