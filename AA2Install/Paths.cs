@@ -9,7 +9,7 @@ namespace AA2Install
     static class Paths
     {
         /// <summary>
-        /// 7Zip standalone location
+        /// 7Zip standalone location.
         /// </summary>
         public static string _7Za
         {
@@ -26,7 +26,7 @@ namespace AA2Install
             }
         }
         /// <summary>
-        /// AA2Play data install location
+        /// AA2Play data install location.
         /// </summary>
         public static string AA2Play
         {
@@ -44,7 +44,7 @@ namespace AA2Install
             }
         }
         /// <summary>
-        /// AA2Edit data install location
+        /// AA2Edit data install location.
         /// </summary>
         public static string AA2Edit
         {
@@ -62,27 +62,27 @@ namespace AA2Install
             }
         }
         /// <summary>
-        /// Temporary files location
+        /// Temporary files location.
         /// </summary>
         public static string TEMP => Environment.CurrentDirectory + @"\temp";
         /// <summary>
-        /// 7z mods location
+        /// 7z mods location.
         /// </summary>
         public static string MODS => Environment.CurrentDirectory + @"\mods";
         /// <summary>
-        /// PP working directory
+        /// PP working directory.
         /// </summary>
         public static string WORKING => Environment.CurrentDirectory + @"\compile";
         /// <summary>
-        /// Backup 7z location
+        /// Backup 7z location.
         /// </summary>
         public static string BACKUP => Environment.CurrentDirectory + @"\backup";
         /// <summary>
-        /// Image and description cache
+        /// Image and description cache.
         /// </summary>
         public static string CACHE => Environment.CurrentDirectory + @"\cache";
         /// <summary>
-        /// Config file path
+        /// Config file path.
         /// </summary>
         public static string CONFIG => Environment.CurrentDirectory + @"\config.json";
 

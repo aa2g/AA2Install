@@ -9,15 +9,16 @@ using System.Text.RegularExpressions;
 
 namespace AA2Install.Archives
 {
-    static class _7z
+    public static class _7z
     {
         public static event DataReceivedEventHandler OutputDataRecieved;
         /// <summary>
         /// Creates a mod index from a 7Zip file
         /// </summary>
-        /// <param name="filename">Location of the 7Zip file</param>
-        /// <returns>Structure containing mod info</returns>
-        public static Mod Index(string filename)
+        /// <param name="filename">Location of the 7Zip file.</param>
+        /// <param name="miscFiles">Whether or not to include files that aren't related to mod installation. Default is false.</param>
+        /// <returns>Structure containing mod info.</returns>
+        public static Mod Index(string filename, bool miscFiles = false)
         {
             Mod m = new Mod();
             List<string> oldlist = Console.Log;
@@ -63,7 +64,7 @@ namespace AA2Install.Archives
                                 name = name + ss[i] + " ";
                             }
 
-                        if (name.StartsWith(@"AA2_MAKE\") || name.StartsWith(@"AA2_PLAY\"))
+                        if (name.StartsWith(@"AA2_MAKE\") || name.StartsWith(@"AA2_PLAY\") || miscFiles)
                             m.Filenames.Add(ss.Last());
                     }
                 }
@@ -87,8 +88,9 @@ namespace AA2Install.Archives
         /// <summary>
         /// Extracts a 7Zip archive to the temp folder
         /// </summary>
-        /// <param name="filename">Location of the 7Zip file</param>
-        /// <returns>Location of extracted contents</returns>
+        /// <param name="filename">Location of the 7Zip file.</param>
+        /// <param name="dest">Destination of extracted files.</param>
+        /// <returns>Location of extracted contents.</returns>
         public static string Extract(string filename, string dest = "")
         {
             if (dest == "")
@@ -111,14 +113,14 @@ namespace AA2Install.Archives
                     Application.DoEvents();
                 }
             }
-            return Paths.TEMP;
+            return dest;
         }
         /// <summary>
         /// Extracts a 7Zip archive to the temp folder (using wildcard)
         /// </summary>
-        /// <param name="filename">Location of the 7Zip file</param>
-        /// <param name="wildcard">Wildcard</param>
-        /// <returns>Location of extracted contents</returns>
+        /// <param name="filename">Location of the 7Zip file.</param>
+        /// <param name="wildcard">Wildcard.</param>
+        /// <returns>Location of extracted contents.</returns>
         public static string ExtractWildcard(string filename, string wildcard, string dest = "")
         {
             if (dest == "")
@@ -144,13 +146,13 @@ namespace AA2Install.Archives
             return Paths.TEMP;
         }
         /// <summary>
-        /// Compresses a specified list of files into a 7z archive
+        /// Compresses a specified list of files into a 7z archive.
         /// </summary>
-        /// <param name="filename">Location to save the 7Z file</param>
-        /// <param name="workingdir">Working directory of 7za</param>
-        /// <param name="directory">Files to compress into the archive</param>
-        /// <returns>Location of extracted contents</returns>
-        public static string Compress(string filename, string workingdir, string directory)
+        /// <param name="filename">Location to save the 7Z file.</param>
+        /// <param name="workingdir">Working directory of 7za.exe.</param>
+        /// <param name="directory">Files to compress into the archive.</param>
+        /// <returns>True if successful, otherwise false.</returns>
+        public static bool Compress(string filename, string workingdir, string directory)
         {
             using (Process p = new Process())
             {
@@ -171,7 +173,7 @@ namespace AA2Install.Archives
                     Application.DoEvents();
                 }
             }
-            return Paths.TEMP;
+            return System.IO.File.Exists(filename);
         }
     }
 }
