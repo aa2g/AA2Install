@@ -11,16 +11,26 @@ using Newtonsoft.Json;
 
 namespace AA2Install
 {
-    static class Configuration
+    public static class Configuration
     {
-        public static string ReadSetting(string key)
+        public static string ReadSetting(string key, Stream configStream = null)
         {
             try
             {
-                if (!File.Exists(Paths.CONFIG))
-                    return null;
+                string json;
 
-                string json = File.ReadAllText(Paths.CONFIG);
+                if (configStream != null)
+                {
+                    using (BinaryReader br = new BinaryReader(configStream))
+                        json = Encoding.Unicode.GetString(br.ReadBytes((int)configStream.Length));
+                }
+                else
+                {
+                    if (!File.Exists(Paths.CONFIG))
+                        return null;
+                    json = File.ReadAllText(Paths.CONFIG);
+                }
+                
                 var appSettings = JsonConvert.DeserializeObject<SerializableDictionary<string>>(json);
 
                 if (!appSettings.ContainsKey(key))
@@ -55,6 +65,31 @@ namespace AA2Install
             catch (Exception ex)
             {
                 Trace.WriteLine("Error writing app settings: " + ex.Message);
+                return false;
+            }
+        }
+        public static bool WriteSetting(string key, string value, Stream input, out MemoryStream output)
+        {
+            try
+            {
+                Trace.WriteLine(key + " : " + value);
+                string json;
+
+                using (StreamReader sr = new StreamReader(input))
+                    json = sr.ReadToEnd();
+
+                var settings = JsonConvert.DeserializeObject<SerializableDictionary<string>>(json);
+                if (settings == null)
+                    settings = new SerializableDictionary<string>();
+                settings[key] = value;
+
+                output = new MemoryStream(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(settings)));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Error writing app settings: " + ex.Message);
+                output = null;
                 return false;
             }
         }
@@ -97,33 +132,24 @@ namespace AA2Install
         /// <param name="key">Key of item</param>
         /// <returns>Value of key in type bool</returns>
         public static bool getBool(string key) => bool.Parse(ReadSetting(key) ?? "False");
+        public static bool getBool(string key, Stream stream) => bool.Parse(ReadSetting(key, stream) ?? "False");
         /// <summary>
         /// Saves a list of installed mods to the "MODS" key
         /// </summary>
         /// <param name="list">List of installed mods</param>
-        public static void saveMods(Dictionary<string, Mod> list)
+        public static void saveMods(SerializableDictionary<Mod> list)
         {
-            SerializableDictionary<Mod> s = new SerializableDictionary<Mod>();
-            foreach (string key in list.Keys)
-            {
-                s[key] = list[key];
-            }
-            WriteSetting("MODS", SerializeObject(s));            
+            WriteSetting("MODS", SerializeObject(list));            
         }
         /// <summary>
         /// Loads a list of installed mods from the "MODS" key
         /// </summary>
         /// <returns>List of installed mods</returns>
-        public static Dictionary<string, Mod> loadMods()
+        public static SerializableDictionary<Mod> loadMods()
         {
-            if (ReadSetting("MODS") == null) { return new Dictionary<string, Mod>(); }
-            Dictionary<string, Mod> d = new Dictionary<string, Mod>();
+            if (ReadSetting("MODS") == null) { return new SerializableDictionary<Mod>(); }
             SerializableDictionary<Mod> s = DeserializeObject<SerializableDictionary<Mod>>(ReadSetting("MODS"));
-            foreach (string key in s.Keys)
-            {
-                d[key] = s[key];
-            }
-            return d;
+            return s;
         }
         #endregion
     }

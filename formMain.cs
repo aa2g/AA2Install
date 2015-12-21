@@ -19,7 +19,7 @@ namespace AA2Install
 {
     public partial class formMain : Form
     {
-        public Dictionary<string, Mod> modDict = new Dictionary<string, Mod>();
+        public SerializableDictionary<Mod> modDict = new SerializableDictionary<Mod>();
 
         #region Console
 
