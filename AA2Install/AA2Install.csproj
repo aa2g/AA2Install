@@ -139,7 +139,7 @@
     <None Include="resources\AA2Install.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="SB3UtilityPP\SB3UtilityPP.csproj">
+    <ProjectReference Include="..\SB3UtilityPP\SB3UtilityPP.csproj">
       <Project>{5647b104-8f58-4867-b849-dac65d5243bd}</Project>
       <Name>SB3UtilityPP</Name>
     </ProjectReference>
