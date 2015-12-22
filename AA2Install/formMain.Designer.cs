@@ -738,7 +738,6 @@
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ToolStripButton btnRefresh;
         private System.Windows.Forms.ToolStripButton btnApply;
-        private System.Windows.Forms.ToolStripStatusLabel labelStatus;
         private System.Windows.Forms.ToolStripMenuItem clearConsoleToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnAA2PLAY;
@@ -756,7 +755,6 @@
         private System.Windows.Forms.Label lblEditPath;
         private System.Windows.Forms.Label lblPlayPath;
         private System.Windows.Forms.RichTextBox rtbDescription;
-        private System.Windows.Forms.ListView lsvMods;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ToolStripMenuItem flushCacheToolStripMenuItem;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -768,13 +766,15 @@
         private System.Windows.Forms.TextBox txtBrowseMigrate;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TabPage tabPage5;
-        private System.Windows.Forms.ListView lsvLog;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ToolStripButton btnCancel;
         private System.Windows.Forms.ToolStripComboBox cmbSorting;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripTextBox txtSearch;
+        public System.Windows.Forms.ListView lsvMods;
+        public System.Windows.Forms.ListView lsvLog;
+        public System.Windows.Forms.ToolStripStatusLabel labelStatus;
     }
 }
 
