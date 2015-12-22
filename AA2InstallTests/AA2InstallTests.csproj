@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="ConfigurationTests.cs" />
     <Compile Include="CRC32.cs" />
+    <Compile Include="GZipTests.cs" />
     <Compile Include="MainTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="7zTests.cs" />
