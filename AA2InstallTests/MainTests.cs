@@ -29,7 +29,7 @@ namespace AA2Install.Tests
             Configuration.WriteSetting("AA2EDIT_Path", Environment.CurrentDirectory + @"\testdir\");
 
             Console.InitializeOutput();
-            Configuration.saveMods(new SerializableDictionary<Mod>());
+            Configuration.saveMods(new ModDictionary());
             form = new formMain();
             hasInstalled = false;
         }
@@ -51,6 +51,7 @@ namespace AA2Install.Tests
             form.refreshModList(true, "dummy");
             expected = 1;
             Assert.IsTrue(form.lsvMods.Items.Count == expected, "lsvMods did not show the true amount of mods for the filter test. Expected value: {0}; Actual value: {1}", new object[] { expected, form.lsvMods.Items.Count });
+            Assert.IsTrue(form.lsvMods.Items[0].Text == "[AA2] DUMMY MOD", "lsvMods did not display the correct name of the mod. Expected value: {0}; Actual value: {1}", new object[] { "[AA2] DUMMY MOD", form.lsvMods.Items[0].Name });
 
             //Filter test without result
             form.refreshModList(true, "wew lad");

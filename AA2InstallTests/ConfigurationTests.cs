@@ -63,16 +63,15 @@ namespace AA2Install.Tests
         [TestMethod()]
         public void saveLoadModsTest()
         {
-            SerializableDictionary<Mod> modDict = new SerializableDictionary<Mod>();
+            ModDictionary modDict = new ModDictionary();
 
-            Mod m = new Mod();
-            m.Name = "Test";
+            Mod m = new Mod("Test");
 
             modDict.Add("key", m);
 
             Configuration.WriteSetting("MODS", Configuration.SerializeObject(modDict));
 
-            SerializableDictionary<Mod> deserialized = Configuration.DeserializeObject<SerializableDictionary<Mod>>(Configuration.ReadSetting("MODS"));
+            ModDictionary deserialized = Configuration.DeserializeObject<ModDictionary>(Configuration.ReadSetting("MODS"));
 
             Assert.AreEqual(modDict["key"].Name, deserialized["key"].Name);
         }
