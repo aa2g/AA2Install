@@ -1,4 +1,7 @@
-﻿Pre5.2.2
+﻿Pre6
++ Taskbar now shows progress
+
+Pre5.2.2
 + Fixed not deleting files when there are no subfiles detected
 + Added a search bar
 + Built this version with optimization option in compiler

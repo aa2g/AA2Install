@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AA2Install
 {
-    static class Paths
+    public static class Paths
     {
         /// <summary>
         /// 7Zip standalone location.

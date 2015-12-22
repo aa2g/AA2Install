@@ -12,5 +12,10 @@ namespace AA2Install
         public static List<string> Log = new List<string>();
         
         public static void ProcessOutputHandler(object sender, DataReceivedEventArgs e) => Log.Add(e.Data ?? string.Empty);
+
+        public static void InitializeOutput()
+        {
+            Archives._7z.OutputDataRecieved += new DataReceivedEventHandler(ProcessOutputHandler);
+        }
     }
 }

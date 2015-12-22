@@ -20,7 +20,10 @@ namespace AA2Install
     public partial class formMain : Form
     {
         public SerializableDictionary<Mod> modDict = new SerializableDictionary<Mod>();
-        
+
+#warning Add removal of mods from main view
+#warning Add retry delete mod if it's being accessed
+
         #region Preferences
 
         private void loadUIConfiguration()
@@ -309,7 +312,8 @@ namespace AA2Install
         /// </summary>
         /// <param name="createBackup">Creates a backup of modified .pp files if true. Default is false.</param>
         /// <param name="checkConflicts">Checks for conflicts in pending mods. Default is true.</param>
-        public bool inject(bool createBackup = false, bool checkConflicts = true)
+        /// <param name="suppressPopups">If true, does not generate message boxes. Default is false.</param>
+        public bool inject(bool createBackup = false, bool checkConflicts = true, bool suppressPopups = false)
         {
             initializeBench();
             cancelPending = false;
@@ -325,7 +329,7 @@ namespace AA2Install
             {
                 Mod m = (Mod)l.Tag;
                 bool backup = File.Exists(Paths.BACKUP + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".zip", ".7z"));
-                if (l.Checked ^ (m.Installed && backup))
+                if (l.Checked ^ (backup))
                 {
                     if (l.Checked)
                     {
@@ -778,7 +782,8 @@ namespace AA2Install
 
             updateStatus("Success!", LogIcon.OK);
             updateTaskbarProgress(TaskbarProgress.TaskbarStates.NoProgress);
-            MessageBox.Show("Mods successfully synced.");
+            if (!suppressPopups)
+                MessageBox.Show("Mods successfully synced.");
             refreshModList();
             return true;
         }
@@ -902,7 +907,7 @@ namespace AA2Install
             }
 
             //Set event handlers
-            _7z.OutputDataRecieved += new DataReceivedEventHandler(Console.ProcessOutputHandler);
+            Console.InitializeOutput();
 
             //Create necessary folders
             if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
