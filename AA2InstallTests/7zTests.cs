@@ -10,6 +10,8 @@ using System.Diagnostics;
 namespace AA2Install.Archives.Tests
 {
     [TestClass()]
+    [DeploymentItem(@"AA2InstallTests\tools\", "tools")]
+    [DeploymentItem(@"AA2InstallTests\Test Data\", "Test Data")]
     public class _7zTests
     {
         [TestInitialize()]

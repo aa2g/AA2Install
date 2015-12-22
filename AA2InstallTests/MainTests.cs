@@ -12,6 +12,9 @@ using System.Windows.Forms;
 namespace AA2Install.Tests
 {
     [TestClass()]
+    [DeploymentItem(@"AA2InstallTests\tools\", "tools")]
+    [DeploymentItem(@"AA2InstallTests\mods\", "mods")]
+    [DeploymentItem(@"AA2InstallTests\testdir\", "testdir")]
     public class MainTests
     {
         formMain form;
@@ -61,6 +64,8 @@ namespace AA2Install.Tests
         [TestMethod()]
         public void injectTest()
         {
+            Assert.IsTrue(File.Exists(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp"), Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp did not deploy");
+
             form.refreshModList();
 
             var subfiles = new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles;
