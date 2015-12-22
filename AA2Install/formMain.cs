@@ -14,15 +14,20 @@ using AA2Install.Archives;
 using SB3Utility;
 using System.Drawing.Drawing2D;
 using System.Collections;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
+using System.Xml;
+using System.Xml.Schema;
 
 namespace AA2Install
 {
     public partial class formMain : Form
     {
-        public SerializableDictionary<Mod> modDict = new SerializableDictionary<Mod>();
+        public ModDictionary modDict = new ModDictionary();
 
 #warning Add removal of mods from main view
 #warning Add retry delete mod if it's being accessed
+#warning Fix bug when checking conflicts with filter enabled
 
         #region Preferences
 
@@ -208,7 +213,7 @@ namespace AA2Install
                     bool flag = false;
                     foreach (Mod m in modDict.Values)
                     {
-                        if (path == m.Name)
+                        if (path == m.Filename)
                         {
                             flag = true;
                             break;
@@ -229,55 +234,39 @@ namespace AA2Install
             foreach (Mod mn in modDict.Values.ToList())
             {
                 Mod m = mn;
-                bool backup = File.Exists(Paths.BACKUP + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".zip", ".7z"));
-                string shortName = m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1);
+                //bool backup = File.Exists(Paths.BACKUP + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".zip", ".7z"));
 
-                if (!File.Exists(m.Name) && !(m.Installed && backup))
+                if (!File.Exists(m.Filename) && !m.Installed)
                 {
                     continue;
                 }
 
-                m.Installed = backup;
-
-                if (!shortName.ToLower().Contains(filter.ToLower()) && filter != "")
+                if (!m.Name.ToLower().Contains(filter.ToLower()) && filter != "")
                     continue;
 
-                lsvMods.Items.Add(m.Name, m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".7z", "").Replace(".zip", ""), 0);
+                lsvMods.Items.Add(m.Name, m.Name.Replace(".7z", "").Replace(".zip", ""), 0);
                 int index = lsvMods.Items.IndexOfKey(m.Name);
 
-                if (m.Installed && !File.Exists(m.Name) && !backup)
-                {
-                    //lsvMods.Items[index].BackColor = Color.Maroon;
-                }
-                else if (m.Installed && File.Exists(m.Name) && !backup)
-                {
-                    //lsvMods.Items[index].BackColor = Color.Goldenrod;
-                }
-                else if ((!m.Installed || !File.Exists(m.Name)) && backup)
+                if (m.Installed && !m.Exists)
                 {
                     //lsvMods.Items[index].BackColor = Color.DarkBlue;
                 }
-                else if (m.Installed && backup)
+                else if (m.Installed)
                 {
                     lsvMods.Items[index].BackColor = Color.LightGreen;
                     lsvMods.Items[index].Checked = true;
                 }
 
-                m.Properties["Estimated Size"] = (m.size / (1024)).ToString("#,## kB");
+                m.Properties["Estimated Size"] = (m.Size / (1024)).ToString("#,## kB");
 
                 if (m.Installed && m.InstallTime.Year > 2000)
                     m.Properties["Installed on"] = m.InstallTime.ToString();
-                else if (backup)
-                {
-                    m.InstallTime = (new FileInfo(m.Name)).LastWriteTime;
-                    m.Properties["Installed on"] = m.InstallTime.ToString();
-                }
                 else
                     m.Properties.Remove("Installed on");
 
                 lsvMods.Items[index].Tag = m;
                 
-                modDict[m.Name] = m;
+                //modDict[m.Name] = m;
             }
 
             if (!skipReload)
@@ -328,19 +317,18 @@ namespace AA2Install
             foreach (ListViewItem l in lsvMods.Items)
             {
                 Mod m = (Mod)l.Tag;
-                bool backup = File.Exists(Paths.BACKUP + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".zip", ".7z"));
-                if (l.Checked ^ (backup))
+                if (l.Checked ^ (m.Installed))
                 {
                     if (l.Checked)
                     {
-                        postarc.Enqueue(m.Name);
+                        postarc.Enqueue(m.Filename);
                         mods.Add(m);
                     }
                     else
                     {
-                        prearc.Enqueue(Paths.BACKUP + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".zip", ".7z"));
+                        prearc.Enqueue(Paths.BACKUP + "\\" + m.Name.Replace(".zip", ".7z"));
                         unmods.Add(m);
-                        rsub.AddRange(m.Filenames);
+                        rsub.AddRange(m.SubFilenames);
                     }
                 }
             }
@@ -409,7 +397,7 @@ namespace AA2Install
                         !lsvMods.Items[lsvMods.Items.IndexOfKey(m.Name)].Checked)
                         continue;
 
-                    foreach (string s in m.Filenames)
+                    foreach (string s in m.SubFilenames)
                     {
                         files[s] = m.Name;
                     }
@@ -426,7 +414,7 @@ namespace AA2Install
                     if (item.Checked)
                     {
                         lsvMods.Items[index].ImageIndex = 1; //Ready
-                        foreach (string s in ((Mod)item.Tag).Filenames)
+                        foreach (string s in ((Mod)item.Tag).SubFilenames)
                         {
                             if (files.ContainsKey(s))
                             {
@@ -437,7 +425,7 @@ namespace AA2Install
                                 foreach (ListViewItem i in lsvMods.Items) //Clusterfuck to find the other conflicting mod
                                 {
                                     Mod m = (Mod)i.Tag;
-                                    if (m.Filenames.Contains(s) && i.Checked)
+                                    if (m.SubFilenames.Contains(s) && i.Checked)
                                     {
                                         //lsvMods.Items[i.Index].ImageIndex = 3; //Triangle error
                                         //updateStatus(i.Text + ": " + s, LogIcon.Error);
@@ -632,13 +620,13 @@ namespace AA2Install
 
                 foreach (Mod m in mods)
                 {
-                    foreach (string s in m.Filenames)
+                    foreach (string s in m.SubFilenames)
                     {
                         if (s.Contains(b.ppDir))
                         {
                             string r = s.Remove(0, 9);
                             string rs = r.Remove(0, r.LastIndexOf('\\') + 1);
-                            string workingdir = Paths.WORKING + "\\BACKUP\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".7z", "").Replace(".zip", "") + "\\";
+                            string workingdir = Paths.WORKING + "\\BACKUP\\" + m.Name.Replace(".7z", "").Replace(".zip", "") + "\\";
                             string directory;
                             if (tempPLAY.Contains(b.ppRAW))
                             {
@@ -757,20 +745,11 @@ namespace AA2Install
                     Mod mm = modDict[m.Name];
                     if (m.Installed)
                     {
-                        mm.Installed = false;
-                        string s = Paths.BACKUP + m.Name.Remove(0, m.Name.LastIndexOf("\\"));
+                        string s = Paths.BACKUP + m.Name.Replace(".zip", ".7z");
                         if (File.Exists(s))
                         {
                             File.Delete(s);
                         }
-                        mm.InstallTime = new DateTime(1991, 9, 8);
-                        modDict[m.Name] = mm;
-                    }
-                    else
-                    {
-                        mm.Installed = true;
-                        mm.InstallTime = DateTime.Now;
-                        modDict[m.Name] = mm;
                     }
                 }
             }
@@ -852,9 +831,12 @@ namespace AA2Install
 
             var iter = modDict.ToDictionary(entry => entry.Key,
                 entry => entry.Value);
+            /*
             foreach (Mod m in iter.Values)
                 if (!m.Installed)
                     modDict.Remove(m.Name);
+           */
+            modDict = new ModDictionary();
 
             Configuration.saveMods(modDict);
             refreshModList();
@@ -1085,7 +1067,6 @@ namespace AA2Install
                 if (ins)
                     File.Copy(txtBrowseMigrate.Text + @"\AA2_PLAY\backups\" + r, Paths.BACKUP + "\\" + r.Replace(".zip", ".7z"), true);
                 Mod mm = _7z.Index(Paths.MODS + "\\" + r);
-                mm.Installed = ins;
                 mods[Paths.MODS + "\\" + r] = mm;
             }
 
@@ -1144,16 +1125,169 @@ namespace AA2Install
         #endregion
     }
     #region Structures
-    [Serializable()]
-    [DebuggerDisplay("{Name}")]
-    public struct Mod
+    [XmlRoot("mod")]
+    [DebuggerDisplay("{_Name}")]
+    public class Mod : ISerializable, IXmlSerializable
     {
-        public string Name;
-        public bool Installed;
-        public ulong size;
-        public List<string> Filenames;
-        public SerializableDictionary<string> Properties;
-        public DateTime InstallTime;
+        #region Serialization
+        public Mod()
+        {
+            Name = "<default>";
+            Size = 0;
+            SubFilenames = new List<string>();
+        }
+        public Mod(SerializationInfo info, StreamingContext ctxt)
+        {
+            
+            Name = (string)info.GetValue("Name", typeof(string));
+            Installed = (bool)info.GetValue("Installed", typeof(bool));
+            Exists = (bool)info.GetValue("Exists", typeof(bool));
+            Size = (ulong)info.GetValue("Size", typeof(ulong));
+            SubFilenames = (List<string>)info.GetValue("SubFilenames", typeof(List<string>));
+            InstallTime = (DateTime)info.GetValue("InstallTime", typeof(DateTime));
+            Properties = (SerializableDictionary<string, string>)info.GetValue("Properties", typeof(SerializableDictionary<string, string>));
+        }
+
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("Name", Name);
+            info.AddValue("Installed", Installed);
+            info.AddValue("Exists", Exists);
+            info.AddValue("Size", Size);
+            info.AddValue("SubFilenames", SubFilenames);
+            info.AddValue("InstallTime", InstallTime);
+            info.AddValue("Properties", Properties);
+        }
+
+        XmlSchema IXmlSerializable.GetSchema() => null;
+
+        void IXmlSerializable.ReadXml(XmlReader reader)
+        {
+            reader.ReadStartElement();
+
+            reader.ReadStartElement();
+            Name = reader.ReadElementString();
+            Exists = reader.ReadElementString().DeserializeObject<bool>();
+            Size = reader.ReadElementString().DeserializeObject<ulong>();
+            SubFilenames = reader.ReadElementString().DeserializeObject<List<string>>();
+            InstallTime = reader.ReadElementString().DeserializeObject<DateTime>();
+            Properties = reader.ReadElementString().DeserializeObject<SerializableDictionary<string, string>>();
+            reader.ReadEndElement();
+
+            reader.ReadEndElement();
+        }
+
+        void IXmlSerializable.WriteXml(XmlWriter writer)
+        {
+            writer.WriteStartElement("Mod");
+            //writer.WriteAttributeString("Assembly Version", FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion);
+            //writer.WriteAttributeString("Config Version", "2");
+            
+            writer.WriteElementString("Name", Name);
+            writer.WriteElementString("Exists", _Exists.SerializeObject());
+            writer.WriteElementString("Size", Size.SerializeObject());
+            writer.WriteElementString("SubFilenames", SubFilenames.SerializeObject());
+            writer.WriteElementString("InstallTime", _InstallTime.SerializeObject());
+            writer.WriteElementString("Properties", Properties.SerializeObject());
+
+            writer.WriteEndElement();
+        }
+        #endregion
+
+        public Mod(string name)
+        {
+            setName(name);
+            Size = 0;
+            SubFilenames = new List<string>();
+        }
+
+        public Mod(string name, ulong size, List<string> subfilenames)
+        {
+            setName(name);
+            Size = size;
+            SubFilenames = subfilenames;
+        }
+        
+        protected void setName(string newname)
+        {
+            if (newname.Contains('\\'))
+                Name = newname.Remove(0, newname.LastIndexOf('\\') + 1);
+            else
+                Name = newname;
+        }
+        
+        public string Name
+        {
+            get;
+            protected set;
+        }
+
+        public string Filename => Paths.MODS + "\\" + Name;
+        
+        private bool _Installed = false;
+        
+        public bool Installed
+        {
+            get
+            {
+                var value = File.Exists(Paths.BACKUP + "\\" + Name.Replace(".zip", ".7z"));
+                _Installed = value;
+                return value;
+            }
+            protected set
+            {
+                _Installed = value;
+            }
+        }
+        
+        private bool _Exists = false;
+        
+        public bool Exists
+        {
+            get
+            {
+                var value = File.Exists(Filename);
+                _Exists = value;
+                return value;
+            }
+            protected set
+            {
+                _Exists = value;
+            }
+        }
+        
+        public ulong Size
+        {
+            get;
+            protected set;
+        }
+        
+        public List<string> SubFilenames
+        {
+            get;
+            protected set;
+        }
+        
+        private DateTime _InstallTime = new DateTime(1991, 9, 8);
+        
+        public DateTime InstallTime
+        {
+            get
+            {
+                DateTime value = _InstallTime;
+                if (Installed)
+                    value = File.GetLastWriteTime(Paths.BACKUP + "\\" + Name.Replace(".zip", ".7z"));
+                _InstallTime = value;
+                return value;
+            }
+            protected set
+            {
+                _InstallTime = value;
+            }
+        }
+        
+        //This is user-generated data so it can be left alone
+        public SerializableDictionary<string, string> Properties = new SerializableDictionary<string, string>();
     }
     public class basePP
     {

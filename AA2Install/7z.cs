@@ -20,7 +20,6 @@ namespace AA2Install.Archives
         /// <returns>Structure containing mod info.</returns>
         public static Mod Index(string filename, bool miscFiles = false)
         {
-            Mod m = new Mod();
             List<string> oldlist = Console.Log;
             Console.Log.Clear();
             using (Process p = new Process())
@@ -42,7 +41,7 @@ namespace AA2Install.Archives
                 p.WaitForExit();
             }
             List<string> ModItems = new List<string>();
-            m.Filenames = new List<string>();
+            var subfiles = new List<string>();
             foreach (string s in Console.Log)
             {
                 Regex r = new Regex(@"^\d{4}");
@@ -52,38 +51,36 @@ namespace AA2Install.Archives
                     string[] ss = s.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
                     if (ss[2] == "....A")
                     {
-                        string name = "";
+                        string n = "";
                         if (Regex.IsMatch(ss[4], @"^\d+$"))
                             for (int i = 5; i < ss.Length; i++)
                             {
-                                name = name + ss[i] + " ";
+                                n = n + ss[i] + " ";
                             }
                         else
                             for (int i = 4; i < ss.Length; i++)
                             {
-                                name = name + ss[i] + " ";
+                                n = n + ss[i] + " ";
                             }
 
-                        if (name.StartsWith(@"AA2_MAKE\") || name.StartsWith(@"AA2_PLAY\") || miscFiles)
-                            m.Filenames.Add(ss.Last());
+                        if (n.StartsWith(@"AA2_MAKE\") || n.StartsWith(@"AA2_PLAY\") || miscFiles)
+                            subfiles.Add(ss.Last());
                     }
                 }
             }
             Console.Log = oldlist;
-            m.Name = filename;
-            m.Properties = new SerializableDictionary<string>();
+            var name = filename;
+            ulong size;
             if (ModItems.Count > 3)
             {
                 string[] ee = ModItems[ModItems.Count - 1].Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
-                m.size = ulong.Parse(ee[2]);
+                size = ulong.Parse(ee[2]);
             }
             else
             {
-                m.size = 0;
+                size = 0;
             }
-            m.Properties["Estimated Size"] = (m.size / (1024)).ToString("#,## kB");
-            m.InstallTime = new DateTime(1991, 9, 8);
-            return m;
+            return new Mod(name, size, subfiles);
         }
         /// <summary>
         /// Extracts a 7Zip archive to the temp folder

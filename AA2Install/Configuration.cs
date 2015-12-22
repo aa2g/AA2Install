@@ -23,6 +23,7 @@ namespace AA2Install
         {
             try
             {
+                key = key.ToLower();
                 string json;
 
                 if (configStream != null)
@@ -37,7 +38,7 @@ namespace AA2Install
                     json = File.ReadAllText(Paths.CONFIG);
                 }
                 
-                var appSettings = JsonConvert.DeserializeObject<SerializableDictionary<string>>(json);
+                var appSettings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
 
                 if (!appSettings.ContainsKey(key))
                     return null;
@@ -63,13 +64,14 @@ namespace AA2Install
         {
             try
             {
+                key = key.ToLower();
                 Trace.WriteLine(key + " : " + value);
                 string json = "";
                 if (File.Exists(Paths.CONFIG))
                     json = File.ReadAllText(Paths.CONFIG);
-                var settings = JsonConvert.DeserializeObject<SerializableDictionary<string>>(json);
+                var settings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
                 if (settings == null)
-                    settings = new SerializableDictionary<string>();
+                    settings = new SerializableDictionary<string, string>();
                 settings[key] = value;
 
                 File.WriteAllText(Paths.CONFIG, JsonConvert.SerializeObject(settings));
@@ -94,15 +96,16 @@ namespace AA2Install
         {
             try
             {
+                key = key.ToLower();
                 Trace.WriteLine(key + " : " + value);
                 string json;
 
                 using (StreamReader sr = new StreamReader(input))
                     json = sr.ReadToEnd();
 
-                var settings = JsonConvert.DeserializeObject<SerializableDictionary<string>>(json);
+                var settings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
                 if (settings == null)
-                    settings = new SerializableDictionary<string>();
+                    settings = new SerializableDictionary<string, string>();
                 settings[key] = value;
 
                 output = new MemoryStream(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(settings)));
@@ -138,7 +141,7 @@ namespace AA2Install
         /// <typeparam name="T">Type of object to deserialize.</typeparam>
         /// <param name="toDeserialize">String to deserialize.</param>
         /// <returns>Deserialized object</returns>
-        public static T DeserializeObject<T>(string toDeserialize)
+        public static T DeserializeObject<T>(this string toDeserialize)
         {
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
             using (StringReader textReader = new StringReader(toDeserialize))
@@ -160,15 +163,15 @@ namespace AA2Install
         /// </summary>
         /// <param name="list">List of installed mods.</param>
         /// <returns>True if successful, otherwise false</returns>
-        public static bool saveMods(SerializableDictionary<Mod> list) => WriteSetting("MODS", SerializeObject(list));
+        public static bool saveMods(ModDictionary list) => WriteSetting("MODS", SerializeObject(list));
         /// <summary>
         /// Loads a list of installed mods from the "MODS" key in configuration.
         /// </summary>
         /// <returns>List of installed mods.</returns>
-        public static SerializableDictionary<Mod> loadMods()
+        public static ModDictionary loadMods()
         {
-            if (ReadSetting("MODS") == null) { return new SerializableDictionary<Mod>(); }
-            return DeserializeObject<SerializableDictionary<Mod>>(ReadSetting("MODS"));
+            if (ReadSetting("MODS") == null) { return new ModDictionary(); }
+            return DeserializeObject<ModDictionary>(ReadSetting("MODS"));
         }
         #endregion
     }
