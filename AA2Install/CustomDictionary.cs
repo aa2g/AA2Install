@@ -2,10 +2,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Xml.Serialization;
 
 [XmlRoot("dictionary")]
+[DebuggerDisplay("Count = {Count}")]
 public class ModDictionary
     : IDictionary<string, Mod>, IXmlSerializable
 {
