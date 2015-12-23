@@ -25,7 +25,6 @@ namespace AA2Install
     {
         public ModDictionary modDict = new ModDictionary();
         
-#warning Add retry delete mod if it's being accessed
 #warning Fix bug when checking conflicts with filter enabled
 #warning Change log to display time taken on it's own row
 #warning Add proper fatal error handling
@@ -186,6 +185,46 @@ namespace AA2Install
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Tries to delete file, and prompts user if the file is being accessed.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public TryDeleteResult tryDelete(string filename)
+        {
+            bool tryAgain = false;
+
+            do
+            {
+
+                try
+                {
+                    if (File.Exists(filename))
+                    {
+                        using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.ReadWrite)) { }
+                        File.Delete(filename);
+                    }
+                    tryAgain = false;
+                }
+                catch (IOException)
+                {
+                    switch (MessageBox.Show("Failed to delete file " + filename + "; is it being accessed?", "Failed", MessageBoxButtons.AbortRetryIgnore))
+                    {
+                        case DialogResult.Retry:
+                            tryAgain = true;
+                            break;
+                        case DialogResult.Ignore:
+                            return TryDeleteResult.Ignored;
+                        case DialogResult.Abort:
+                            return TryDeleteResult.Cancelled;
+                    }
+                }
+
+            } while (tryAgain);
+
+            return TryDeleteResult.OK;
         }
 
         /// <summary>
@@ -720,16 +759,16 @@ namespace AA2Install
                 {
                     foreach (string sub in Directory.GetDirectories(s + "\\AA2_PLAY\\"))
                     {
-                        string g = sub.Remove(0, s.Length);
-                        _7z.Compress(archive, s, sub.Remove(0, s.Length + 1) + "\\");
+                        string g = sub.Remove(0, s.Length + 1) + "\\";
+                        _7z.Compress(archive, s, g);
                     }
                 }
                 if (Directory.Exists(s + "\\AA2_MAKE\\"))
                 {
                     foreach (string sub in Directory.GetDirectories(s + "\\AA2_MAKE\\"))
                     {
-                        string g = sub.Remove(0, s.Length);
-                        _7z.Compress(archive, s, sub.Remove(0, s.Length + 1) + "\\");
+                        string g = sub.Remove(0, s.Length + 1) + "\\";
+                        _7z.Compress(archive, s, g);
                     }
                 }
             }
@@ -739,19 +778,12 @@ namespace AA2Install
             updateStatus("Finishing up...");
             mods.AddRange(unmods);
 
-            foreach (Mod m in mods)
+            foreach (Mod m in unmods)
             {
-                if (modDict.ContainsKey(m.Name))
+                string s = Paths.BACKUP + "\\" + m.Name.Replace(".zip", ".7z");
+                if (File.Exists(s))
                 {
-                    Mod mm = modDict[m.Name];
-                    if (m.Installed)
-                    {
-                        string s = Paths.BACKUP + m.Name.Replace(".zip", ".7z");
-                        if (File.Exists(s))
-                        {
-                            File.Delete(s);
-                        }
-                    }
+                    tryDelete(s);
                 }
             }
 
@@ -884,7 +916,7 @@ namespace AA2Install
                 if (result == DialogResult.Yes)
                 {
                     foreach (string s in filenames)
-                        File.Delete(s);
+                        tryDelete(s);
 
                     refreshModList();
                 }
@@ -1149,7 +1181,7 @@ namespace AA2Install
     }
     #region Structures
     [XmlRoot("mod")]
-    [DebuggerDisplay("{_Name}")]
+    [DebuggerDisplay("{Name}")]
     public class Mod : ISerializable, IXmlSerializable
     {
         #region Serialization
@@ -1357,6 +1389,12 @@ namespace AA2Install
                     return (int)(((Mod)((ListViewItem)y).Tag).InstallTime - ((Mod)((ListViewItem)x).Tag).InstallTime).TotalSeconds;
             }
         }
+    }
+    public enum TryDeleteResult
+    {
+        OK,
+        Ignored,
+        Cancelled
     }
     #endregion
 }

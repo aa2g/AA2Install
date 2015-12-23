@@ -1,8 +1,10 @@
 ﻿Pre6
 + Major backend overhaul, config related issues are now simple to fix (if they even arise)
++ Much more aggressive flush config
 + Config files are now GZip compressed
 + Taskbar now shows progress
 + Added the ability to delete mods from the main view
++ Prompts user if file is in use when trying to delete a file
 
 Pre5.2.2
 + Fixed not deleting files when there are no subfiles detected
