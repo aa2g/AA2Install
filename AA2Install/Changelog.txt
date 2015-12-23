@@ -1,6 +1,7 @@
 ﻿Pre6
 + Major backend overhaul, config related issues are now simple to fix (if they even arise)
 + Much more aggressive flush config
++ Now handles crashes in the program itself, so you can send me proper error dumps
 + Config files are now GZip compressed (stored as config.json.gz)
 + Taskbar now shows progress
 + Added the ability to delete mods from the main view
