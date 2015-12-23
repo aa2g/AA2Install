@@ -83,6 +83,8 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.imageTimer = new System.Windows.Forms.Timer(this.components);
+            this.modContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -103,6 +105,7 @@
             this.groupBox1.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.modContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -222,6 +225,7 @@
             this.lsvMods.CheckBoxes = true;
             this.lsvMods.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1});
+            this.lsvMods.ContextMenuStrip = this.modContextMenu;
             this.lsvMods.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lsvMods.GridLines = true;
             this.lsvMods.Location = new System.Drawing.Point(0, 25);
@@ -674,6 +678,20 @@
             this.imageTimer.Interval = 3000;
             this.imageTimer.Tick += new System.EventHandler(this.imageTimer_Tick);
             // 
+            // modContextMenu
+            // 
+            this.modContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteToolStripMenuItem});
+            this.modContextMenu.Name = "modContextMenu";
+            this.modContextMenu.Size = new System.Drawing.Size(153, 48);
+            // 
+            // deleteToolStripMenuItem
+            // 
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteToolStripMenuItem.Text = "Delete";
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            // 
             // formMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -715,6 +733,7 @@
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.tabPage5.ResumeLayout(false);
+            this.modContextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -775,6 +794,8 @@
         public System.Windows.Forms.ListView lsvMods;
         public System.Windows.Forms.ListView lsvLog;
         public System.Windows.Forms.ToolStripStatusLabel labelStatus;
+        private System.Windows.Forms.ContextMenuStrip modContextMenu;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
     }
 }
 

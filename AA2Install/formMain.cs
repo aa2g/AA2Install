@@ -24,10 +24,11 @@ namespace AA2Install
     public partial class formMain : Form
     {
         public ModDictionary modDict = new ModDictionary();
-
-#warning Add removal of mods from main view
+        
 #warning Add retry delete mod if it's being accessed
 #warning Fix bug when checking conflicts with filter enabled
+#warning Change log to display time taken on it's own row
+#warning Add proper fatal error handling
 
         #region Preferences
 
@@ -231,17 +232,17 @@ namespace AA2Install
                 }
             }
 
-            foreach (Mod mn in modDict.Values.ToList())
+            foreach (Mod m in modDict.Values.ToList())
             {
-                Mod m = mn;
                 //bool backup = File.Exists(Paths.BACKUP + "\\" + m.Name.Remove(0, m.Name.LastIndexOf('\\') + 1).Replace(".zip", ".7z"));
 
                 if (!File.Exists(m.Filename) && !m.Installed)
                 {
+                    modDict.Remove(m.Name);
                     continue;
                 }
 
-                if (!m.Name.ToLower().Contains(filter.ToLower()) && filter != "")
+                if (!m.Name.Replace(".7z", "").Replace(".zip", "").ToLower().Contains(filter.ToLower()) && filter != "")
                     continue;
 
                 lsvMods.Items.Add(m.Name, m.Name.Replace(".7z", "").Replace(".zip", ""), 0);
@@ -869,6 +870,26 @@ namespace AA2Install
             TaskbarProgress.SetState(this.Handle, state);
             TaskbarProgress.SetValue(this.Handle, value, maximum);
         }
+        
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lsvMods.SelectedItems.Count > 0)
+            {
+                List<string> filenames = new List<string>(Enumerable.Range(0, lsvMods.SelectedItems.Count)
+                    .Select(index => ((Mod)lsvMods.SelectedItems[index].Tag).Filename));
+
+                List<string> names = new List<string>(filenames.Select(i => i.Remove(0, i.LastIndexOf('\\') + 1)));
+
+                var result = MessageBox.Show("Are you sure you want to delete mod(s): " + Environment.NewLine + names.Aggregate((i, j) => i + Environment.NewLine + j), "Delete mods?", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    foreach (string s in filenames)
+                        File.Delete(s);
+
+                    refreshModList();
+                }
+            }
+        }
         #endregion
         #region Form Events
         public formMain()
@@ -919,6 +940,8 @@ namespace AA2Install
         List<string> imageLoop = new List<string>();
         private void lsvMods_SelectedIndexChanged(object sender, EventArgs e)
         {
+            deleteToolStripMenuItem.Enabled = lsvMods.SelectedItems.Count > 0;
+
             if (lsvMods.SelectedItems.Count > 0)
             {
                 if (imagePreview.Image != null) 
