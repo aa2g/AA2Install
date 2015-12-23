@@ -24,9 +24,6 @@ namespace AA2Install
     public partial class formMain : Form
     {
         public ModDictionary modDict = new ModDictionary();
-        
-#warning Fix bug when checking conflicts with filter enabled
-#warning Change log to display time taken on it's own row
 
         #region Preferences
 
@@ -315,7 +312,7 @@ namespace AA2Install
                 prgMinor.Style = ProgressBarStyle.Continuous;
 
                 prgMinor.Value = prgMinor.Maximum;
-                updateStatus("Ready.", LogIcon.OK);
+                updateStatus("Ready.", LogIcon.OK, false);
 
 
                 setEnabled(true);
@@ -374,8 +371,8 @@ namespace AA2Install
 
             if (prearc.Count + postarc.Count == 0)
             {
-                updateStatus("FAILED: No changes in selected mods");
-                updateStatus("No changes in selected mods found.", LogIcon.Error);
+                updateStatus("No changes in selected mods found.", LogIcon.Error, false);
+                updateStatus("FAILED: No changes in selected mods", LogIcon.Error, false, true);
                 return false;
             }
 
@@ -395,11 +392,14 @@ namespace AA2Install
             //Check if directory exists
             if (!(Directory.Exists(Paths.AA2Play) && Directory.Exists(Paths.AA2Edit)))
             {
-                updateStatus("FAILED: AA2Play/AA2Edit is not installed/cannot be found");
+                updateStatus("AA2Play/AA2Edit is not installed/cannot be found", LogIcon.Error, false);
+                updateStatus("FAILED: AA2Play/AA2Edit is not installed/cannot be found", LogIcon.Error, false, true);
                 btnApply.Enabled = true;
                 btnRefresh.Enabled = true;
                 return false;
             }
+
+            refreshModList(true);
             
             //Clear and create temp
             updateStatus("Clearing TEMP folder...");
@@ -490,9 +490,9 @@ namespace AA2Install
                 if (conflict)
                 {
                     foreach (string c in conflicts)
-                        updateStatus(c, LogIcon.Error);
+                        updateStatus(c, LogIcon.Error, false);
+                    updateStatus("Collision detected.", LogIcon.Error, false);
                     updateStatus("FAILED: The highlighted mods have conflicting files", LogIcon.Ready, false, true);
-                    updateStatus("Collision detected.", LogIcon.Error);
                     MessageBox.Show("Some mods have been detected to have conflicting files.\nYou can use the log to manually fix the conflicting files in the mods (if they can be fixed) or you can proceed anyway by changing the relevant setting in the preferences.\nNote: if you proceed anyway, to uninstall you must uninstall mods in the reverse order you installed them to ensure that wrong files are not left behind.", "Collision detected", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     setEnabled(true);
                     prgMinor.Value = 0;
@@ -791,7 +791,7 @@ namespace AA2Install
             TryDeleteDirectory(Paths.TEMP);
             TryDeleteDirectory(Paths.WORKING);
 
-            updateStatus("Success!", LogIcon.OK);
+            updateStatus("Success!", LogIcon.OK, false);
             updateTaskbarProgress(TaskbarProgress.TaskbarStates.NoProgress);
             if (!suppressPopups)
                 MessageBox.Show("Mods successfully synced.");
@@ -1154,6 +1154,8 @@ namespace AA2Install
             bench = DateTime.Now;
             return diff;
         }
+
+        private bool showTime = false;
         public void updateStatus(string entry, LogIcon icon = LogIcon.Ready, bool displayTime = true, bool onlyStatusBar = false)
         {
             if (onlyStatusBar)
@@ -1170,7 +1172,12 @@ namespace AA2Install
                         lsvLog.Items.Add(entry, (int)icon);
                         break;
                     default:
-                        lsvLog.Items.Add("(" + Math.Round(getTimeSinceLastCheck().TotalMilliseconds / 1000, 2).ToString() + "s) " + entry, (int)icon);
+                        if (lsvLog.Items.Count > 0 && showTime)
+                        {
+                            lsvLog.Items[lsvLog.Items.Count - 1].SubItems.Add((getTimeSinceLastCheck().TotalMilliseconds / 1000).ToString("F2") + "s");
+                        }
+                        showTime = displayTime;
+                        lsvLog.Items.Add( entry, (int)icon);
                         labelStatus.Text = entry;
                         break;
                 }
