@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AA2Install")]
-[assembly: AssemblyDescription("Open Source alternative to Illusion Wizzard")]
+[assembly: AssemblyDescription("FOSS alternative to Illusion Wizzard")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("/aa2g/")]
 [assembly: AssemblyProduct("AA2Install")]
-[assembly: AssemblyCopyright("Copyright © /aa2g/ 2015")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.6.0.0")]
+[assembly: AssemblyFileVersion("0.6.0.0")]
