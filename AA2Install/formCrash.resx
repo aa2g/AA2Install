@@ -120,7 +120,7 @@
   <data name="label1.Text" xml:space="preserve">
     <value>AA2Install has crashed. If you were in the middle of an un/install, your game may have become corrupt.
 
-Please notify the dev (via a github issue  or directly on /aa2g/ or hongfire ) of this, what you were doing and link the following files:</value>
+Please notify the dev (via a github issue  or directly on /aa2g/ or hongfire ) of this, what you were doing and attach the following files:</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

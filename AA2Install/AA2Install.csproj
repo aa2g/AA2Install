@@ -146,7 +146,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Changelog.txt" />
+    <EmbeddedResource Include="Changelog.txt" />
     <None Include="resources\aa2install error.png" />
     <None Include="resources\AA2Install.ico" />
   </ItemGroup>
@@ -155,6 +155,9 @@
       <Project>{5647b104-8f58-4867-b849-dac65d5243bd}</Project>
       <Name>SB3UtilityPP</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\gears.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

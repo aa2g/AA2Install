@@ -400,8 +400,20 @@ namespace AA2Install
             }
 
             refreshModList(true);
-            
-            //Clear and create temp
+
+            foreach (ListViewItem l in lsvMods.Items)
+            {
+                Mod m = (Mod)l.Tag;
+                foreach (Mod n in mods)
+                    if (n.Filename == m.Filename)
+                        l.Checked = true;
+                
+                foreach (Mod n in unmods)
+                    if (n.Filename == m.Filename)
+                        l.Checked = false;
+            }
+
+                //Clear and create temp
             updateStatus("Clearing TEMP folder...");
             updateStatus("Clearing temporary folders...");
 
@@ -921,6 +933,11 @@ namespace AA2Install
                 }
             }
         }
+
+        private void clearLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lsvLog.Items.Clear();
+        }
         #endregion
         #region Form Events
         public formMain()
@@ -931,6 +948,9 @@ namespace AA2Install
 
         private void formMain_Shown(object sender, EventArgs e)
         {
+            //Change title
+            this.Text = "AA2Install v" + formAbout.AssemblyVersion;
+
             //Resize the column
             lsvMods_SizeChanged(null, null);
 
@@ -1165,6 +1185,11 @@ namespace AA2Install
             else
             {
                 Console.ProgramLog.Add(new LogEntry(entry, icon));
+                        if (lsvLog.Items.Count > 0 && showTime)
+                        {
+                            lsvLog.Items[lsvLog.Items.Count - 1].SubItems.Add((getTimeSinceLastCheck().TotalMilliseconds / 1000).ToString("F2") + "s");
+                        }
+                        showTime = displayTime;
                 switch (icon)
                 {
                     case LogIcon.Error:
@@ -1172,12 +1197,7 @@ namespace AA2Install
                         lsvLog.Items.Add(entry, (int)icon);
                         break;
                     default:
-                        if (lsvLog.Items.Count > 0 && showTime)
-                        {
-                            lsvLog.Items[lsvLog.Items.Count - 1].SubItems.Add((getTimeSinceLastCheck().TotalMilliseconds / 1000).ToString("F2") + "s");
-                        }
-                        showTime = displayTime;
-                        lsvLog.Items.Add( entry, (int)icon);
+                        lsvLog.Items.Add(entry, (int)icon);
                         labelStatus.Text = entry;
                         break;
                 }
