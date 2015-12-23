@@ -1,4 +1,6 @@
-﻿Pre6
+﻿Changelog
+
+v6
 + Major backend overhaul, config related issues are now simple to fix (if they even arise)
 + Much more aggressive flush config
 + Now handles crashes in the program itself, so you can send me proper error dumps
@@ -6,6 +8,9 @@
 + Taskbar now shows progress
 + Added the ability to delete mods from the main view
 + Prompts user if file is in use when trying to delete a file
++ Pretty new dialogs
++ Fixed more small UI bugs
++ Officially now a stable build
 
 Pre5.2.2
 + Fixed not deleting files when there are no subfiles detected
