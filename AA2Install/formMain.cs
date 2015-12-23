@@ -27,7 +27,6 @@ namespace AA2Install
         
 #warning Fix bug when checking conflicts with filter enabled
 #warning Change log to display time taken on it's own row
-#warning Add proper fatal error handling
 
         #region Preferences
 
@@ -1163,6 +1162,7 @@ namespace AA2Install
             }
             else
             {
+                Console.ProgramLog.Add(new LogEntry(entry, icon));
                 switch (icon)
                 {
                     case LogIcon.Error:

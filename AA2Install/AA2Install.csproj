@@ -69,6 +69,12 @@
     <Compile Include="formAbout.Designer.cs">
       <DependentUpon>formAbout.cs</DependentUpon>
     </Compile>
+    <Compile Include="formCrash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="formCrash.Designer.cs">
+      <DependentUpon>formCrash.cs</DependentUpon>
+    </Compile>
     <Compile Include="formMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -83,6 +89,9 @@
     <Compile Include="TaskbarProgress.cs" />
     <EmbeddedResource Include="formAbout.resx">
       <DependentUpon>formAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="formCrash.resx">
+      <DependentUpon>formCrash.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="formMain.resx">
       <DependentUpon>formMain.cs</DependentUpon>
@@ -138,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Changelog.txt" />
+    <None Include="resources\aa2install error.png" />
     <None Include="resources\AA2Install.ico" />
   </ItemGroup>
   <ItemGroup>

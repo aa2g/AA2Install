@@ -20,8 +20,8 @@ namespace AA2Install.Archives
         /// <returns>Structure containing mod info.</returns>
         public static Mod Index(string filename, bool miscFiles = false)
         {
-            List<string> oldlist = Console.Log;
-            Console.Log.Clear();
+            List<string> oldlist = Console.ConsoleLog;
+            Console.ConsoleLog.Clear();
             using (Process p = new Process())
             {
                 p.StartInfo.FileName = Paths._7Za;
@@ -42,7 +42,7 @@ namespace AA2Install.Archives
             }
             List<string> ModItems = new List<string>();
             var subfiles = new List<string>();
-            foreach (string s in Console.Log)
+            foreach (string s in Console.ConsoleLog)
             {
                 Regex r = new Regex(@"^\d{4}");
                 if (r.IsMatch(s))
@@ -68,7 +68,7 @@ namespace AA2Install.Archives
                     }
                 }
             }
-            Console.Log = oldlist;
+            Console.ConsoleLog = oldlist;
             var name = filename;
             ulong size;
             if (ModItems.Count > 3)
