@@ -9,13 +9,30 @@ namespace AA2Install
 {
     public static class Console
     {
-        public static List<string> Log = new List<string>();
-        
-        public static void ProcessOutputHandler(object sender, DataReceivedEventArgs e) => Log.Add(e.Data ?? string.Empty);
+        public static List<string> ConsoleLog = new List<string>();
+        public static List<LogEntry> ProgramLog = new List<LogEntry>();
+
+        public static void ProcessOutputHandler(object sender, DataReceivedEventArgs e) => ConsoleLog.Add(e.Data ?? string.Empty);
 
         public static void InitializeOutput()
         {
             Archives._7z.OutputDataRecieved += new DataReceivedEventHandler(ProcessOutputHandler);
+        }
+    }
+
+    [Serializable()]
+    public class LogEntry
+    {
+        public string log;
+        public DateTime time;
+        public formMain.LogIcon logicon;
+
+        public LogEntry() { }
+        public LogEntry(string entry, formMain.LogIcon icon)
+        {
+            log = entry;
+            time = DateTime.Now;
+            logicon = icon;
         }
     }
 }
