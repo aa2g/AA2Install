@@ -92,6 +92,11 @@ namespace AA2Install.Tests
             Assert.IsTrue(form.inject(true, true, true), "Installation injection failed. Log: {0}", new object[] { form.labelStatus.Text });
             hasInstalled = true;
 
+            foreach (Mod m in form.modDict.Values)
+            {
+                Assert.IsTrue(m.Installed, "Backup archive for {0} was not created.", new object[] { m.Name });
+            }
+            
             Assert.IsTrue(File.Exists(Environment.CurrentDirectory + @"\testdir\jg2e04_00_TEST.pp"), "jg2e04_00_TEST.pp was not created.");
             Assert.IsTrue(File.Exists(Environment.CurrentDirectory + @"\testdir\jg2p01_00_TEST.pp"), "jg2p01_00_TEST.pp was not created.");
 
@@ -133,6 +138,14 @@ namespace AA2Install.Tests
                 lv.Checked = false;
 
             Assert.IsTrue(form.inject(false, false, true), "Uninstallation injection failed. Log: {0}", new object[] { form.labelStatus.Text });
+
+            Assert.IsTrue(!File.Exists(Environment.CurrentDirectory + @"\testdir\jg2e04_00_TEST.pp"), "jg2e04_00_TEST.pp was not deleted.");
+            Assert.IsTrue(!File.Exists(Environment.CurrentDirectory + @"\testdir\jg2p01_00_TEST.pp"), "jg2p01_00_TEST.pp was not deleted.");
+
+            foreach (Mod m in form.modDict.Values)
+            {
+                Assert.IsTrue(!m.Installed, "Backup archive for {0} was not deleted.", new object[] { m.Name });
+            }
 
             Assert.IsTrue(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count, "Amount of restored changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", new object[] { subfiles.Count, new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count });
 
