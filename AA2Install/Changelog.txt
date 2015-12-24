@@ -3,6 +3,7 @@
 v6.1
 + Fixed issue with console not displaying output
 + Added a splash screen to offload UI startup logic
++ Updated mod deletion
 
 v6
 + Major backend overhaul, config related issues are now simple to fix (if they even arise)
