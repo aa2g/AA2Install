@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.IO;
 using SB3Utility;
 using System.Windows.Forms;
+using AA2Install.Archives;
+using System.Diagnostics;
 
 namespace AA2Install.Tests
 {
@@ -28,9 +30,26 @@ namespace AA2Install.Tests
             Configuration.WriteSetting("AA2PLAY_Path", Environment.CurrentDirectory + @"\testdir\");
             Configuration.WriteSetting("AA2EDIT_Path", Environment.CurrentDirectory + @"\testdir\");
 
-            Console.InitializeOutput();
             Configuration.saveMods(new ModDictionary());
             form = new formMain();
+            form.Show();
+
+            /*
+            Console.InitializeOutput();
+            _7z.OutputDataRecieved += new DataReceivedEventHandler((s, e) =>
+            {
+                form.BeginInvoke(new MethodInvoker(() =>
+                {
+                    form.rtbConsole.AppendText((e.Data ?? string.Empty) + Environment.NewLine);
+                }));
+            });
+            if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
+            if (!Directory.Exists(Paths.MODS)) { Directory.CreateDirectory(Paths.MODS + @"\"); }
+            form.lsvMods.ListViewItemSorter = new CustomListViewSorter(int.Parse(Configuration.ReadSetting("SORTMODE") ?? "0"));
+            form.cmbSorting.SelectedIndex = int.Parse(Configuration.ReadSetting("SORTMODE") ?? "0");
+            form.loadUIConfiguration();
+            */
+
             hasInstalled = false;
         }
 
@@ -45,18 +64,21 @@ namespace AA2Install.Tests
             //Overall test
             form.refreshModList();
             expected = 2;
-            Assert.IsTrue(form.lsvMods.Items.Count == expected, "lsvMods did not show the true amount of mods for the overall test. Expected value: {0}; Actual value: {1}", new object[] { expected, form.lsvMods.Items.Count });
+            Assert.IsTrue(form.lsvMods.Items.Count == expected, "lsvMods did not show the true amount of mods for the overall test. Expected value: {0}; Actual value: {1}", expected, form.lsvMods.Items.Count);
 
             //Filter test
             form.refreshModList(true, "dummy");
             expected = 1;
-            Assert.IsTrue(form.lsvMods.Items.Count == expected, "lsvMods did not show the true amount of mods for the filter test. Expected value: {0}; Actual value: {1}", new object[] { expected, form.lsvMods.Items.Count });
-            Assert.IsTrue(form.lsvMods.Items[0].Text == "[AA2] DUMMY MOD", "lsvMods did not display the correct name of the mod. Expected value: {0}; Actual value: {1}", new object[] { "[AA2] DUMMY MOD", form.lsvMods.Items[0].Name });
+            Assert.IsTrue(form.lsvMods.Items.Count == expected, "lsvMods did not show the true amount of mods for the filter test. Expected value: {0}; Actual value: {1}", expected, form.lsvMods.Items.Count);
+            Assert.IsTrue(form.lsvMods.Items[0].Text == "[AA2] DUMMY MOD", "lsvMods did not display the correct name of the mod. Expected value: {0}; Actual value: {1}", "[AA2] DUMMY MOD", form.lsvMods.Items[0].Name);
 
             //Filter test without result
             form.refreshModList(true, "wew lad");
             expected = 0;
-            Assert.IsTrue(form.lsvMods.Items.Count == expected, "lsvMods did not show the true amount of mods for the no result filter test. Expected value: {0}; Actual value: {1}", new object[] { expected, form.lsvMods.Items.Count });
+            Assert.IsTrue(form.lsvMods.Items.Count == expected, "lsvMods did not show the true amount of mods for the no result filter test. Expected value: {0}; Actual value: {1}", expected, form.lsvMods.Items.Count);
+
+            Assert.IsTrue(Console.ConsoleLog.Count > 0, "Nothing was written to internal console log.");
+            Assert.IsTrue(form.rtbConsole.TextLength > 0, "Nothing was written to external console log.");
         }
 
         /// <summary>
@@ -89,12 +111,12 @@ namespace AA2Install.Tests
             foreach (ListViewItem lv in form.lsvMods.Items)
                 lv.Checked = true;
 
-            Assert.IsTrue(form.inject(true, true, true), "Installation injection failed. Log: {0}", new object[] { form.labelStatus.Text });
+            Assert.IsTrue(form.inject(true, true, true), "Installation injection failed. Log: {0}", form.labelStatus.Text);
             hasInstalled = true;
 
             foreach (Mod m in form.modDict.Values)
             {
-                Assert.IsTrue(m.Installed, "Backup archive for {0} was not created.", new object[] { m.Name });
+                Assert.IsTrue(m.Installed, "Backup archive for {0} was not created.", m.Name);
             }
             
             Assert.IsTrue(File.Exists(Environment.CurrentDirectory + @"\testdir\jg2e04_00_TEST.pp"), "jg2e04_00_TEST.pp was not created.");
@@ -129,22 +151,22 @@ namespace AA2Install.Tests
             };
 
             //Assert.IsFalse(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count, "Subfiles have not changed.");
-            Assert.IsTrue(diff.Count == TrueCRC.Count, "Amount of changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", new object[] { TrueCRC.Count, diff.Count });
+            Assert.IsTrue(diff.Count == TrueCRC.Count, "Amount of changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", TrueCRC.Count, diff.Count);
 
             foreach (KeyValuePair<string, uint> kv in TrueCRC)
-                Assert.IsTrue(kv.Value == diff[kv.Key], "CRC check failed after installation. Key: {0}; Expected value: {1}; Actual value: {2}", new object[] { kv.Key, kv.Value, diff[kv.Key] });
+                Assert.IsTrue(kv.Value == diff[kv.Key], "CRC check failed after installation. Key: {0}; Expected value: {1}; Actual value: {2}", kv.Key, kv.Value, diff[kv.Key]);
 
             foreach (ListViewItem lv in form.lsvMods.Items)
                 lv.Checked = false;
 
-            Assert.IsTrue(form.inject(false, false, true), "Uninstallation injection failed. Log: {0}", new object[] { form.labelStatus.Text });
+            Assert.IsTrue(form.inject(false, false, true), "Uninstallation injection failed. Log: {0}", form.labelStatus.Text);
 
             Assert.IsTrue(!File.Exists(Environment.CurrentDirectory + @"\testdir\jg2e04_00_TEST.pp"), "jg2e04_00_TEST.pp was not deleted.");
             Assert.IsTrue(!File.Exists(Environment.CurrentDirectory + @"\testdir\jg2p01_00_TEST.pp"), "jg2p01_00_TEST.pp was not deleted.");
 
             foreach (Mod m in form.modDict.Values)
             {
-                Assert.IsTrue(!m.Installed, "Backup archive for {0} was not deleted.", new object[] { m.Name });
+                Assert.IsTrue(!m.Installed, "Backup archive for {0} was not deleted.", m.Name);
             }
 
             Assert.IsTrue(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count, "Amount of restored changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", new object[] { subfiles.Count, new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count });
@@ -159,9 +181,11 @@ namespace AA2Install.Tests
                     mem.Read(buffer, 0, (int)mem.Length);
 
                     var value = DamienG.Security.Cryptography.Crc32.Compute(buffer);
-                    Assert.IsTrue(CRCValues[kv.Name] == value, "CRC check failed after uninstallation. Key: {0}; Expected value: {1}; Actual value: {2}", new object[] { kv.Name, CRCValues[kv.Name], value });
+                    Assert.IsTrue(CRCValues[kv.Name] == value, "CRC check failed after uninstallation. Key: {0}; Expected value: {1}; Actual value: {2}", kv.Name, CRCValues[kv.Name], value);
                 }
             }
+            Assert.IsTrue(Console.ConsoleLog.Count > 0, "Nothing was written to internal console log.");
+            Assert.IsTrue(form.rtbConsole.TextLength > 0, "Nothing was written to external console log.");
 
             Configuration.saveMods(form.modDict);
         }

@@ -27,7 +27,7 @@ namespace AA2Install
 
         #region Preferences
 
-        private void loadUIConfiguration()
+        public void loadUIConfiguration()
         {
             btnAA2PLAY.Enabled = txtAA2PLAY.Enabled = checkAA2PLAY.Checked = Configuration.getBool("AA2PLAY");
             txtAA2PLAY.Text = Configuration.ReadSetting("AA2PLAY_Path") ?? "";
@@ -946,7 +946,7 @@ namespace AA2Install
         }
 
 
-        private void formMain_Shown(object sender, EventArgs e)
+        public void formMain_Shown(object sender, EventArgs ev)
         {
             //Change title
             this.Text = "AA2Install v" + formAbout.AssemblyVersion;
@@ -962,6 +962,13 @@ namespace AA2Install
 
             //Set event handlers
             Console.InitializeOutput();
+            _7z.OutputDataRecieved += new DataReceivedEventHandler((s, e) =>
+            {
+                this.BeginInvoke(new MethodInvoker(() =>
+                {
+                    rtbConsole.AppendText((e.Data ?? string.Empty) + Environment.NewLine);
+                }));
+            });
 
             //Create necessary folders
             if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
