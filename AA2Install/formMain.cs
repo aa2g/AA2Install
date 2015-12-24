@@ -18,6 +18,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.Xml;
 using System.Xml.Schema;
+using System.Threading;
 
 namespace AA2Install
 {
@@ -948,8 +949,41 @@ namespace AA2Install
 
         public void formMain_Shown(object sender, EventArgs ev)
         {
+            Hide();
+            bool done = false;
+
             //Change title
             this.Text = "AA2Install v" + formAbout.AssemblyVersion;
+
+            //Show splash
+            /*statusUpdated += new statusUpdatedEventHandler((s) =>
+            {
+                splash.BeginInvoke(new MethodInvoker(() =>
+                {
+                    splash.lblStatus.Text = s;
+                }));
+            });
+            splash.Show();*/
+            ThreadPool.QueueUserWorkItem((x) =>
+            {
+                using (var splashForm = new formSplash())
+                {
+                    splashForm.lblVer.Text = "AA2Install v" + formAbout.AssemblyVersion;
+                    statusUpdated += (s) =>
+                    {
+                        splashForm.BeginInvoke(new MethodInvoker(() =>
+                        {
+                            splashForm.lblStatus.Text = s;
+                        }));
+                    };
+                    splashForm.Show();
+                    while (!done)
+                        Application.DoEvents();
+
+                    statusUpdated = null;
+                    splashForm.Close();
+                }
+            });
 
             //Resize the column
             lsvMods_SizeChanged(null, null);
@@ -991,6 +1025,10 @@ namespace AA2Install
                     rtbConsole.ScrollToCaret();
                 }
             };
+
+            //Hide splash
+            done = true;
+            Show();
         }
         #endregion
         #region Image and Description
@@ -1182,9 +1220,14 @@ namespace AA2Install
             return diff;
         }
 
+        public delegate void statusUpdatedEventHandler(string status);
+        public event statusUpdatedEventHandler statusUpdated;
+
         private bool showTime = false;
         public void updateStatus(string entry, LogIcon icon = LogIcon.Ready, bool displayTime = true, bool onlyStatusBar = false)
         {
+            if (statusUpdated != null)
+                statusUpdated(entry);
             if (onlyStatusBar)
             {
                 labelStatus.Text = entry;
