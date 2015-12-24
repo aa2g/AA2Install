@@ -257,6 +257,7 @@
             this.lsvMods.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.lsvMods_DrawItem);
             this.lsvMods.SelectedIndexChanged += new System.EventHandler(this.lsvMods_SelectedIndexChanged);
             this.lsvMods.SizeChanged += new System.EventHandler(this.lsvMods_SizeChanged);
+            this.lsvMods.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lsvMods_KeyPress);
             // 
             // columnHeader1
             // 

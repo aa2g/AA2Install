@@ -919,19 +919,31 @@ namespace AA2Install
         {
             if (lsvMods.SelectedItems.Count > 0)
             {
-                List<string> filenames = new List<string>(Enumerable.Range(0, lsvMods.SelectedItems.Count)
-                    .Select(index => ((Mod)lsvMods.SelectedItems[index].Tag).Filename));
+                //Paths.BACKUP + "\\" + Name.Replace(".zip", ".7z")
+                List<Mod> mods = new List<Mod>(Enumerable.Range(0, lsvMods.SelectedItems.Count)
+                    .Select(index => (Mod)lsvMods.SelectedItems[index].Tag));
 
-                List<string> names = new List<string>(filenames.Select(i => i.Remove(0, i.LastIndexOf('\\') + 1)));
-
-                var result = MessageBox.Show("Are you sure you want to delete mod(s): " + Environment.NewLine + names.Aggregate((i, j) => i + Environment.NewLine + j), "Delete mods?", MessageBoxButtons.YesNo);
+                var result = MessageBox.Show("Are you sure you want to delete mod(s): " + Environment.NewLine + mods.Select(m => m.Name).Aggregate((i, j) => i + Environment.NewLine + j), "Delete mods?", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
-                    foreach (string s in filenames)
-                        tryDelete(s);
-
+                    foreach (Mod m in mods)
+                    {
+                        if (m.Installed)
+                            tryDelete(Paths.BACKUP + "\\" + m.Name.Replace(".zip", ".7z"));
+                        tryDelete(m.Filename);
+                    }
                     refreshModList();
                 }
+            }
+        }
+
+        private void lsvMods_KeyPress(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Delete:
+                    deleteToolStripMenuItem_Click(null, null);
+                    break;
             }
         }
 
