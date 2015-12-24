@@ -1,5 +1,8 @@
 ﻿Changelog
 
+v6.1
++ Fixed issue with console not displaying output
+
 v6
 + Major backend overhaul, config related issues are now simple to fix (if they even arise)
 + Much more aggressive flush config

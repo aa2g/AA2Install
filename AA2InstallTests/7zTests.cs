@@ -37,6 +37,8 @@ namespace AA2Install.Archives.Tests
             Assert.IsTrue(m.SubFilenames.Contains(@"AA2_PLAY\4.jpg"));
             Assert.IsTrue(m.SubFilenames.Contains(@"AA2_MAKE\3.png"));
             Assert.IsTrue(m.SubFilenames.Count == 2);
+
+            Assert.IsTrue(Console.ConsoleLog.Count > 0);
         }
     }
 }

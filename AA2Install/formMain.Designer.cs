@@ -153,26 +153,26 @@
             // clearConsoleToolStripMenuItem
             // 
             this.clearConsoleToolStripMenuItem.Name = "clearConsoleToolStripMenuItem";
-            this.clearConsoleToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.clearConsoleToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.clearConsoleToolStripMenuItem.Text = "Clear Console";
             this.clearConsoleToolStripMenuItem.Click += new System.EventHandler(this.clearConsoleToolStripMenuItem_Click);
             // 
             // clearLogToolStripMenuItem
             // 
             this.clearLogToolStripMenuItem.Name = "clearLogToolStripMenuItem";
-            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.clearLogToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.clearLogToolStripMenuItem.Text = "Clear Log";
             this.clearLogToolStripMenuItem.Click += new System.EventHandler(this.clearLogToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(144, 6);
             // 
             // flushCacheToolStripMenuItem
             // 
             this.flushCacheToolStripMenuItem.Name = "flushCacheToolStripMenuItem";
-            this.flushCacheToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.flushCacheToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.flushCacheToolStripMenuItem.Text = "Flush Cache";
             this.flushCacheToolStripMenuItem.Click += new System.EventHandler(this.flushCacheToolStripMenuItem_Click);
             // 
@@ -728,7 +728,7 @@
             this.MinimumSize = new System.Drawing.Size(880, 519);
             this.Name = "formMain";
             this.Text = "AA2Install";
-            this.Shown += new System.EventHandler(this.formMain_Shown);
+            this.Load += new System.EventHandler(this.formMain_Shown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
@@ -773,7 +773,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.RichTextBox rtbConsole;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusMain;
@@ -808,7 +807,6 @@
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ToolStripButton btnCancel;
-        private System.Windows.Forms.ToolStripComboBox cmbSorting;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripTextBox txtSearch;
@@ -823,6 +821,8 @@
         private System.Windows.Forms.ToolStripMenuItem clearLogToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem flushCacheToolStripMenuItem;
+        public System.Windows.Forms.RichTextBox rtbConsole;
+        public System.Windows.Forms.ToolStripComboBox cmbSorting;
     }
 }
 
