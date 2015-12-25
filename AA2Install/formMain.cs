@@ -991,21 +991,13 @@ namespace AA2Install
 
         public void formMain_Shown(object sender, EventArgs ev)
         {
-            Hide();
+            //Hide();
             bool done = false;
 
             //Change title
             this.Text = "AA2Install v" + formAbout.AssemblyVersion;
 
             //Show splash
-            /*statusUpdated += new statusUpdatedEventHandler((s) =>
-            {
-                splash.BeginInvoke(new MethodInvoker(() =>
-                {
-                    splash.lblStatus.Text = s;
-                }));
-            });
-            splash.Show();*/
             ThreadPool.QueueUserWorkItem((x) =>
             {
                 using (var splashForm = new formSplash())
@@ -1024,6 +1016,7 @@ namespace AA2Install
 
                     statusUpdated = null;
                     splashForm.Close();
+                    this.BeginInvoke(new MethodInvoker((() => { this.Activate(); })));
                 }
             });
 
