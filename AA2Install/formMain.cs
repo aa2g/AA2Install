@@ -911,25 +911,55 @@ namespace AA2Install
 
         private void updateTaskbarProgress(int value, int maximum, TaskbarProgress.TaskbarStates state = TaskbarProgress.TaskbarStates.Normal)
         {
-            TaskbarProgress.SetState(this.Handle, state);
-            TaskbarProgress.SetValue(this.Handle, value, maximum);
+            try
+            {
+                TaskbarProgress.SetState(this.Handle, state);
+                TaskbarProgress.SetValue(this.Handle, value, maximum);
+            }
+            catch (System.Runtime.InteropServices.InvalidComObjectException) { }
         }
-        
+
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            deleteSelectedMods();
+        }
+
+        public void deleteSelectedMods(bool suppressDialogs = false)
         {
             if (lsvMods.SelectedItems.Count > 0)
             {
-                //Paths.BACKUP + "\\" + Name.Replace(".zip", ".7z")
                 List<Mod> mods = new List<Mod>(Enumerable.Range(0, lsvMods.SelectedItems.Count)
                     .Select(index => (Mod)lsvMods.SelectedItems[index].Tag));
 
-                var result = MessageBox.Show("Are you sure you want to delete mod(s): " + Environment.NewLine + mods.Select(m => m.Name).Aggregate((i, j) => i + Environment.NewLine + j), "Delete mods?", MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
+                DialogResult result = DialogResult.No;
+                if (!suppressDialogs)
+                    result = MessageBox.Show("Are you sure you want to delete mod(s): " + Environment.NewLine + mods.Select(m => m.Name).Aggregate((i, j) => i + Environment.NewLine + j), "Delete mods?", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes || suppressDialogs)
                 {
                     foreach (Mod m in mods)
                     {
                         if (m.Installed)
-                            tryDelete(Paths.BACKUP + "\\" + m.Name.Replace(".zip", ".7z"));
+                            if (!suppressDialogs)
+                                using (formDelete del = new formDelete(m.Name))
+                                    result = del.ShowDialog();
+                            else
+                                result = DialogResult.Yes;
+
+                            switch (result)
+                            {
+                                case DialogResult.OK: //delete only
+                                    tryDelete(Paths.BACKUP + "\\" + m.Name.Replace(".zip", ".7z"));
+                                    break;
+                                case DialogResult.Yes: //uninstall + delete
+                                    refreshModList(true);
+                                    lsvMods.Items[lsvMods.Items.IndexOfKey(m.Name)].Checked = false;
+                                    inject(false, false, true);
+                                    break;
+                                case DialogResult.Cancel:
+                                    return; //exit entire loop
+                            }
+                            
                         tryDelete(m.Filename);
                     }
                     refreshModList();
@@ -942,7 +972,7 @@ namespace AA2Install
             switch (e.KeyCode)
             {
                 case Keys.Delete:
-                    deleteToolStripMenuItem_Click(null, null);
+                    deleteSelectedMods();
                     break;
             }
         }
