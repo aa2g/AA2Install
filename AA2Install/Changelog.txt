@@ -2,6 +2,7 @@
 
 v6.2
 + Improved mod deletion again
++ Performance improvements
 
 v6.1
 + Fixed issue with console not displaying output

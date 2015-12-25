@@ -30,11 +30,11 @@ namespace AA2Install
 
         public void loadUIConfiguration()
         {
-            btnAA2PLAY.Enabled = txtAA2PLAY.Enabled = checkAA2PLAY.Checked = Configuration.getBool("AA2PLAY");
+            btnAA2PLAY.Enabled = txtAA2PLAY.Enabled = chkAA2PLAY.Checked = Configuration.getBool("AA2PLAY");
             txtAA2PLAY.Text = Configuration.ReadSetting("AA2PLAY_Path") ?? "";
-            btnAA2EDIT.Enabled = txtAA2EDIT.Enabled = checkAA2EDIT.Checked = Configuration.getBool("AA2EDIT");
+            btnAA2EDIT.Enabled = txtAA2EDIT.Enabled = chkAA2EDIT.Checked = Configuration.getBool("AA2EDIT");
             txtAA2EDIT.Text = Configuration.ReadSetting("AA2EDIT_Path") ?? "";
-            checkConflicts.Checked = Configuration.getBool("CONFLICTS");
+            chkConflicts.Checked = Configuration.getBool("CONFLICTS");
 
             lblEditPath.Text = "Current AA2_EDIT path: " + Paths.AA2Edit;
             lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
@@ -44,13 +44,15 @@ namespace AA2Install
 
         private void btnAA2PLAY_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog fold = new FolderBrowserDialog();
-            fold.Description = @"Locate the AA2_PLAY\data folder.";
-            DialogResult result = fold.ShowDialog();
-            if (result == DialogResult.OK)
+            using (FolderBrowserDialog fold = new FolderBrowserDialog())
             {
-                Configuration.WriteSetting("AA2PLAY_Path", fold.SelectedPath);
-                txtAA2PLAY.Text = fold.SelectedPath;
+                fold.Description = @"Locate the AA2_PLAY\data folder.";
+                DialogResult result = fold.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    Configuration.WriteSetting("AA2PLAY_Path", fold.SelectedPath);
+                    txtAA2PLAY.Text = fold.SelectedPath;
+                }
             }
         }
 
@@ -64,7 +66,7 @@ namespace AA2Install
 
         private void checkAA2PLAY_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkAA2PLAY.Checked)
+            if (chkAA2PLAY.Checked)
             {
                 txtAA2PLAY.Enabled = true;
                 btnAA2PLAY.Enabled = true;
@@ -74,7 +76,7 @@ namespace AA2Install
                 txtAA2PLAY.Enabled = false;
                 btnAA2PLAY.Enabled = false;
             }
-            Configuration.WriteSetting("AA2PLAY", checkAA2PLAY.Checked.ToString());
+            Configuration.WriteSetting("AA2PLAY", chkAA2PLAY.Checked.ToString());
 
             lblEditPath.Text = "Current AA2_EDIT path: " + Paths.AA2Edit;
             lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
@@ -82,7 +84,7 @@ namespace AA2Install
 
         private void checkAA2EDIT_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkAA2EDIT.Checked)
+            if (chkAA2EDIT.Checked)
             {
                 txtAA2EDIT.Enabled = true;
                 btnAA2EDIT.Enabled = true;
@@ -92,7 +94,7 @@ namespace AA2Install
                 txtAA2EDIT.Enabled = false;
                 btnAA2EDIT.Enabled = false;
             }
-            Configuration.WriteSetting("AA2EDIT", checkAA2EDIT.Checked.ToString());
+            Configuration.WriteSetting("AA2EDIT", chkAA2EDIT.Checked.ToString());
 
             lblEditPath.Text = "Current AA2_EDIT path: " + Paths.AA2Edit;
             lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
@@ -108,19 +110,21 @@ namespace AA2Install
 
         private void btnAA2EDIT_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog fold = new FolderBrowserDialog();
-            fold.Description = @"Locate the AA2_PLAY\data folder.";
-            DialogResult result = fold.ShowDialog();
-            if (result == DialogResult.OK)
+            using (FolderBrowserDialog fold = new FolderBrowserDialog())
             {
-                Configuration.WriteSetting("AA2EDIT_Path", fold.SelectedPath);
-                txtAA2EDIT.Text = fold.SelectedPath;
+                fold.Description = @"Locate the AA2_PLAY\data folder.";
+                DialogResult result = fold.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    Configuration.WriteSetting("AA2EDIT_Path", fold.SelectedPath);
+                    txtAA2EDIT.Text = fold.SelectedPath;
+                }
             }
         }
 
         private void checkConflicts_CheckedChanged(object sender, EventArgs e)
         {
-            Configuration.WriteSetting("CONFLICTS", checkConflicts.Checked.ToString());
+            Configuration.WriteSetting("CONFLICTS", chkConflicts.Checked.ToString());
         }
 
         #endregion
@@ -132,9 +136,9 @@ namespace AA2Install
         public void setEnabled(bool enabled)
         {
             lsvMods.Enabled = btnApply.Enabled = btnRefresh.Enabled =
-                checkAA2EDIT.Enabled = txtAA2EDIT.Enabled = btnAA2EDIT.Enabled =
-                checkAA2PLAY.Enabled = txtAA2PLAY.Enabled = btnAA2PLAY.Enabled =
-                checkConflicts.Enabled = btnMigrate.Enabled = btnBrowseMigrate.Enabled =
+                chkAA2EDIT.Enabled = txtAA2EDIT.Enabled = btnAA2EDIT.Enabled =
+                chkAA2PLAY.Enabled = txtAA2PLAY.Enabled = btnAA2PLAY.Enabled =
+                chkConflicts.Enabled = btnMigrate.Enabled = btnBrowseMigrate.Enabled =
                 txtMigrate.Enabled = txtBrowseMigrate.Enabled = btnCancel.Enabled = 
                 cmbSorting.Enabled = enabled;
         }
@@ -146,8 +150,10 @@ namespace AA2Install
         /// <param name="Filter">Filter; can have multiple filters split by '|'.</param>
         /// <param name="searchOption">Option to search by.</param>
         /// <returns>List of files in directory.</returns>
-        public string[] getFiles(string SourceFolder, string Filter, System.IO.SearchOption searchOption)
+        public static string[] getFiles(string SourceFolder, string Filter, System.IO.SearchOption searchOption)
         {
+            if (Filter == null)
+                return new string[] { };
             ArrayList alFiles = new ArrayList();
             string[] MultipleFilters = Filter.Split('|');
             foreach (string FileFilter in MultipleFilters)
@@ -189,7 +195,7 @@ namespace AA2Install
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public TryDeleteResult tryDelete(string filename)
+        public static TryDeleteResult tryDelete(string filename)
         {
             bool tryAgain = false;
 
@@ -229,6 +235,9 @@ namespace AA2Install
         /// </summary>
         public void refreshModList(bool skipReload = false, string filter = "")
         {
+            if (filter == null)
+                filter = "";
+
             lsvMods.Items.Clear();
             modDict = Configuration.loadMods();
             if (!skipReload)
@@ -278,7 +287,7 @@ namespace AA2Install
                     continue;
                 }
 
-                if (!m.Name.Replace(".7z", "").Replace(".zip", "").ToLower().Contains(filter.ToLower()) && filter != "")
+                if (!m.Name.Replace(".7z", "").Replace(".zip", "").ToLower().Contains(filter.ToLower()) && !string.IsNullOrWhiteSpace(filter))
                     continue;
 
                 lsvMods.Items.Add(m.Name, m.Name.Replace(".7z", "").Replace(".zip", ""), 0);
@@ -330,7 +339,7 @@ namespace AA2Install
             {
                 Directory.Delete(target_dir, true);
             }
-            catch (Exception) { }
+            catch (IOException) { }
         }
 
         /// <summary>
@@ -805,7 +814,7 @@ namespace AA2Install
             TryDeleteDirectory(Paths.WORKING);
 
             updateStatus("Success!", LogIcon.OK, false);
-            updateTaskbarProgress(TaskbarProgress.TaskbarStates.NoProgress);
+            updateTaskbarProgress(TaskbarProgress.TaskbarStates.None);
             if (!suppressPopups)
                 MessageBox.Show("Mods successfully synced.");
             refreshModList();
@@ -826,8 +835,8 @@ namespace AA2Install
         }
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form about = new formAbout();
-            about.ShowDialog();
+            using (Form about = new formAbout())
+                about.ShowDialog();
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -850,8 +859,8 @@ namespace AA2Install
                 if ((e.State & ListViewItemStates.Selected) > 0)
                 {
                     Color c = Color.FromKnownColor(KnownColor.Highlight);
-                    Brush brush = new LinearGradientBrush(e.Bounds, c, c, LinearGradientMode.Horizontal);
-                    e.Graphics.FillRectangle(brush, e.Bounds);
+                    using (Brush brush = new LinearGradientBrush(e.Bounds, c, c, LinearGradientMode.Horizontal))
+                        e.Graphics.FillRectangle(brush, e.Bounds);
                 }
             }
         }
@@ -873,14 +882,7 @@ namespace AA2Install
             if (Directory.Exists(Paths.CACHE))
                 TryDeleteDirectory(Paths.CACHE);
             Directory.CreateDirectory(Paths.CACHE + "\\");
-
-            var iter = modDict.ToDictionary(entry => entry.Key,
-                entry => entry.Value);
-            /*
-            foreach (Mod m in iter.Values)
-                if (!m.Installed)
-                    modDict.Remove(m.Name);
-           */
+            
             modDict = new ModDictionary();
 
             Configuration.saveMods(modDict);
@@ -889,7 +891,7 @@ namespace AA2Install
 
         private void btnApply_Click(object sender, EventArgs e)
         {
-            inject(false, !checkConflicts.Checked);
+            inject(false, !chkConflicts.Checked);
         }
 
         private void cmbSorting_SelectedIndexChanged(object sender, EventArgs e)
@@ -1162,7 +1164,7 @@ namespace AA2Install
                 {
                     imagePreview.Image.Dispose();
                     imagePreview.Image = new Bitmap(imageLoop[(imageIndex % imageLoop.Count)]);
-                    GC.Collect();
+                    //GC.Collect();
                     imageIndex++;
                 }
                 
@@ -1182,12 +1184,14 @@ namespace AA2Install
 
         private void btnBrowseMigrate_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog fold = new FolderBrowserDialog();
-            fold.Description = @"Locate the Wizzard install folder (where Illusion_Wizzard.exe is)";
-            DialogResult result = fold.ShowDialog();
-            if (result == DialogResult.OK)
+            using (FolderBrowserDialog fold = new FolderBrowserDialog())
             {
-                txtBrowseMigrate.Text = fold.SelectedPath;
+                fold.Description = @"Locate the Wizzard install folder (where Illusion_Wizzard.exe is)";
+                DialogResult result = fold.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    txtBrowseMigrate.Text = fold.SelectedPath;
+                }
             }
         }
 
@@ -1207,7 +1211,6 @@ namespace AA2Install
             }
             updateLog("Starting migration..");
             List<string> smods = new List<string>(Directory.GetFiles(txtBrowseMigrate.Text + @"\AA2_PLAY\mods\"));
-            List<string> backups = new List<string>(Directory.GetFiles(txtBrowseMigrate.Text + @"\AA2_PLAY\backups\"));
 
             int i = 0;
             foreach (string m in smods)
@@ -1248,15 +1251,18 @@ namespace AA2Install
         {
             bench = DateTime.Now;
         }
-        public TimeSpan getTimeSinceLastCheck()
+        public TimeSpan TimeSinceLastCheck
         {
-            var diff = DateTime.Now - bench;
-            bench = DateTime.Now;
-            return diff;
+            get
+            {
+                var diff = DateTime.Now - bench;
+                bench = DateTime.Now;
+                return diff;
+            }
         }
 
-        public delegate void statusUpdatedEventHandler(string status);
-        public event statusUpdatedEventHandler statusUpdated;
+        delegate void statusUpdatedEventHandler(string status);
+        event statusUpdatedEventHandler statusUpdated;
 
         private bool showTime = false;
         public void updateStatus(string entry, LogIcon icon = LogIcon.Ready, bool displayTime = true, bool onlyStatusBar = false)
@@ -1272,7 +1278,7 @@ namespace AA2Install
                 Console.ProgramLog.Add(new LogEntry(entry, icon));
                         if (lsvLog.Items.Count > 0 && showTime)
                         {
-                            lsvLog.Items[lsvLog.Items.Count - 1].SubItems.Add((getTimeSinceLastCheck().TotalMilliseconds / 1000).ToString("F2") + "s");
+                            lsvLog.Items[lsvLog.Items.Count - 1].SubItems.Add((TimeSinceLastCheck.TotalMilliseconds / 1000).ToString("F2") + "s");
                         }
                         showTime = displayTime;
                 switch (icon)
@@ -1294,16 +1300,17 @@ namespace AA2Install
     #region Structures
     [XmlRoot("mod")]
     [DebuggerDisplay("{Name}")]
+    [Serializable()]
     public class Mod : ISerializable, IXmlSerializable
     {
         #region Serialization
-        public Mod()
+        protected Mod()
         {
             Name = "<default>";
             Size = 0;
             SubFilenames = new List<string>();
         }
-        public Mod(SerializationInfo info, StreamingContext ctxt)
+        protected Mod(SerializationInfo info, StreamingContext ctxt)
         {
             
             Name = (string)info.GetValue("Name", typeof(string));
@@ -1315,7 +1322,7 @@ namespace AA2Install
             Properties = (SerializableDictionary<string, string>)info.GetValue("Properties", typeof(SerializableDictionary<string, string>));
         }
 
-        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("Name", Name);
             info.AddValue("Installed", Installed);
@@ -1326,9 +1333,9 @@ namespace AA2Install
             info.AddValue("Properties", Properties);
         }
 
-        XmlSchema IXmlSerializable.GetSchema() => null;
+        public XmlSchema GetSchema() => null;
 
-        void IXmlSerializable.ReadXml(XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
             reader.ReadStartElement();
 
@@ -1344,7 +1351,7 @@ namespace AA2Install
             reader.ReadEndElement();
         }
 
-        void IXmlSerializable.WriteXml(XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("Mod");
             //writer.WriteAttributeString("Assembly Version", FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion);
@@ -1377,6 +1384,9 @@ namespace AA2Install
         
         protected void setName(string newname)
         {
+            if (string.IsNullOrEmpty(newname))
+                return;
+
             if (newname.Contains('\\'))
                 Name = newname.Remove(0, newname.LastIndexOf('\\') + 1);
             else
@@ -1390,9 +1400,8 @@ namespace AA2Install
         }
 
         public string Filename => Paths.MODS + "\\" + Name;
-        
+
         private bool _Installed = false;
-        
         public bool Installed
         {
             get
@@ -1480,6 +1489,12 @@ namespace AA2Install
         }
         public int Compare(object x, object y)
         {
+            var Lx = x as ListViewItem;
+            var Ly = y as ListViewItem;
+
+            var Mx = Lx.Tag as Mod;
+            var My = Ly.Tag as Mod;
+
             if (x == y)
                 return 0;
 
@@ -1492,13 +1507,13 @@ namespace AA2Install
             {
                 case 0: //Text sorting
                 default:
-                    return string.Compare(((ListViewItem)x).Text, ((ListViewItem)y).Text);
+                    return string.Compare(Lx.Text, Ly.Text);
                 case 1: //Install date sorting
-                    if (((ListViewItem)x).Tag == null || !((Mod)((ListViewItem)x).Tag).Installed)
+                    if (Lx.Tag == null || !My.Installed)
                         return 1;
-                    if (((ListViewItem)y).Tag == null || !((Mod)((ListViewItem)y).Tag).Installed)
+                    if (Ly.Tag == null || !Mx.Installed)
                         return -1;
-                    return (int)(((Mod)((ListViewItem)y).Tag).InstallTime - ((Mod)((ListViewItem)x).Tag).InstallTime).TotalSeconds;
+                    return (int)(My.InstallTime - Mx.InstallTime).TotalSeconds;
             }
         }
     }
