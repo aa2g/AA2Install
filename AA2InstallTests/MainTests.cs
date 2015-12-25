@@ -20,7 +20,7 @@ namespace AA2Install.Tests
     public class MainTests
     {
         formMain form;
-        bool hasInstalled;
+        static bool hasInstalled;
 
         [TestInitialize()]
         public void Initialize()
@@ -190,8 +190,122 @@ namespace AA2Install.Tests
             Configuration.saveMods(form.modDict);
         }
 
-        [TestCleanup()]
-        public void Cleanup()
+        /// <summary>
+        /// Tests the deletion and uninstallation of mods.
+        /// </summary>
+        [TestMethod()]
+        public void deleteModTest()
+        {
+            Assert.IsTrue(File.Exists(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp"), Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp did not deploy");
+
+            form.refreshModList();
+
+            var subfiles = new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles;
+            Dictionary<string, uint> CRCValues = new Dictionary<string, uint>();
+
+            foreach (IWriteFile kv in subfiles)
+            {
+                using (MemoryStream mem = new MemoryStream())
+                {
+                    kv.WriteTo(mem);
+                    byte[] buffer = new byte[mem.Length];
+                    mem.Position = 0;
+                    mem.Read(buffer, 0, (int)mem.Length);
+
+                    var value = DamienG.Security.Cryptography.Crc32.Compute(buffer);
+                    CRCValues.Add(kv.Name, value);
+                }
+            }
+
+            foreach (ListViewItem lv in form.lsvMods.Items)
+                lv.Checked = true;
+
+            Assert.IsTrue(form.inject(true, true, true), "Installation injection failed. Log: {0}", form.labelStatus.Text);
+            hasInstalled = true;
+
+            foreach (Mod m in form.modDict.Values)
+            {
+                Assert.IsTrue(m.Installed, "Backup archive for {0} was not created.", m.Name);
+            }
+
+            Assert.IsTrue(File.Exists(Environment.CurrentDirectory + @"\testdir\jg2e04_00_TEST.pp"), "jg2e04_00_TEST.pp was not created.");
+            Assert.IsTrue(File.Exists(Environment.CurrentDirectory + @"\testdir\jg2p01_00_TEST.pp"), "jg2p01_00_TEST.pp was not created.");
+
+            Dictionary<string, uint> diff = new Dictionary<string, uint>();
+
+            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles)
+            {
+                using (MemoryStream mem = new MemoryStream())
+                {
+                    kv.WriteTo(mem);
+                    byte[] buffer = new byte[mem.Length];
+                    mem.Position = 0;
+                    mem.Read(buffer, 0, (int)mem.Length);
+
+                    var value = DamienG.Security.Cryptography.Crc32.Compute(buffer);
+                    if (CRCValues[kv.Name] != value)
+                        diff.Add(kv.Name, value);
+                }
+            }
+
+            Dictionary<string, uint> TrueCRC = new Dictionary<string, uint>()
+            {
+                { "jg2_01_05_00.lst", 838774076 },
+                { "jg2_01_05_01.lst", 1767953068 },
+                { "jg2_01_05_02.lst", 1609570759 },
+                { "jg2_01_05_03.lst", 4121681499 },
+                { "jg2_01_06_05.lst", 32814373 },
+                { "jg2_01_06_06.lst", 2454317916 },
+                { "jg2_01_06_08.lst", 3999174270 }
+            };
+
+            //Assert.IsFalse(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count, "Subfiles have not changed.");
+            Assert.IsTrue(diff.Count == TrueCRC.Count, "Amount of changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", TrueCRC.Count, diff.Count);
+
+            foreach (KeyValuePair<string, uint> kv in TrueCRC)
+                Assert.IsTrue(kv.Value == diff[kv.Key], "CRC check failed after installation. Key: {0}; Expected value: {1}; Actual value: {2}", kv.Key, kv.Value, diff[kv.Key]);
+
+            foreach (ListViewItem lv in form.lsvMods.Items)
+            {
+                lv.Checked = false;
+                lv.Selected = true;
+            }
+                
+
+            //Assert.IsTrue(form.inject(false, false, true), "Uninstallation injection failed. Log: {0}", form.labelStatus.Text);
+            form.deleteSelectedMods(true);
+
+            Assert.IsTrue(!File.Exists(Environment.CurrentDirectory + @"\testdir\jg2e04_00_TEST.pp"), "jg2e04_00_TEST.pp was not deleted.");
+            Assert.IsTrue(!File.Exists(Environment.CurrentDirectory + @"\testdir\jg2p01_00_TEST.pp"), "jg2p01_00_TEST.pp was not deleted.");
+
+            foreach (Mod m in form.modDict.Values)
+            {
+                Assert.IsTrue(!m.Installed, "Backup archive for {0} was not deleted.", m.Name);
+            }
+
+            Assert.IsTrue(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count, "Amount of restored changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", new object[] { subfiles.Count, new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count });
+
+            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles)
+            {
+                using (MemoryStream mem = new MemoryStream())
+                {
+                    kv.WriteTo(mem);
+                    byte[] buffer = new byte[mem.Length];
+                    mem.Position = 0;
+                    mem.Read(buffer, 0, (int)mem.Length);
+
+                    var value = DamienG.Security.Cryptography.Crc32.Compute(buffer);
+                    Assert.IsTrue(CRCValues[kv.Name] == value, "CRC check failed after uninstallation. Key: {0}; Expected value: {1}; Actual value: {2}", kv.Name, CRCValues[kv.Name], value);
+                }
+            }
+            Assert.IsTrue(Console.ConsoleLog.Count > 0, "Nothing was written to internal console log.");
+            Assert.IsTrue(form.rtbConsole.TextLength > 0, "Nothing was written to external console log.");
+
+            Configuration.saveMods(form.modDict);
+        }
+
+        [ClassCleanup()]
+        public static void Cleanup()
         {
             if (hasInstalled)
             {

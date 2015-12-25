@@ -88,6 +88,7 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.imageTimer = new System.Windows.Forms.Timer(this.components);
+            this.lblTextures = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -472,7 +473,7 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.checkConflicts);
-            this.groupBox2.Location = new System.Drawing.Point(8, 122);
+            this.groupBox2.Location = new System.Drawing.Point(8, 134);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(953, 49);
             this.groupBox2.TabIndex = 1;
@@ -494,6 +495,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.lblTextures);
             this.groupBox1.Controls.Add(this.lblEditPath);
             this.groupBox1.Controls.Add(this.lblPlayPath);
             this.groupBox1.Controls.Add(this.btnAA2EDIT);
@@ -504,7 +506,7 @@
             this.groupBox1.Controls.Add(this.checkAA2PLAY);
             this.groupBox1.Location = new System.Drawing.Point(8, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(953, 113);
+            this.groupBox1.Size = new System.Drawing.Size(953, 125);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Paths";
@@ -717,6 +719,15 @@
             this.imageTimer.Interval = 3000;
             this.imageTimer.Tick += new System.EventHandler(this.imageTimer_Tick);
             // 
+            // lblTextures
+            // 
+            this.lblTextures.AutoSize = true;
+            this.lblTextures.Location = new System.Drawing.Point(195, 106);
+            this.lblTextures.Name = "lblTextures";
+            this.lblTextures.Size = new System.Drawing.Size(137, 13);
+            this.lblTextures.TabIndex = 7;
+            this.lblTextures.Text = "Current data\\textures path: ";
+            // 
             // formMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -824,6 +835,7 @@
         private System.Windows.Forms.ToolStripMenuItem flushCacheToolStripMenuItem;
         public System.Windows.Forms.RichTextBox rtbConsole;
         public System.Windows.Forms.ToolStripComboBox cmbSorting;
+        private System.Windows.Forms.Label lblTextures;
     }
 }
 

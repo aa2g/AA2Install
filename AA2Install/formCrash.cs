@@ -34,7 +34,7 @@ namespace AA2Install
 
         private void linkaa2g_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            launchLink(@"http://boards.4chan.org/vg/catalog");
+            launchLink(@"https://boards.4chan.org/vg/catalog#s=aa2g");
         }
 
         private void linkHongfire_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
