@@ -19,8 +19,22 @@ namespace AA2Install.Tests
     [DeploymentItem(@"AA2InstallTests\testdir\", "testdir")]
     public class MainTests
     {
+        /// <summary>
+        /// Copies a directory since C# doesn't have an inbuilt method
+        /// </summary>
+        /// <param name="source">Source Directory</param>
+        /// <param name="target">Target Directory</param>
+        public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
+        {
+            if (!Directory.Exists(target.FullName)) { Directory.CreateDirectory(target.FullName); }
+            foreach (DirectoryInfo dir in source.GetDirectories())
+                CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+            foreach (FileInfo file in source.GetFiles())
+                File.Copy(file.FullName, Path.Combine(target.FullName, file.Name), true);
+            //file.CopyTo(Path.Combine(target.FullName, file.Name), true);
+        }
+
         formMain form;
-        static bool hasInstalled;
 
         [TestInitialize()]
         public void Initialize()
@@ -33,24 +47,6 @@ namespace AA2Install.Tests
             Configuration.saveMods(new ModDictionary());
             form = new formMain();
             form.Show();
-
-            /*
-            Console.InitializeOutput();
-            _7z.OutputDataRecieved += new DataReceivedEventHandler((s, e) =>
-            {
-                form.BeginInvoke(new MethodInvoker(() =>
-                {
-                    form.rtbConsole.AppendText((e.Data ?? string.Empty) + Environment.NewLine);
-                }));
-            });
-            if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
-            if (!Directory.Exists(Paths.MODS)) { Directory.CreateDirectory(Paths.MODS + @"\"); }
-            form.lsvMods.ListViewItemSorter = new CustomListViewSorter(int.Parse(Configuration.ReadSetting("SORTMODE") ?? "0"));
-            form.cmbSorting.SelectedIndex = int.Parse(Configuration.ReadSetting("SORTMODE") ?? "0");
-            form.loadUIConfiguration();
-            */
-
-            hasInstalled = false;
         }
 
         /// <summary>
@@ -112,7 +108,6 @@ namespace AA2Install.Tests
                 lv.Checked = true;
 
             Assert.IsTrue(form.inject(true, true, true), "Installation injection failed. Log: {0}", form.labelStatus.Text);
-            hasInstalled = true;
 
             foreach (Mod m in form.modDict.Values)
             {
@@ -198,6 +193,7 @@ namespace AA2Install.Tests
         {
             Assert.IsTrue(File.Exists(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp"), Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp did not deploy");
 
+            CopyFilesRecursively(new DirectoryInfo(Environment.CurrentDirectory + @"\mods\"), new DirectoryInfo(Environment.CurrentDirectory + @"\mods2\"));
             form.refreshModList();
 
             var subfiles = new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles;
@@ -221,7 +217,6 @@ namespace AA2Install.Tests
                 lv.Checked = true;
 
             Assert.IsTrue(form.inject(true, true, true), "Installation injection failed. Log: {0}", form.labelStatus.Text);
-            hasInstalled = true;
 
             foreach (Mod m in form.modDict.Values)
             {
@@ -301,21 +296,21 @@ namespace AA2Install.Tests
             Assert.IsTrue(Console.ConsoleLog.Count > 0, "Nothing was written to internal console log.");
             Assert.IsTrue(form.rtbConsole.TextLength > 0, "Nothing was written to external console log.");
 
+            formMain.TryDeleteDirectory(Environment.CurrentDirectory + @"\mods\");
+            Directory.Move(Environment.CurrentDirectory + @"\mods2\", Environment.CurrentDirectory + @"\mods\");
+
             Configuration.saveMods(form.modDict);
         }
 
         [ClassCleanup()]
         public static void Cleanup()
         {
-            if (hasInstalled)
-            {
-                foreach (string s in Directory.GetFiles(Environment.CurrentDirectory + @"\testdir\"))
-                    try { File.Delete(s); }
-                    catch { }
-                foreach (string s in Directory.GetFiles(Environment.CurrentDirectory + @"\backup\"))
-                    try { File.Delete(s); }
-                    catch { }
-            }
+            foreach (string s in Directory.GetFiles(Environment.CurrentDirectory + @"\testdir\"))
+                try { File.Delete(s); }
+                catch { }
+            foreach (string s in Directory.GetFiles(Environment.CurrentDirectory + @"\backup\"))
+                try { File.Delete(s); }
+                catch { }
         }
     }
 }
