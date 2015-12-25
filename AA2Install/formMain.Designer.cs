@@ -66,16 +66,17 @@
             this.rtbConsole = new System.Windows.Forms.RichTextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.checkConflicts = new System.Windows.Forms.CheckBox();
+            this.chkConflicts = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblTextures = new System.Windows.Forms.Label();
             this.lblEditPath = new System.Windows.Forms.Label();
             this.lblPlayPath = new System.Windows.Forms.Label();
             this.btnAA2EDIT = new System.Windows.Forms.Button();
             this.txtAA2EDIT = new System.Windows.Forms.TextBox();
-            this.checkAA2EDIT = new System.Windows.Forms.CheckBox();
+            this.chkAA2EDIT = new System.Windows.Forms.CheckBox();
             this.btnAA2PLAY = new System.Windows.Forms.Button();
             this.txtAA2PLAY = new System.Windows.Forms.TextBox();
-            this.checkAA2PLAY = new System.Windows.Forms.CheckBox();
+            this.chkAA2PLAY = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.txtMigrate = new System.Windows.Forms.TextBox();
             this.btnMigrate = new System.Windows.Forms.Button();
@@ -88,7 +89,6 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.imageTimer = new System.Windows.Forms.Timer(this.components);
-            this.lblTextures = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -472,7 +472,7 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.checkConflicts);
+            this.groupBox2.Controls.Add(this.chkConflicts);
             this.groupBox2.Location = new System.Drawing.Point(8, 134);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(953, 49);
@@ -480,16 +480,16 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Installation";
             // 
-            // checkConflicts
+            // chkConflicts
             // 
-            this.checkConflicts.AutoSize = true;
-            this.checkConflicts.Location = new System.Drawing.Point(6, 19);
-            this.checkConflicts.Name = "checkConflicts";
-            this.checkConflicts.Size = new System.Drawing.Size(302, 17);
-            this.checkConflicts.TabIndex = 0;
-            this.checkConflicts.Text = "Ignore conflicts (Uninstallation results will be unpredictable)";
-            this.checkConflicts.UseVisualStyleBackColor = true;
-            this.checkConflicts.CheckedChanged += new System.EventHandler(this.checkConflicts_CheckedChanged);
+            this.chkConflicts.AutoSize = true;
+            this.chkConflicts.Location = new System.Drawing.Point(6, 19);
+            this.chkConflicts.Name = "chkConflicts";
+            this.chkConflicts.Size = new System.Drawing.Size(302, 17);
+            this.chkConflicts.TabIndex = 0;
+            this.chkConflicts.Text = "Ignore conflicts (Uninstallation results will be unpredictable)";
+            this.chkConflicts.UseVisualStyleBackColor = true;
+            this.chkConflicts.CheckedChanged += new System.EventHandler(this.checkConflicts_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -500,16 +500,25 @@
             this.groupBox1.Controls.Add(this.lblPlayPath);
             this.groupBox1.Controls.Add(this.btnAA2EDIT);
             this.groupBox1.Controls.Add(this.txtAA2EDIT);
-            this.groupBox1.Controls.Add(this.checkAA2EDIT);
+            this.groupBox1.Controls.Add(this.chkAA2EDIT);
             this.groupBox1.Controls.Add(this.btnAA2PLAY);
             this.groupBox1.Controls.Add(this.txtAA2PLAY);
-            this.groupBox1.Controls.Add(this.checkAA2PLAY);
+            this.groupBox1.Controls.Add(this.chkAA2PLAY);
             this.groupBox1.Location = new System.Drawing.Point(8, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(953, 125);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Paths";
+            // 
+            // lblTextures
+            // 
+            this.lblTextures.AutoSize = true;
+            this.lblTextures.Location = new System.Drawing.Point(195, 106);
+            this.lblTextures.Name = "lblTextures";
+            this.lblTextures.Size = new System.Drawing.Size(137, 13);
+            this.lblTextures.TabIndex = 7;
+            this.lblTextures.Text = "Current data\\textures path: ";
             // 
             // lblEditPath
             // 
@@ -552,16 +561,16 @@
             this.txtAA2EDIT.TabIndex = 3;
             this.txtAA2EDIT.TextChanged += new System.EventHandler(this.txtAA2EDIT_TextChanged);
             // 
-            // checkAA2EDIT
+            // chkAA2EDIT
             // 
-            this.checkAA2EDIT.AutoSize = true;
-            this.checkAA2EDIT.Location = new System.Drawing.Point(6, 64);
-            this.checkAA2EDIT.Name = "checkAA2EDIT";
-            this.checkAA2EDIT.Size = new System.Drawing.Size(165, 17);
-            this.checkAA2EDIT.TabIndex = 2;
-            this.checkAA2EDIT.Text = "Custom AA2_EDIT\\data path";
-            this.checkAA2EDIT.UseVisualStyleBackColor = true;
-            this.checkAA2EDIT.CheckedChanged += new System.EventHandler(this.checkAA2EDIT_CheckedChanged);
+            this.chkAA2EDIT.AutoSize = true;
+            this.chkAA2EDIT.Location = new System.Drawing.Point(6, 64);
+            this.chkAA2EDIT.Name = "chkAA2EDIT";
+            this.chkAA2EDIT.Size = new System.Drawing.Size(165, 17);
+            this.chkAA2EDIT.TabIndex = 2;
+            this.chkAA2EDIT.Text = "Custom AA2_EDIT\\data path";
+            this.chkAA2EDIT.UseVisualStyleBackColor = true;
+            this.chkAA2EDIT.CheckedChanged += new System.EventHandler(this.checkAA2EDIT_CheckedChanged);
             // 
             // btnAA2PLAY
             // 
@@ -586,16 +595,16 @@
             this.txtAA2PLAY.TabIndex = 1;
             this.txtAA2PLAY.TextChanged += new System.EventHandler(this.txtAA2PLAY_TextChanged);
             // 
-            // checkAA2PLAY
+            // chkAA2PLAY
             // 
-            this.checkAA2PLAY.AutoSize = true;
-            this.checkAA2PLAY.Location = new System.Drawing.Point(6, 19);
-            this.checkAA2PLAY.Name = "checkAA2PLAY";
-            this.checkAA2PLAY.Size = new System.Drawing.Size(167, 17);
-            this.checkAA2PLAY.TabIndex = 0;
-            this.checkAA2PLAY.Text = "Custom AA2_PLAY\\data path";
-            this.checkAA2PLAY.UseVisualStyleBackColor = true;
-            this.checkAA2PLAY.CheckedChanged += new System.EventHandler(this.checkAA2PLAY_CheckedChanged);
+            this.chkAA2PLAY.AutoSize = true;
+            this.chkAA2PLAY.Location = new System.Drawing.Point(6, 19);
+            this.chkAA2PLAY.Name = "chkAA2PLAY";
+            this.chkAA2PLAY.Size = new System.Drawing.Size(167, 17);
+            this.chkAA2PLAY.TabIndex = 0;
+            this.chkAA2PLAY.Text = "Custom AA2_PLAY\\data path";
+            this.chkAA2PLAY.UseVisualStyleBackColor = true;
+            this.chkAA2PLAY.CheckedChanged += new System.EventHandler(this.checkAA2PLAY_CheckedChanged);
             // 
             // tabPage4
             // 
@@ -719,15 +728,6 @@
             this.imageTimer.Interval = 3000;
             this.imageTimer.Tick += new System.EventHandler(this.imageTimer_Tick);
             // 
-            // lblTextures
-            // 
-            this.lblTextures.AutoSize = true;
-            this.lblTextures.Location = new System.Drawing.Point(195, 106);
-            this.lblTextures.Name = "lblTextures";
-            this.lblTextures.Size = new System.Drawing.Size(137, 13);
-            this.lblTextures.TabIndex = 7;
-            this.lblTextures.Text = "Current data\\textures path: ";
-            // 
             // formMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -794,10 +794,10 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnAA2PLAY;
         private System.Windows.Forms.TextBox txtAA2PLAY;
-        private System.Windows.Forms.CheckBox checkAA2PLAY;
+        private System.Windows.Forms.CheckBox chkAA2PLAY;
         private System.Windows.Forms.Button btnAA2EDIT;
         private System.Windows.Forms.TextBox txtAA2EDIT;
-        private System.Windows.Forms.CheckBox checkAA2EDIT;
+        private System.Windows.Forms.CheckBox chkAA2EDIT;
         private System.Windows.Forms.ToolStripProgressBar prgMinor;
         private System.Windows.Forms.ToolStripProgressBar prgMajor;
         private System.Windows.Forms.SplitContainer splitContainer1;
@@ -809,7 +809,7 @@
         private System.Windows.Forms.RichTextBox rtbDescription;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox checkConflicts;
+        private System.Windows.Forms.CheckBox chkConflicts;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TextBox txtMigrate;
         private System.Windows.Forms.Button btnMigrate;

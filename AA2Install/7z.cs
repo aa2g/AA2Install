@@ -90,7 +90,7 @@ namespace AA2Install.Archives
         /// <returns>Location of extracted contents.</returns>
         public static string Extract(string filename, string dest = "")
         {
-            if (dest == "")
+            if (string.IsNullOrEmpty(dest))
                 dest = Paths.TEMP;
 
             using (Process p = new Process())
@@ -120,7 +120,7 @@ namespace AA2Install.Archives
         /// <returns>Location of extracted contents.</returns>
         public static string ExtractWildcard(string filename, string wildcard, string dest = "")
         {
-            if (dest == "")
+            if (string.IsNullOrEmpty(dest))
                 dest = Paths.TEMP;
 
             using (Process p = new Process())
