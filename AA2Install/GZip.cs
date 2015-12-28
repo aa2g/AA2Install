@@ -18,7 +18,6 @@ namespace AA2Install
         public static byte[] CompressString(string str)
         {
             var bytes = Encoding.UTF8.GetBytes(str);
-            byte[] o;
 
             using (var msi = new MemoryStream(bytes))
                 using (var mso = new MemoryStream())
@@ -26,9 +25,8 @@ namespace AA2Install
                     using (var gs = new GZipStream(mso, CompressionMode.Compress))
                         msi.CopyTo(gs);
 
-                    o = mso.ToArray();
+                    return mso.ToArray();
                 }
-            return o;
         }
 
         /// <summary>
