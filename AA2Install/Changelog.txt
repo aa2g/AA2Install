@@ -1,8 +1,9 @@
 ﻿Changelog
 
-v6.2
+v6.1.1
 + Improved mod deletion again
 + UI performance improvements
++ Fixed preferences being able to be modified when not enabled
 
 v6.1
 + Fixed issue with console not displaying output

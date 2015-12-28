@@ -1048,7 +1048,6 @@ namespace AA2Install
             cmbSorting.SelectedIndex = int.Parse(Configuration.ReadSetting("SORTMODE") ?? "0");
 
             //Start program
-            loadUIConfiguration();
             refreshModList();
 
             //Get the damn console to scroll to bottom
@@ -1063,6 +1062,7 @@ namespace AA2Install
 
             //Hide splash
             done = true;
+            loadUIConfiguration();
             Show();
         }
         #endregion
