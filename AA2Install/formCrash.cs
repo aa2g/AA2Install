@@ -16,13 +16,13 @@ namespace AA2Install
         {
             InitializeComponent();
             txtDetails.Text = details;
-            if (!string.IsNullOrEmpty(dumpfile))
+            if (dumpfile != "")
             {
                 lsbFiles.Items.Add(dumpfile);
             }
         }
 
-        public static void launchLink(string link)
+        public void launchLink(string link)
         {
             System.Diagnostics.Process.Start(link);
         }

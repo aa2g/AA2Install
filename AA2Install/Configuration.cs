@@ -19,34 +19,40 @@ namespace AA2Install
         /// <param name="key">Key of item to retrieve.</param>
         /// <param name="configStream">If supplied, reads configuration file from this stream instead of the default path</param>
         /// <returns>True if successful, otherwise false.</returns>
-        public static string ReadSetting(string key = null, Stream configStream = null)
+        public static string ReadSetting(string key, Stream configStream = null)
         {
-            if (key == null)
-                return null;
-            key = key.ToLower();
-            string json;
+            try
+            {
+                key = key.ToLower();
+                string json;
 
-            if (configStream != null)
-            {
-                using (BinaryReader br = new BinaryReader(configStream))
-                    json = Encoding.Unicode.GetString(br.ReadBytes((int)configStream.Length));
-            }
-            else
-            {
-                if (!File.Exists(Paths.CONFIG + ".gz"))
-                    return null;
-                //json = File.ReadAllText(Paths.CONFIG);
-                json = GZip.DecompressString(File.ReadAllBytes(Paths.CONFIG + ".gz"));
-            }
+                if (configStream != null)
+                {
+                    using (BinaryReader br = new BinaryReader(configStream))
+                        json = Encoding.Unicode.GetString(br.ReadBytes((int)configStream.Length));
+                }
+                else
+                {
+                    if (!File.Exists(Paths.CONFIG + ".gz"))
+                        return null;
+                    //json = File.ReadAllText(Paths.CONFIG);
+                    json = GZip.DecompressString(File.ReadAllBytes(Paths.CONFIG + ".gz"));
+                }
                 
-            var appSettings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
+                var appSettings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
 
-            if (!appSettings.ContainsKey(key))
+                if (!appSettings.ContainsKey(key))
+                    return null;
+
+                string result = appSettings[key];
+                Trace.WriteLine(key + " : " + result);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Error reading app settings: " + ex.Message);
                 return null;
-
-            string result = appSettings[key];
-            Trace.WriteLine(key + " : " + result);
-            return result;
+            }
         }
 
         /// <summary>
@@ -55,23 +61,30 @@ namespace AA2Install
         /// <param name="key">Key of item to write.</param>
         /// <param name="value">Value of item to write.</param>
         /// <returns>True if successful, otherwise false.</returns>
-        public static void WriteSetting(string key, string value)
+        public static bool WriteSetting(string key, string value)
         {
-            if (key == null)
-                return;
-            key = key.ToLower();
-            Trace.WriteLine(key + " : " + value);
-            string json = "";
-            if (File.Exists(Paths.CONFIG + ".gz"))
-                //json = File.ReadAllText(Paths.CONFIG);
-                json = GZip.DecompressString(File.ReadAllBytes(Paths.CONFIG + ".gz"));
-            var settings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
-            if (settings == null)
-                settings = new SerializableDictionary<string, string>();
-            settings[key] = value;
+            try
+            {
+                key = key.ToLower();
+                Trace.WriteLine(key + " : " + value);
+                string json = "";
+                if (File.Exists(Paths.CONFIG + ".gz"))
+                    //json = File.ReadAllText(Paths.CONFIG);
+                    json = GZip.DecompressString(File.ReadAllBytes(Paths.CONFIG + ".gz"));
+                var settings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
+                if (settings == null)
+                    settings = new SerializableDictionary<string, string>();
+                settings[key] = value;
 
-            //File.WriteAllText(Paths.CONFIG, JsonConvert.SerializeObject(settings));
-            File.WriteAllBytes(Paths.CONFIG + ".gz", GZip.CompressString(JsonConvert.SerializeObject(settings)));
+                //File.WriteAllText(Paths.CONFIG, JsonConvert.SerializeObject(settings));
+                File.WriteAllBytes(Paths.CONFIG + ".gz", GZip.CompressString(JsonConvert.SerializeObject(settings)));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Error writing app settings: " + ex.Message);
+                return false;
+            }
         }
 
         /// <summary>
@@ -82,23 +95,31 @@ namespace AA2Install
         /// <param name="input">Stream to load configuration data from.</param>
         /// <param name="output">Output stream of new configuration data.</param>
         /// <returns>True if successful, otherwise false.</returns>
-        public static MemoryStream WriteSetting(string key, string value, Stream input)
+        public static bool WriteSetting(string key, string value, Stream input, out MemoryStream output)
         {
-            if (key == null)
-                return null;
-            key = key.ToLower();
-            Trace.WriteLine(key + " : " + value);
-            string json;
+            try
+            {
+                key = key.ToLower();
+                Trace.WriteLine(key + " : " + value);
+                string json;
 
-            using (StreamReader sr = new StreamReader(input))
-                json = sr.ReadToEnd();
+                using (StreamReader sr = new StreamReader(input))
+                    json = sr.ReadToEnd();
 
-            var settings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
-            if (settings == null)
-                settings = new SerializableDictionary<string, string>();
-            settings[key] = value;
+                var settings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
+                if (settings == null)
+                    settings = new SerializableDictionary<string, string>();
+                settings[key] = value;
 
-            return new MemoryStream(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(settings)));
+                output = new MemoryStream(Encoding.Unicode.GetBytes(JsonConvert.SerializeObject(settings)));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("Error writing app settings: " + ex.Message);
+                output = null;
+                return false;
+            }
         }
 
         /// <summary>
@@ -145,7 +166,7 @@ namespace AA2Install
         /// </summary>
         /// <param name="list">List of installed mods.</param>
         /// <returns>True if successful, otherwise false</returns>
-        public static void saveMods(ModDictionary list) => WriteSetting("MODS", SerializeObject(list));
+        public static bool saveMods(ModDictionary list) => WriteSetting("MODS", SerializeObject(list));
         /// <summary>
         /// Loads a list of installed mods from the "MODS" key in configuration.
         /// </summary>

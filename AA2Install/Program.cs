@@ -28,13 +28,13 @@ namespace AA2Install
         {
             if (saveLog(e.Exception))
             {
-                using (var crash = new formCrash(e.Exception.Message + Environment.NewLine + e.Exception.StackTrace, "AA2Install crash " + DateTime.Now.ToString("d-M-yyyy hh-mm-ss") + ".dmp"))
-                    crash.ShowDialog();
+                var crash = new formCrash(e.Exception.Message + Environment.NewLine + e.Exception.StackTrace, "AA2Install crash " + DateTime.Now.ToString("d-M-yyyy hh-mm-ss") + ".dmp");
+                crash.ShowDialog();
             }
             else
             {
-                using (var crash = new formCrash(e.Exception.Message + Environment.NewLine + e.Exception.StackTrace))
-                    crash.ShowDialog();
+                var crash = new formCrash(e.Exception.Message + Environment.NewLine + e.Exception.StackTrace);
+                crash.ShowDialog();
             }
             Application.Exit();
         }
@@ -47,13 +47,13 @@ namespace AA2Install
             }*/
             if (saveLog(e.ExceptionObject as Exception))
             {
-                using (var crash = new formCrash((e.ExceptionObject as Exception).Message + Environment.NewLine + (e.ExceptionObject as Exception).StackTrace, "AA2Install crash " + DateTime.Now.ToString("d-M-yyyy hh-mm-ss") + ".dmp"))
-                    crash.ShowDialog();
+                var crash = new formCrash((e.ExceptionObject as Exception).Message + Environment.NewLine + (e.ExceptionObject as Exception).StackTrace, "AA2Install crash " + DateTime.Now.ToString("d-M-yyyy hh-mm-ss") + ".dmp");
+                crash.ShowDialog();
                 }
             else
             {
-                using (var crash = new formCrash((e.ExceptionObject as Exception).Message + Environment.NewLine + (e.ExceptionObject as Exception).StackTrace))
-                    crash.ShowDialog();
+                var crash = new formCrash((e.ExceptionObject as Exception).Message + Environment.NewLine + (e.ExceptionObject as Exception).StackTrace);
+                crash.ShowDialog();
             }
             Application.Exit();
         }
