@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace AA2Install.Archives
 {
@@ -37,6 +38,7 @@ namespace AA2Install.Archives
                 while (!p.HasExited)
                 {
                     Application.DoEvents();
+                    Thread.Sleep(100);
                 }
                 p.WaitForExit();
             }
@@ -108,6 +110,7 @@ namespace AA2Install.Archives
                 while (!p.HasExited)
                 {
                     Application.DoEvents();
+                    Thread.Sleep(100);
                 }
             }
             return dest;
@@ -138,6 +141,7 @@ namespace AA2Install.Archives
                 while (!p.HasExited)
                 {
                     Application.DoEvents();
+                    Thread.Sleep(100);
                 }
             }
             return Paths.TEMP;
@@ -168,6 +172,7 @@ namespace AA2Install.Archives
                 while (!p.HasExited)
                 {
                     Application.DoEvents();
+                    Thread.Sleep(100);
                 }
             }
             return System.IO.File.Exists(filename);

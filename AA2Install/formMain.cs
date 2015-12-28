@@ -736,6 +736,7 @@ namespace AA2Install
                     while (bb.IsBusy)
                     {
                         Application.DoEvents();
+                        Thread.Sleep(100);
                     }
                 }
                 else
