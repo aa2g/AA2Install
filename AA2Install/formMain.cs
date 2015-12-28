@@ -1480,6 +1480,12 @@ namespace AA2Install
         }
         public int Compare(object x, object y)
         {
+            var Lx = x as ListViewItem;
+            var Ly = y as ListViewItem;
+
+            var Mx = Lx.Tag as Mod;
+            var My = Ly.Tag as Mod;
+
             if (x == y)
                 return 0;
 
@@ -1492,13 +1498,13 @@ namespace AA2Install
             {
                 case 0: //Text sorting
                 default:
-                    return string.Compare(((ListViewItem)x).Text, ((ListViewItem)y).Text);
+                    return string.Compare(Lx.Text, Ly.Text);
                 case 1: //Install date sorting
-                    if (((ListViewItem)x).Tag == null || !((Mod)((ListViewItem)x).Tag).Installed)
+                    if (Lx.Tag == null || !My.Installed)
                         return 1;
-                    if (((ListViewItem)y).Tag == null || !((Mod)((ListViewItem)y).Tag).Installed)
+                    if (Ly.Tag == null || !Mx.Installed)
                         return -1;
-                    return (int)(((Mod)((ListViewItem)y).Tag).InstallTime - ((Mod)((ListViewItem)x).Tag).InstallTime).TotalSeconds;
+                    return (int)(My.InstallTime - Mx.InstallTime).TotalSeconds;
             }
         }
     }
