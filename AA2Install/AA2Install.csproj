@@ -90,6 +90,12 @@
     <Compile Include="formAbout.Designer.cs">
       <DependentUpon>formAbout.cs</DependentUpon>
     </Compile>
+    <Compile Include="formChanges.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="formChanges.Designer.cs">
+      <DependentUpon>formChanges.cs</DependentUpon>
+    </Compile>
     <Compile Include="formCrash.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -122,6 +128,9 @@
     <Compile Include="TaskbarProgress.cs" />
     <EmbeddedResource Include="formAbout.resx">
       <DependentUpon>formAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="formChanges.resx">
+      <DependentUpon>formChanges.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="formCrash.resx">
       <DependentUpon>formCrash.cs</DependentUpon>
@@ -200,6 +209,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\aa2install icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\database_go.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

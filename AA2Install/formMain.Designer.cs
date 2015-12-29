@@ -38,8 +38,12 @@
             this.clearLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.flushCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pendingChangesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -74,6 +78,7 @@
             this.btnPLAYreg = new System.Windows.Forms.Button();
             this.txtPLAYreg = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkSuppress = new System.Windows.Forms.CheckBox();
             this.checkConflicts = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblTextures = new System.Windows.Forms.Label();
@@ -131,7 +136,9 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.viewToolStripMenuItem,
+            this.helpToolStripMenuItem,
+            this.toolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(977, 24);
@@ -190,6 +197,34 @@
             this.flushCacheToolStripMenuItem.Text = "Flush Cache";
             this.flushCacheToolStripMenuItem.Click += new System.EventHandler(this.flushCacheToolStripMenuItem_Click);
             // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.windowsToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Text = "View";
+            // 
+            // windowsToolStripMenuItem
+            // 
+            this.windowsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pendingChangesToolStripMenuItem});
+            this.windowsToolStripMenuItem.Name = "windowsToolStripMenuItem";
+            this.windowsToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.windowsToolStripMenuItem.Text = "Windows";
+            // 
+            // pendingChangesToolStripMenuItem
+            // 
+            this.pendingChangesToolStripMenuItem.Checked = true;
+            this.pendingChangesToolStripMenuItem.CheckOnClick = true;
+            this.pendingChangesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.pendingChangesToolStripMenuItem.Image = global::AA2Install.Properties.Resources.database_go;
+            this.pendingChangesToolStripMenuItem.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.pendingChangesToolStripMenuItem.Name = "pendingChangesToolStripMenuItem";
+            this.pendingChangesToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.pendingChangesToolStripMenuItem.Text = "Pending Changes";
+            this.pendingChangesToolStripMenuItem.Click += new System.EventHandler(this.pendingChangesToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -204,6 +239,11 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.aboutToolStripMenuItem.Text = "About...";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(12, 20);
             // 
             // tabControl1
             // 
@@ -269,6 +309,7 @@
             this.lsvMods.View = System.Windows.Forms.View.Details;
             this.lsvMods.DrawColumnHeader += new System.Windows.Forms.DrawListViewColumnHeaderEventHandler(this.lsvMods_DrawColumnHeader);
             this.lsvMods.DrawItem += new System.Windows.Forms.DrawListViewItemEventHandler(this.lsvMods_DrawItem);
+            this.lsvMods.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lsvMods_ItemChecked);
             this.lsvMods.SelectedIndexChanged += new System.EventHandler(this.lsvMods_SelectedIndexChanged);
             this.lsvMods.SizeChanged += new System.EventHandler(this.lsvMods_SizeChanged);
             this.lsvMods.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lsvMods_KeyPress);
@@ -493,7 +534,7 @@
             this.groupBox3.Controls.Add(this.txtEDITreg);
             this.groupBox3.Controls.Add(this.btnPLAYreg);
             this.groupBox3.Controls.Add(this.txtPLAYreg);
-            this.groupBox3.Location = new System.Drawing.Point(8, 189);
+            this.groupBox3.Location = new System.Drawing.Point(8, 210);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(953, 139);
             this.groupBox3.TabIndex = 8;
@@ -547,6 +588,7 @@
             this.txtEDITreg.Name = "txtEDITreg";
             this.txtEDITreg.Size = new System.Drawing.Size(911, 20);
             this.txtEDITreg.TabIndex = 3;
+            this.txtEDITreg.TextChanged += new System.EventHandler(this.txtEDITreg_TextChanged);
             // 
             // btnPLAYreg
             // 
@@ -567,18 +609,31 @@
             this.txtPLAYreg.Name = "txtPLAYreg";
             this.txtPLAYreg.Size = new System.Drawing.Size(911, 20);
             this.txtPLAYreg.TabIndex = 1;
+            this.txtPLAYreg.TextChanged += new System.EventHandler(this.txtPLAYreg_TextChanged);
             // 
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.checkSuppress);
             this.groupBox2.Controls.Add(this.checkConflicts);
             this.groupBox2.Location = new System.Drawing.Point(8, 134);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(953, 49);
+            this.groupBox2.Size = new System.Drawing.Size(953, 70);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Installation";
+            // 
+            // checkSuppress
+            // 
+            this.checkSuppress.AutoSize = true;
+            this.checkSuppress.Location = new System.Drawing.Point(6, 42);
+            this.checkSuppress.Name = "checkSuppress";
+            this.checkSuppress.Size = new System.Drawing.Size(161, 17);
+            this.checkSuppress.TabIndex = 1;
+            this.checkSuppress.Text = "Suppress confirmation dialog";
+            this.checkSuppress.UseVisualStyleBackColor = true;
+            this.checkSuppress.CheckedChanged += new System.EventHandler(this.checkSuppress_CheckedChanged);
             // 
             // checkConflicts
             // 
@@ -960,6 +1015,11 @@
         private System.Windows.Forms.Label lblTextures;
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.ErrorProvider errorProviderOK;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem windowsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pendingChangesToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkSuppress;
     }
 }
 
