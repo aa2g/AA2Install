@@ -26,6 +26,7 @@ namespace AA2Install
     public partial class formMain : Form
     {
         public ModDictionary modDict = new ModDictionary();
+        public formChanges change;
 
         #region Preferences
 
@@ -36,6 +37,7 @@ namespace AA2Install
             btnAA2EDIT.Enabled = txtAA2EDIT.Enabled = checkAA2EDIT.Checked = Configuration.getBool("AA2EDIT");
             txtAA2EDIT.Text = Configuration.ReadSetting("AA2EDIT_Path") ?? "";
             checkConflicts.Checked = Configuration.getBool("CONFLICTS");
+            checkSuppress.Checked = Configuration.getBool("SUPPRESS");
 
             lblEditPath.Text = "Current AA2_EDIT path: " + Paths.AA2Edit;
             lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
@@ -124,6 +126,11 @@ namespace AA2Install
         private void checkConflicts_CheckedChanged(object sender, EventArgs e)
         {
             Configuration.WriteSetting("CONFLICTS", checkConflicts.Checked.ToString());
+        }
+
+        private void checkSuppress_CheckedChanged(object sender, EventArgs e)
+        {
+            Configuration.WriteSetting("SUPPRESS", checkSuppress.Checked.ToString());
         }
 
         #endregion
@@ -893,7 +900,13 @@ namespace AA2Install
 
         private void btnApply_Click(object sender, EventArgs e)
         {
-            inject(false, !checkConflicts.Checked);
+            DialogResult res = DialogResult.Yes;
+
+            if (!Configuration.getBool("SUPPRESS"))
+                res = MessageBox.Show("Are you sure you want to synchronize? (check pending changes)", "Synchronize", MessageBoxButtons.YesNo);
+
+            if (res == DialogResult.Yes)
+                inject(false, !checkConflicts.Checked);
         }
 
         private void cmbSorting_SelectedIndexChanged(object sender, EventArgs e)
@@ -985,6 +998,35 @@ namespace AA2Install
         {
             lsvLog.Items.Clear();
         }
+
+        private void pendingChangesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //pendingChangesToolStripMenuItem.Checked = !pendingChangesToolStripMenuItem.Checked;
+            if (pendingChangesToolStripMenuItem.Checked)
+                change.Show();
+            else
+                change.Hide();
+        }
+
+        private void lsvMods_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            if (change != null)
+            {
+                change.lsbInstall.Items.Clear();
+                change.lsbUninstall.Items.Clear();
+
+                foreach (ListViewItem lsv in lsvMods.Items)
+                {
+                    var m = lsv.Tag as Mod;
+                    if (m != null)
+                        if (m.Installed ^ lsv.Checked)
+                            if (lsv.Checked)
+                                change.lsbInstall.Items.Add(m.Name);
+                            else
+                                change.lsbUninstall.Items.Add(m.Name);
+                }
+            }
+        }
         #endregion
         #region Form Events
         public formMain()
@@ -1068,6 +1110,8 @@ namespace AA2Install
             done = true;
             loadUIConfiguration();
             Show();
+            change = new formChanges(pendingChangesToolStripMenuItem);
+            change.Show();
         }
         #endregion
         #region Image and Description
@@ -1237,11 +1281,13 @@ namespace AA2Install
         }
         #endregion
         #region Registry Fixer
+        public bool isChecking = false;
         public bool CheckInstalled()
         {
             errorProvider.Clear();
             errorProviderOK.Clear();
             bool exit = true;
+            isChecking = true;
 
             RegistryKey play = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Play");
             RegistryKey edit = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Edit");
@@ -1298,17 +1344,25 @@ namespace AA2Install
                 errorProviderOK.SetError(lblEDITreg, "Detected as OK.");
             }
 
+            isChecking = false;
             return exit;
         }
 
-        private void btnRegUpdate_Click(object sender, EventArgs e)
+        public void UpdateReg(bool checkAfter = true)
         {
             RegistryKey play = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Play");
             RegistryKey edit = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Edit");
 
             play.SetValue("INSTALLDIR", txtPLAYreg.Text, RegistryValueKind.String);
             edit.SetValue("INSTALLDIR", txtEDITreg.Text, RegistryValueKind.String);
-            CheckInstalled();
+
+            if (checkAfter)
+                CheckInstalled();
+        }
+
+        private void btnRegUpdate_Click(object sender, EventArgs e)
+        {
+            UpdateReg();
         }
 
         private void btnPLAYreg_Click(object sender, EventArgs e)
@@ -1322,6 +1376,7 @@ namespace AA2Install
                     txtPLAYreg.Text = fold.SelectedPath;
                 }
             }
+            UpdateReg();
         }
 
         private void btnEDITreg_Click(object sender, EventArgs e)
@@ -1335,6 +1390,19 @@ namespace AA2Install
                     txtEDITreg.Text = fold.SelectedPath;
                 }
             }
+            UpdateReg();
+        }
+
+        private void txtPLAYreg_TextChanged(object sender, EventArgs e)
+        {
+            if (!isChecking)
+                UpdateReg();
+        }
+
+        private void txtEDITreg_TextChanged(object sender, EventArgs e)
+        {
+            if (!isChecking)
+                UpdateReg();
         }
         #endregion
 

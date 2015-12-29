@@ -1,5 +1,10 @@
 ﻿Changelog
 
+v6.2
++ Added a registry fixer
++ New form that shows pending changes
++ Dialog asking if you want to synchronize
+
 v6.1.1
 + Improved mod deletion again
 + UI performance improvements
