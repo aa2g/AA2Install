@@ -19,6 +19,7 @@ using System.Xml.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Threading;
+using Microsoft.Win32;
 
 namespace AA2Install
 {
@@ -40,6 +41,8 @@ namespace AA2Install
             lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
 
             //checkRAW.Checked = Configuration.getBool("PPRAW");
+
+            CheckInstalled();
         }
 
         private void btnAA2PLAY_Click(object sender, EventArgs e)
@@ -1231,6 +1234,107 @@ namespace AA2Install
             updateLog("Done!");
 
             refreshModList();
+        }
+        #endregion
+        #region Registry Fixer
+        public bool CheckInstalled()
+        {
+            errorProvider.Clear();
+            errorProviderOK.Clear();
+            bool exit = true;
+
+            RegistryKey play = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Play");
+            RegistryKey edit = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Edit");
+
+            play.SetValue("PRODUCTNAME", "ジンコウガクエン2", RegistryValueKind.String);
+            edit.SetValue("PRODUCTNAME", "ジンコウガクエン2 きゃらめいく", RegistryValueKind.String);
+
+            play.SetValue("VERSION", 0x64, RegistryValueKind.DWord);
+            edit.SetValue("VERSION", 0x64, RegistryValueKind.DWord);
+
+            string playdir = txtPLAYreg.Text = (string)play.GetValue("INSTALLDIR", "");
+            string editdir = txtEDITreg.Text = (string)edit.GetValue("INSTALLDIR", "");
+
+            if (playdir == "")
+            {
+                errorProvider.SetError(lblPLAYreg, "Directory is not set.");
+                exit = false;
+            }
+            else if (!Directory.Exists(playdir) ||
+                !playdir.EndsWith("\\"))
+            {
+                errorProvider.SetError(lblPLAYreg, "Directory can not be found / does not end in a \"\\\".");
+                exit = false;
+            }
+            else if (!Directory.Exists(playdir + @"data\"))
+            {
+                errorProvider.SetError(lblPLAYreg, "Data subdirectory can not be found.");
+                exit = false;
+            }
+            else
+            {
+                errorProviderOK.SetError(lblPLAYreg, "Detected as OK.");
+            }
+
+
+            if (editdir == "")
+            {
+                errorProvider.SetError(lblEDITreg, "Directory is not set.");
+                exit = false;
+            }
+            else if (!Directory.Exists(editdir) ||
+                !editdir.EndsWith("\\"))
+            {
+                errorProvider.SetError(lblEDITreg, "Directory can not be found / does not end in a \"\\\".");
+                exit = false;
+            }
+            else if (!Directory.Exists(editdir + @"data\"))
+            {
+                errorProvider.SetError(lblEDITreg, "Data subdirectory can not be found.");
+                exit = false;
+            }
+            else
+            {
+                errorProviderOK.SetError(lblEDITreg, "Detected as OK.");
+            }
+
+            return exit;
+        }
+
+        private void btnRegUpdate_Click(object sender, EventArgs e)
+        {
+            RegistryKey play = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Play");
+            RegistryKey edit = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Edit");
+
+            play.SetValue("INSTALLDIR", txtPLAYreg.Text, RegistryValueKind.String);
+            edit.SetValue("INSTALLDIR", txtEDITreg.Text, RegistryValueKind.String);
+            CheckInstalled();
+        }
+
+        private void btnPLAYreg_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog fold = new FolderBrowserDialog())
+            {
+                fold.Description = @"Locate the AA2_PLAY folder.";
+                DialogResult result = fold.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    txtPLAYreg.Text = fold.SelectedPath;
+                }
+            }
+        }
+
+        private void btnEDITreg_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog fold = new FolderBrowserDialog())
+            {
+                fold.Description = @"Locate the AA2_EDIT folder.";
+                DialogResult result = fold.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    txtEDITreg.Text = fold.SelectedPath;
+                }
+            }
         }
         #endregion
 

@@ -65,9 +65,18 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.rtbConsole = new System.Windows.Forms.RichTextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnRegUpdate = new System.Windows.Forms.Button();
+            this.lblEDITreg = new System.Windows.Forms.Label();
+            this.lblPLAYreg = new System.Windows.Forms.Label();
+            this.btnEDITreg = new System.Windows.Forms.Button();
+            this.txtEDITreg = new System.Windows.Forms.TextBox();
+            this.btnPLAYreg = new System.Windows.Forms.Button();
+            this.txtPLAYreg = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkConflicts = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblTextures = new System.Windows.Forms.Label();
             this.lblEditPath = new System.Windows.Forms.Label();
             this.lblPlayPath = new System.Windows.Forms.Label();
             this.btnAA2EDIT = new System.Windows.Forms.Button();
@@ -88,7 +97,8 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.imageTimer = new System.Windows.Forms.Timer(this.components);
-            this.lblTextures = new System.Windows.Forms.Label();
+            this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.errorProviderOK = new System.Windows.Forms.ErrorProvider(this.components);
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -106,10 +116,13 @@
             this.statusMain.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProviderOK)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -459,6 +472,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.groupBox3);
             this.tabPage3.Controls.Add(this.groupBox2);
             this.tabPage3.Controls.Add(this.groupBox1);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -467,6 +481,92 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Preferences";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.btnRegUpdate);
+            this.groupBox3.Controls.Add(this.lblEDITreg);
+            this.groupBox3.Controls.Add(this.lblPLAYreg);
+            this.groupBox3.Controls.Add(this.btnEDITreg);
+            this.groupBox3.Controls.Add(this.txtEDITreg);
+            this.groupBox3.Controls.Add(this.btnPLAYreg);
+            this.groupBox3.Controls.Add(this.txtPLAYreg);
+            this.groupBox3.Location = new System.Drawing.Point(8, 189);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(953, 139);
+            this.groupBox3.TabIndex = 8;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Registry Fixer";
+            // 
+            // btnRegUpdate
+            // 
+            this.btnRegUpdate.Location = new System.Drawing.Point(6, 109);
+            this.btnRegUpdate.Name = "btnRegUpdate";
+            this.btnRegUpdate.Size = new System.Drawing.Size(941, 23);
+            this.btnRegUpdate.TabIndex = 7;
+            this.btnRegUpdate.Text = "Update";
+            this.btnRegUpdate.UseVisualStyleBackColor = true;
+            this.btnRegUpdate.Click += new System.EventHandler(this.btnRegUpdate_Click);
+            // 
+            // lblEDITreg
+            // 
+            this.lblEDITreg.AutoSize = true;
+            this.lblEDITreg.Location = new System.Drawing.Point(3, 67);
+            this.lblEDITreg.Name = "lblEDITreg";
+            this.lblEDITreg.Size = new System.Drawing.Size(88, 13);
+            this.lblEDITreg.TabIndex = 6;
+            this.lblEDITreg.Text = "AA2_EDIT path: ";
+            // 
+            // lblPLAYreg
+            // 
+            this.lblPLAYreg.AutoSize = true;
+            this.lblPLAYreg.Location = new System.Drawing.Point(3, 22);
+            this.lblPLAYreg.Name = "lblPLAYreg";
+            this.lblPLAYreg.Size = new System.Drawing.Size(90, 13);
+            this.lblPLAYreg.TabIndex = 5;
+            this.lblPLAYreg.Text = "AA2_PLAY path: ";
+            // 
+            // btnEDITreg
+            // 
+            this.btnEDITreg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEDITreg.Location = new System.Drawing.Point(923, 81);
+            this.btnEDITreg.Name = "btnEDITreg";
+            this.btnEDITreg.Size = new System.Drawing.Size(24, 23);
+            this.btnEDITreg.TabIndex = 4;
+            this.btnEDITreg.Text = "...";
+            this.btnEDITreg.UseVisualStyleBackColor = true;
+            this.btnEDITreg.Click += new System.EventHandler(this.btnEDITreg_Click);
+            // 
+            // txtEDITreg
+            // 
+            this.txtEDITreg.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtEDITreg.Location = new System.Drawing.Point(6, 83);
+            this.txtEDITreg.Name = "txtEDITreg";
+            this.txtEDITreg.Size = new System.Drawing.Size(911, 20);
+            this.txtEDITreg.TabIndex = 3;
+            // 
+            // btnPLAYreg
+            // 
+            this.btnPLAYreg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPLAYreg.Location = new System.Drawing.Point(923, 36);
+            this.btnPLAYreg.Name = "btnPLAYreg";
+            this.btnPLAYreg.Size = new System.Drawing.Size(24, 23);
+            this.btnPLAYreg.TabIndex = 1;
+            this.btnPLAYreg.Text = "...";
+            this.btnPLAYreg.UseVisualStyleBackColor = true;
+            this.btnPLAYreg.Click += new System.EventHandler(this.btnPLAYreg_Click);
+            // 
+            // txtPLAYreg
+            // 
+            this.txtPLAYreg.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPLAYreg.Location = new System.Drawing.Point(6, 38);
+            this.txtPLAYreg.Name = "txtPLAYreg";
+            this.txtPLAYreg.Size = new System.Drawing.Size(911, 20);
+            this.txtPLAYreg.TabIndex = 1;
             // 
             // groupBox2
             // 
@@ -510,6 +610,15 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Paths";
+            // 
+            // lblTextures
+            // 
+            this.lblTextures.AutoSize = true;
+            this.lblTextures.Location = new System.Drawing.Point(195, 106);
+            this.lblTextures.Name = "lblTextures";
+            this.lblTextures.Size = new System.Drawing.Size(137, 13);
+            this.lblTextures.TabIndex = 7;
+            this.lblTextures.Text = "Current data\\textures path: ";
             // 
             // lblEditPath
             // 
@@ -719,14 +828,15 @@
             this.imageTimer.Interval = 3000;
             this.imageTimer.Tick += new System.EventHandler(this.imageTimer_Tick);
             // 
-            // lblTextures
+            // errorProvider
             // 
-            this.lblTextures.AutoSize = true;
-            this.lblTextures.Location = new System.Drawing.Point(195, 106);
-            this.lblTextures.Name = "lblTextures";
-            this.lblTextures.Size = new System.Drawing.Size(137, 13);
-            this.lblTextures.TabIndex = 7;
-            this.lblTextures.Text = "Current data\\textures path: ";
+            this.errorProvider.ContainerControl = this;
+            // 
+            // errorProviderOK
+            // 
+            this.errorProviderOK.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
+            this.errorProviderOK.ContainerControl = this;
+            this.errorProviderOK.Icon = ((System.Drawing.Icon)(resources.GetObject("errorProviderOK.Icon")));
             // 
             // formMain
             // 
@@ -763,6 +873,8 @@
             this.statusMain.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -770,6 +882,8 @@
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.tabPage5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProviderOK)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -835,7 +949,17 @@
         private System.Windows.Forms.ToolStripMenuItem flushCacheToolStripMenuItem;
         public System.Windows.Forms.RichTextBox rtbConsole;
         public System.Windows.Forms.ToolStripComboBox cmbSorting;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Button btnRegUpdate;
+        private System.Windows.Forms.Label lblEDITreg;
+        private System.Windows.Forms.Label lblPLAYreg;
+        private System.Windows.Forms.Button btnEDITreg;
+        private System.Windows.Forms.TextBox txtEDITreg;
+        private System.Windows.Forms.Button btnPLAYreg;
+        private System.Windows.Forms.TextBox txtPLAYreg;
         private System.Windows.Forms.Label lblTextures;
+        private System.Windows.Forms.ErrorProvider errorProvider;
+        private System.Windows.Forms.ErrorProvider errorProviderOK;
     }
 }
 
