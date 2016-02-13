@@ -27,6 +27,14 @@ namespace AA2Install
     {
         public ModDictionary modDict = new ModDictionary();
         public formChanges change;
+#warning add force installation
+#warning add ordered installation
+#warning add measurement for 7z extraction and .pp sizes when injecting
+#warning measure own IO usage for ETAs
+#warning set exception error culture to english
+#warning add warning for no 7z
+#warning add a new panel for detailed installation info
+
 
         #region Preferences
 
@@ -1662,9 +1670,9 @@ namespace AA2Install
             if (x == y)
                 return 0;
 
-            if (x == null)
+            if (x == null || Mx == null)
                 return 1;
-            if (y == null)
+            if (y == null || My == null)
                 return -1;
 
             switch (mode)

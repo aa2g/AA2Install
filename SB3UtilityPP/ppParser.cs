@@ -111,12 +111,12 @@ namespace SB3Utility
 							{
 								reader.BaseStream.Seek(subfile.offset, SeekOrigin.Begin);
 
-								uint readSteps = subfile.size / Utility.BufSize;
+								uint readSteps = subfile.size / (uint)Utility.BufSize;
 								for (int j = 0; j < readSteps; j++)
 								{
-									writer.Write(reader.ReadBytes(Utility.BufSize));
+									writer.Write(reader.ReadBytes((int)Utility.BufSize));
 								}
-								writer.Write(reader.ReadBytes(subfile.size % Utility.BufSize));
+								writer.Write(reader.ReadBytes((int)(subfile.size % Utility.BufSize)));
 							}
 							metadata[i] = subfile.Metadata;
 						}
