@@ -51,7 +51,6 @@
     <Compile Include="IWriteFile.cs" />
     <Compile Include="JchStream.cs" />
     <Compile Include="lstParser.cs" />
-    <Compile Include="ObjChildren.cs" />
     <Compile Include="ppFormat.cs" />
     <Compile Include="ppHeader.cs" />
     <Compile Include="ppParser.cs" />
