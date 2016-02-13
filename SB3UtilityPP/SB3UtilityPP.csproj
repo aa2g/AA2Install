@@ -38,7 +38,6 @@
     <CodeAnalysisRuleSet>SB3UtilityPP.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SlimDX, Version=4.0.13.43, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,9 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ema.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Imported.cs" />
     <Compile Include="IReadFile.cs" />
     <Compile Include="IWriteFile.cs" />
     <Compile Include="JchStream.cs" />
@@ -67,16 +63,6 @@
     <Compile Include="Subfile.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="WakeariStream.cs" />
-    <Compile Include="Workspace.cs" />
-    <Compile Include="xaOps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="xaParser.cs" />
-    <Compile Include="xxOps.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="xxParser.cs" />
-    <Compile Include="xxReplace.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SB3UtilityPP.ruleset" />

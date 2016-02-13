@@ -4,8 +4,6 @@ using System.Text;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
-using SlimDX;
-using SlimDX.Direct3D9;
 using System.Configuration;
 using System.Reflection;
 
@@ -15,7 +13,7 @@ namespace SB3Utility
 	{
 		public static Encoding EncodingShiftJIS = Encoding.GetEncoding("Shift-JIS");
 		public static CultureInfo CultureUS = new CultureInfo("en-US");
-		public const uint BufSize = 0x400000;
+		public static readonly int BufSize = 0x400000;
 
 		public static string GetDestFile(DirectoryInfo dir, string prefix, string ext)
 		{
@@ -131,46 +129,6 @@ namespace SB3Utility
 				s.Remove(s.Length - 1, 1);
 			}
 			return s.ToString();
-		}
-
-		public static byte[] StringToBytes(string s)
-		{
-			StringBuilder sb = new StringBuilder(s.Length);
-			for (int i = 0; i < s.Length; i++)
-			{
-				if (s[i].IsHex())
-				{
-					sb.Append(s[i]);
-				}
-			}
-			if ((sb.Length % 2) != 0)
-			{
-				throw new Exception("Hex string doesn't have an even number of digits");
-			}
-
-			string byteString = sb.ToString();
-			byte[] b = new byte[byteString.Length / 2];
-			for (int i = 0; i < b.Length; i++)
-			{
-				b[i] = Byte.Parse(byteString.Substring(i * 2, 2), NumberStyles.AllowHexSpecifier);
-			}
-			return b;
-		}
-
-		public static bool ImageSupported(string ext)
-		{
-			string lower = ext.ToLowerInvariant();
-
-			string[] names = Enum.GetNames(typeof(ImageFileFormat));
-			for (int i = 0; i < names.Length; i++)
-			{
-				if (lower == ("." + names[i].ToLowerInvariant()))
-				{
-					return true;
-				}
-			}
-
-			return false;
 		}
 
 		public static bool ValidFilePath(string path)
