@@ -196,7 +196,7 @@ namespace AA2Install
                 setEnabled(true);
                 updateStatus("User cancelled operation.", LogIcon.Error);
                 updateStatus("User cancelled operation.", LogIcon.Error, false, true);
-                refreshModList();
+                refreshModList(false, txtSearch.Text);
                 return true;
             }
             return false;
@@ -417,8 +417,8 @@ namespace AA2Install
                 btnRefresh.Enabled = true;
                 return false;
             }
-
-            refreshModList(true);
+            
+            refreshModList(true, txtSearch.Text);
 
             foreach (ListViewItem l in lsvMods.Items)
             {
@@ -851,6 +851,7 @@ namespace AA2Install
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
+            txtSearch.Text = "";
             refreshModList();
         }
 
@@ -903,6 +904,7 @@ namespace AA2Install
             modDict = new ModDictionary();
 
             Configuration.saveMods(modDict);
+            txtSearch.Text = "";
             refreshModList();
         }
 
@@ -915,6 +917,8 @@ namespace AA2Install
 
             if (res == DialogResult.Yes)
                 inject(false, !checkConflicts.Checked);
+
+            refreshModList(true, txtSearch.Text);
         }
 
         private void cmbSorting_SelectedIndexChanged(object sender, EventArgs e)
@@ -977,7 +981,7 @@ namespace AA2Install
                                     tryDelete(Paths.BACKUP + "\\" + m.Name.Replace(".zip", ".7z"));
                                     break;
                                 case DialogResult.Yes: //uninstall + delete
-                                    refreshModList(true);
+                                    refreshModList(true, txtSearch.Text);
                                     lsvMods.Items[lsvMods.Items.IndexOfKey(m.Name)].Checked = false;
                                     inject(false, false, true);
                                     break;
@@ -987,7 +991,7 @@ namespace AA2Install
                             
                         tryDelete(m.Filename);
                     }
-                    refreshModList();
+                    refreshModList(true, txtSearch.Text);
                 }
             }
         }
