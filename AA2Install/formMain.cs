@@ -417,8 +417,8 @@ namespace AA2Install
                 btnRefresh.Enabled = true;
                 return false;
             }
-
-            refreshModList(true);
+            
+            refreshModList(true, txtSearch.Text);
 
             foreach (ListViewItem l in lsvMods.Items)
             {
