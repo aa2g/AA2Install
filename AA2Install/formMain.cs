@@ -669,6 +669,7 @@ namespace AA2Install
                 {
                     File.Delete(b.pp.FilePath);
                 }
+                ii++;
             }
 
             prgMinor.Value = 0;
