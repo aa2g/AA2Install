@@ -971,8 +971,7 @@ namespace AA2Install
 
                 if (result == DialogResult.Yes || suppressDialogs)
                 {
-                    foreach (ListViewItem lsv in lsvMods.Items)
-                        lsv.Checked = false;
+                    refreshModList(true);
 
                     foreach (Mod m in mods)
                     {
