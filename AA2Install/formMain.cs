@@ -27,7 +27,6 @@ namespace AA2Install
     {
         public ModDictionary modDict = new ModDictionary();
         public formChanges change;
-#warning add force installation
 #warning add ordered installation
 #warning add measurement for 7z extraction and .pp sizes when injecting
 #warning measure own IO usage for ETAs
@@ -954,6 +953,41 @@ namespace AA2Install
             deleteSelectedMods();
         }
 
+        private void forceInstallToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            forceSelectedMods();
+        }
+
+        public void forceSelectedMods(bool suppressDialogs = false)
+        {
+            if (lsvMods.SelectedItems.Count > 0)
+            {
+                List<Mod> mods = new List<Mod>(Enumerable.Range(0, lsvMods.SelectedItems.Count)
+                    .Select(index => (Mod)lsvMods.SelectedItems[index].Tag));
+
+                DialogResult result = DialogResult.No;
+                if (!suppressDialogs)
+                    result = MessageBox.Show("Are you sure you want to force install mod(s): " + Environment.NewLine + mods.Select(m => m.Name).Aggregate((i, j) => i + Environment.NewLine + j) + "\nThis will delete backups of selected mods.", "Force mods?", MessageBoxButtons.YesNo);
+
+                if (result == DialogResult.Yes || suppressDialogs)
+                {
+                    foreach (ListViewItem lsv in lsvMods.Items)
+                        lsv.Checked = false;
+
+                    foreach (Mod m in mods)
+                    {
+                        tryDelete(Paths.BACKUP + "\\" + m.Name.Replace(".zip", ".7z"));
+                        int index = lsvMods.Items.IndexOfKey(m.Name);
+                        lsvMods.Items[index].Checked = true;
+                    }
+
+                    inject(false, false, suppressDialogs);
+
+                    refreshModList(true, txtSearch.Text);
+                }
+            }
+        }
+
         public void deleteSelectedMods(bool suppressDialogs = false)
         {
             if (lsvMods.SelectedItems.Count > 0)
@@ -1132,7 +1166,8 @@ namespace AA2Install
         List<string> imageLoop = new List<string>();
         private void lsvMods_SelectedIndexChanged(object sender, EventArgs e)
         {
-            deleteToolStripMenuItem.Enabled = lsvMods.SelectedItems.Count > 0;
+            deleteToolStripMenuItem.Enabled = forceInstallToolStripMenuItem.Enabled 
+                = lsvMods.SelectedItems.Count > 0;
 
             if (lsvMods.SelectedItems.Count > 0)
             {

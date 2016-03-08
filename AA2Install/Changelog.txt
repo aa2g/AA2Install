@@ -1,5 +1,9 @@
 ﻿Changelog
 
+v6.3
++ Added force installation
++ Mod filters have been fixed (thanks hard-linker anon)
+
 v6.2
 + Added a registry fixer
 + New form that shows pending changes
