@@ -33,6 +33,11 @@ namespace AA2Install
 #warning set exception error culture to english
 #warning add warning for no 7z
 #warning add a new panel for detailed installation info
+#warning add lst preservation option for certian files/check uncheck which subfiles to install
+#warning replace synchronization method with a queue for installs and uninstalls
+#warning replace 7z handling, reload mod metadata everytime it's selected
+#warning investigate filter issues
+#warning display which .pps are going to get changed
 
 
         #region Preferences
@@ -1121,16 +1126,6 @@ namespace AA2Install
                 MessageBox.Show("You don't seem to have AA2Play and/or AA2Edit (properly) installed.\nPlease install it, use the registry fixer (if you've already installed it) or manually specify the install path in the preferences.", "AA2 Not Installed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
-            //Set event handlers
-            Console.InitializeOutput();
-            _7z.OutputDataRecieved += new DataReceivedEventHandler((s, e) =>
-            {
-                this.BeginInvoke(new MethodInvoker(() =>
-                {
-                    rtbConsole.AppendText((e.Data ?? string.Empty) + Environment.NewLine);
-                }));
-            });
-
             //Create necessary folders
             if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
             if (!Directory.Exists(Paths.MODS)) { Directory.CreateDirectory(Paths.MODS + @"\"); }
@@ -1179,7 +1174,7 @@ namespace AA2Install
 
                 string name = lsvMods.SelectedItems[0].Text;
                 if (!File.Exists(Paths.CACHE + "\\" + name + ".txt") && !File.Exists(Paths.CACHE + "\\" + name + ".jpg"))
-                    _7z.ExtractWildcard(Paths.MODS + "\\" + name + ".7z", name + "*", Paths.CACHE);
+                    _7z.Extract(Paths.MODS + "\\" + name + ".7z", name + ".+", Paths.CACHE);
 
                 rtbDescription.Clear();
                 Font temp = rtbDescription.SelectionFont;

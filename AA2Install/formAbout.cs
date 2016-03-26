@@ -49,7 +49,7 @@ namespace AA2Install
             get
             {
                 var ver =  Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                return ver.Remove(0, 2).Replace(".0", "");
+                return ver.Replace(".0", "");
             }
         }
 

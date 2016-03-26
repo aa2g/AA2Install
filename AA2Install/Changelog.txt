@@ -1,5 +1,8 @@
 ﻿Changelog
 
+v7
++ Completely reworked 7z handling
+
 v6.3
 + Added force installation
 + Mod filters have been fixed (thanks hard-linker anon)

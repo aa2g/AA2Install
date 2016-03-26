@@ -7,12 +7,13 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Threading;
+using SevenZip;
+using System.IO;
 
 namespace AA2Install.Archives
 {
     public static class _7z
     {
-        public static event DataReceivedEventHandler OutputDataRecieved;
         /// <summary>
         /// Creates a mod index from a 7Zip file
         /// </summary>
@@ -21,68 +22,23 @@ namespace AA2Install.Archives
         /// <returns>Structure containing mod info.</returns>
         public static Mod Index(string filename, bool miscFiles = false)
         {
-            List<string> oldlist = Console.ConsoleLog;
-            Console.ConsoleLog.Clear();
-            using (Process p = new Process())
+            SevenZipBase.SetLibraryPath(Paths._7Za);
+            Mod m;
+            using (SevenZipExtractor z = new SevenZipExtractor(filename))
             {
-                p.StartInfo.FileName = Paths._7Za;
-                p.StartInfo.Arguments = "l \"" + filename + "\"";
-                p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-
-                p.OutputDataReceived += OutputDataRecieved;
-                p.Start();
-                p.BeginOutputReadLine();
-
-                while (!p.HasExited)
+                List<string> ModItems = new List<string>();
+                var subfiles = new List<string>();
+                foreach (var d in z.ArchiveFileData)
                 {
-                    Application.DoEvents();
-                    Thread.Sleep(100);
+                    string s = d.FileName;
+                    if (!d.FileName.EndsWith(".empty") && !d.IsDirectory && (s.StartsWith(@"AA2_MAKE\") || s.StartsWith(@"AA2_PLAY\") || miscFiles))
+                        subfiles.Add(s);
                 }
-                p.WaitForExit();
+                var name = filename;
+                ulong size = (ulong)z.UnpackedSize;
+                m = new Mod(name, size, subfiles);
             }
-            List<string> ModItems = new List<string>();
-            var subfiles = new List<string>();
-            foreach (string s in Console.ConsoleLog)
-            {
-                Regex r = new Regex(@"^\d{4}");
-                if (r.IsMatch(s))
-                {
-                    ModItems.Add(s);
-                    string[] ss = s.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
-                    if (ss[2] == "....A")
-                    {
-                        string n = "";
-                        if (Regex.IsMatch(ss[4], @"^\d+$"))
-                            for (int i = 5; i < ss.Length; i++)
-                            {
-                                n = n + ss[i] + " ";
-                            }
-                        else
-                            for (int i = 4; i < ss.Length; i++)
-                            {
-                                n = n + ss[i] + " ";
-                            }
-
-                        if (n.StartsWith(@"AA2_MAKE\") || n.StartsWith(@"AA2_PLAY\") || miscFiles)
-                            subfiles.Add(ss.Last());
-                    }
-                }
-            }
-            Console.ConsoleLog = oldlist;
-            var name = filename;
-            ulong size;
-            if (ModItems.Count > 3)
-            {
-                string[] ee = ModItems[ModItems.Count - 1].Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
-                size = ulong.Parse(ee[2]);
-            }
-            else
-            {
-                size = 0;
-            }
-            return new Mod(name, size, subfiles);
+            return m;
         }
         /// <summary>
         /// Extracts a 7Zip archive to the temp folder
@@ -90,30 +46,9 @@ namespace AA2Install.Archives
         /// <param name="filename">Location of the 7Zip file.</param>
         /// <param name="dest">Destination of extracted files.</param>
         /// <returns>Location of extracted contents.</returns>
-        public static string Extract(string filename, string dest = "")
+        public static void Extract(string filename, string dest = "")
         {
-            if (dest == "")
-                dest = Paths.TEMP;
-
-            using (Process p = new Process())
-            {
-                p.StartInfo.FileName = Paths._7Za;
-                p.StartInfo.Arguments = "x \"" + filename + "\" AA2* -aos -mmt -o\"" + dest + "\"";
-                p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-
-                p.OutputDataReceived += OutputDataRecieved;
-                p.Start();
-                p.BeginOutputReadLine();
-
-                while (!p.HasExited)
-                {
-                    Application.DoEvents();
-                    Thread.Sleep(100);
-                }
-            }
-            return dest;
+            Extract(filename, "^AA2_.+", dest);
         }
         /// <summary>
         /// Extracts a 7Zip archive to the temp folder (using wildcard)
@@ -121,30 +56,28 @@ namespace AA2Install.Archives
         /// <param name="filename">Location of the 7Zip file.</param>
         /// <param name="wildcard">Wildcard.</param>
         /// <returns>Location of extracted contents.</returns>
-        public static string ExtractWildcard(string filename, string wildcard, string dest = "")
+        public static void Extract(string filename, string regex, string dest = "")
         {
             if (dest == "")
                 dest = Paths.TEMP;
 
-            using (Process p = new Process())
+            SevenZipBase.SetLibraryPath(Paths._7Za);
+            using (SevenZipExtractor z = new SevenZipExtractor(filename))
             {
-                p.StartInfo.FileName = Paths._7Za;
-                p.StartInfo.Arguments = "x \"" + filename + "\" \"" + wildcard + "\" -aos -mmt -o\"" + dest + "\"";
-                p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-
-                p.OutputDataReceived += OutputDataRecieved;
-                p.Start();
-                p.BeginOutputReadLine();
-
-                while (!p.HasExited)
+                Regex r = new Regex(regex.Replace("[", "\\["));
+                List<int> indicies = new List<int>();
+                foreach (var d in z.ArchiveFileData)
                 {
-                    Application.DoEvents();
-                    Thread.Sleep(100);
+                    if (!d.FileName.EndsWith(".empty") && r.IsMatch(d.FileName))
+                        indicies.Add(d.Index);
+                    else if (d.FileName.EndsWith(".empty"))
+                    {
+                        Directory.CreateDirectory(Path.Combine(dest, d.FileName.Remove(d.FileName.Length - 7)));
+                    }
                 }
+
+                z.ExtractFiles(dest, indicies.ToArray());       
             }
-            return Paths.TEMP;
         }
         /// <summary>
         /// Compresses a specified list of files into a 7z archive.
@@ -153,29 +86,39 @@ namespace AA2Install.Archives
         /// <param name="workingdir">Working directory of 7za.exe.</param>
         /// <param name="directory">Files to compress into the archive.</param>
         /// <returns>True if successful, otherwise false.</returns>
-        public static bool Compress(string filename, string workingdir, string directory)
+        public static void Compress(string filename, string workingdir, string directory)
         {
-            using (Process p = new Process())
+            SevenZipBase.SetLibraryPath(Paths._7Za);
+
+            SevenZipCompressor z = new SevenZipCompressor();
+
+            z.CompressionLevel = CompressionLevel.Fast;
+            z.CompressionMethod = CompressionMethod.Lzma2;
+            if (File.Exists(filename))
+                z.CompressionMode = CompressionMode.Append;
+            else
+                z.CompressionMode = CompressionMode.Create;
+
+            string fulldir = Path.Combine(workingdir, directory);
+
+            File.WriteAllText(fulldir + "\\.empty", "");
+
+            Dictionary<string, string> files = new Dictionary<string, string>();
+
+            foreach (string f in Directory.GetFiles(fulldir, "*", SearchOption.AllDirectories))
             {
-
-                p.StartInfo.FileName = Paths._7Za;
-                p.StartInfo.WorkingDirectory = workingdir;
-                p.StartInfo.Arguments = "a \"" + filename + "\" -mmt " + directory;
-                p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-
-                p.OutputDataReceived += OutputDataRecieved;
-                p.Start();
-                p.BeginOutputReadLine();
-
-                while (!p.HasExited)
-                {
-                    Application.DoEvents();
-                    Thread.Sleep(100);
-                }
+                files[f.Remove(0, workingdir.Length + 1).Replace('\\', '/')] = f;
             }
-            return System.IO.File.Exists(filename);
+            
+            z.CompressFileDictionary(files, filename);
+            /*Dictionary<int, string> ToDelete = new Dictionary<int, string>();
+
+            using (SevenZipExtractor e = new SevenZipExtractor(filename))
+                foreach (var f in e.ArchiveFileData)
+                    if (f.FileName.EndsWith(".empty"))
+                        ToDelete[f.Index] = "";
+
+            z.ModifyArchive(filename, ToDelete);*/
         }
     }
 }

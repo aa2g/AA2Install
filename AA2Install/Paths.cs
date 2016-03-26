@@ -17,11 +17,11 @@ namespace AA2Install
             {
                 if (Environment.Is64BitOperatingSystem)
                 {
-                    return Environment.CurrentDirectory + @"\tools\7z\x64\7za.exe";
+                    return Environment.CurrentDirectory + @"\7za.dll";
                 } 
                 else 
                 {
-                    return Environment.CurrentDirectory + @"\tools\7z\x86\7za.exe";
+                    return Environment.CurrentDirectory + @"\7za_64.exe";
                 }
             }
         }

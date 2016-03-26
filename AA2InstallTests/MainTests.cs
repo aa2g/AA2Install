@@ -14,7 +14,8 @@ using System.Diagnostics;
 namespace AA2Install.Tests
 {
     [TestClass()]
-    [DeploymentItem(@"AA2InstallTests\tools\", "tools")]
+    [DeploymentItem(@"AA2Install\7za.dll")]
+    [DeploymentItem(@"AA2Install\7za_64.dll")]
     [DeploymentItem(@"AA2InstallTests\mods\", "mods")]
     [DeploymentItem(@"AA2InstallTests\testdir\", "testdir")]
     public class MainTests
@@ -72,9 +73,6 @@ namespace AA2Install.Tests
             form.refreshModList(true, "wew lad");
             expected = 0;
             Assert.IsTrue(form.lsvMods.Items.Count == expected, "lsvMods did not show the true amount of mods for the no result filter test. Expected value: {0}; Actual value: {1}", expected, form.lsvMods.Items.Count);
-
-            Assert.IsTrue(Console.ConsoleLog.Count > 0, "Nothing was written to internal console log.");
-            Assert.IsTrue(form.rtbConsole.TextLength > 0, "Nothing was written to external console log.");
         }
 
         /// <summary>
@@ -179,8 +177,6 @@ namespace AA2Install.Tests
                     Assert.IsTrue(CRCValues[kv.Name] == value, "CRC check failed after uninstallation. Key: {0}; Expected value: {1}; Actual value: {2}", kv.Name, CRCValues[kv.Name], value);
                 }
             }
-            Assert.IsTrue(Console.ConsoleLog.Count > 0, "Nothing was written to internal console log.");
-            Assert.IsTrue(form.rtbConsole.TextLength > 0, "Nothing was written to external console log.");
 
             Configuration.saveMods(form.modDict);
         }
@@ -293,8 +289,6 @@ namespace AA2Install.Tests
                     Assert.IsTrue(CRCValues[kv.Name] == value, "CRC check failed after uninstallation. Key: {0}; Expected value: {1}; Actual value: {2}", kv.Name, CRCValues[kv.Name], value);
                 }
             }
-            Assert.IsTrue(Console.ConsoleLog.Count > 0, "Nothing was written to internal console log.");
-            Assert.IsTrue(form.rtbConsole.TextLength > 0, "Nothing was written to external console log.");
 
             formMain.TryDeleteDirectory(Environment.CurrentDirectory + @"\mods\");
             Directory.Move(Environment.CurrentDirectory + @"\mods2\", Environment.CurrentDirectory + @"\mods\");
@@ -415,9 +409,7 @@ namespace AA2Install.Tests
                     var value = DamienG.Security.Cryptography.Crc32.Compute(buffer);
                     Assert.IsTrue(CRCValues[kv.Name] == value, "CRC check failed after uninstallation. Key: {0}; Expected value: {1}; Actual value: {2}", kv.Name, CRCValues[kv.Name], value);
                 }
-            }
-            Assert.IsTrue(Console.ConsoleLog.Count > 0, "Nothing was written to internal console log.");
-            Assert.IsTrue(form.rtbConsole.TextLength > 0, "Nothing was written to external console log.");
+            };
 
             Configuration.saveMods(form.modDict);
         }
