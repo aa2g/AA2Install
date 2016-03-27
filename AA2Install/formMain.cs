@@ -1183,11 +1183,12 @@ namespace AA2Install
                 rtbDescription.SelectionFont = new Font(temp, FontStyle.Bold);
                 str.AppendLine(name);
                 
-                foreach (KeyValuePair<string, string> kv in ((Mod)lsvMods.SelectedItems[0].Tag).Properties)
+                foreach (KeyValuePair<string, object> kv in ((Mod)lsvMods.SelectedItems[0].Tag).Properties)
                 {
-                    str.AppendLine(System.Threading.Thread.CurrentThread
-           .CurrentCulture.TextInfo.ToTitleCase(kv.Key.ToLower())
-           + ": " + kv.Value);
+                    if (!kv.Key.StartsWith("."))
+                        str.AppendLine(Thread.CurrentThread
+                           .CurrentCulture.TextInfo.ToTitleCase(kv.Key.ToLower())
+                           + ": " + kv.Value);
                 }
                 rtbDescription.AppendText(str.ToString());
                 str.Clear();
@@ -1527,7 +1528,7 @@ namespace AA2Install
             Size = (ulong)info.GetValue("Size", typeof(ulong));
             SubFilenames = (List<string>)info.GetValue("SubFilenames", typeof(List<string>));
             InstallTime = (DateTime)info.GetValue("InstallTime", typeof(DateTime));
-            Properties = (SerializableDictionary<string, string>)info.GetValue("Properties", typeof(SerializableDictionary<string, string>));
+            Properties = (SerializableDictionary<string, object>)info.GetValue("Properties", typeof(SerializableDictionary<string, object>));
         }
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -1553,7 +1554,7 @@ namespace AA2Install
             Size = reader.ReadElementString().DeserializeObject<ulong>();
             SubFilenames = reader.ReadElementString().DeserializeObject<List<string>>();
             InstallTime = reader.ReadElementString().DeserializeObject<DateTime>();
-            Properties = reader.ReadElementString().DeserializeObject<SerializableDictionary<string, string>>();
+            Properties = reader.ReadElementString().DeserializeObject<SerializableDictionary<string, object>>();
             reader.ReadEndElement();
 
             reader.ReadEndElement();
@@ -1669,7 +1670,7 @@ namespace AA2Install
         }
         
         //This is user-generated data so it can be left alone
-        public SerializableDictionary<string, string> Properties = new SerializableDictionary<string, string>();
+        public SerializableDictionary<string, object> Properties = new SerializableDictionary<string, object>();
     }
     public class basePP
     {
