@@ -300,6 +300,8 @@ namespace AA2Install
                     continue;
                 }
 
+                Regex r = new Regex(@"^AA2_[A-Z]{4}\\");
+
                 if (!m.Name.Replace(".7z", "").Replace(".zip", "").ToLower().Contains(filter.ToLower()) && filter != "")
                     continue;
 
@@ -309,6 +311,25 @@ namespace AA2Install
                 if (m.Installed && !m.Exists)
                 {
                     //lsvMods.Items[index].BackColor = Color.DarkBlue;
+                }
+                else if (!m.SubFilenames.Any(s => r.IsMatch(s)))
+                {
+                    List<string> sfiles;
+
+                    SevenZip.SevenZipBase.SetLibraryPath(Paths._7Za);
+                    using (SevenZip.SevenZipExtractor sz = new SevenZip.SevenZipExtractor(m.Filename))
+                        sfiles = sz.ArchiveFileData.Select(s => s.FileName).ToList();
+
+                    if (sfiles.Any(s => s.EndsWith(".7z") || s.EndsWith(".zip")))
+                    {
+                        lsvMods.Items[index].BackColor = Color.FromArgb(0xF7D088);
+                        m.Properties["Status"] = "Actual mod 7z may be inside mod archive.";
+                    }
+                    else
+                    {
+                        lsvMods.Items[index].BackColor = Color.FromArgb(0xFFCCCC);
+                        m.Properties["Status"] = "Not a valid mod.";
+                    }
                 }
                 else if (m.Installed)
                 {
