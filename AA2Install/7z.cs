@@ -27,15 +27,17 @@ namespace AA2Install.Archives
             using (SevenZipExtractor z = new SevenZipExtractor(filename))
             {
                 List<string> ModItems = new List<string>();
+                ulong size = 0;
                 var subfiles = new List<string>();
                 foreach (var d in z.ArchiveFileData)
                 {
                     string s = d.FileName;
                     if (!d.FileName.EndsWith(".empty") && !d.IsDirectory && (s.StartsWith(@"AA2_MAKE\") || s.StartsWith(@"AA2_PLAY\") || miscFiles))
                         subfiles.Add(s);
+                    size += d.Size;
                 }
                 var name = filename;
-                ulong size = (ulong)z.UnpackedSize;
+                //size = (ulong)z.UnpackedSize;
                 m = new Mod(name, size, subfiles);
             }
             return m;
