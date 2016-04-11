@@ -865,10 +865,6 @@ namespace AA2Install
             Application.Exit();
         }
 
-        private void clearConsoleToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            rtbConsole.Text = "";
-        }
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form about = new formAbout();
@@ -1157,16 +1153,6 @@ namespace AA2Install
 
             //Start program
             refreshModList();
-
-            //Get the damn console to scroll to bottom
-            rtbConsole.VisibleChanged += (a, b) =>
-            {
-                if (rtbConsole.Visible)
-                {
-                    rtbConsole.SelectionStart = rtbConsole.TextLength;
-                    rtbConsole.ScrollToCaret();
-                }
-            };
 
             //Hide splash
             done = true;

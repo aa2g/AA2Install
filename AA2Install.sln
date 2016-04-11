@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA2Install", "AA2Install\AA2Install.csproj", "{A080BED4-153A-425E-94F3-60906AC0EA90}"
 EndProject
@@ -12,7 +12,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0D760FE1-3040-4FB1-8672-FD47572726B7}"
 	ProjectSection(SolutionItems) = preProject
 		AA2Install.ruleset = AA2Install.ruleset
-		deploy.testsettings = deploy.testsettings
 	EndProjectSection
 EndProject
 Global
