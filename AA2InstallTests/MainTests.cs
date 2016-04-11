@@ -16,8 +16,8 @@ namespace AA2Install.Tests
     [TestClass()]
     [DeploymentItem(@"AA2Install\7za.dll")]
     [DeploymentItem(@"AA2Install\7za_64.dll")]
-    [DeploymentItem(@"AA2InstallTests\mods\", "mods")]
-    [DeploymentItem(@"AA2InstallTests\testdir\", "testdir")]
+    [DeploymentItem(@"mods\", "mods")]
+    [DeploymentItem(@"testdir\", "testdir")]
     public class MainTests
     {
         /// <summary>
