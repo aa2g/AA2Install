@@ -174,11 +174,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="7za_64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Changelog.txt" />
     <None Include="Resources\aa2install error.png" />
     <None Include="Resources\AA2Install.ico" />
@@ -199,7 +194,10 @@
     <None Include="Resources\database_go.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="7za.dll">
+    <Content Include="7z.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="7z64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
