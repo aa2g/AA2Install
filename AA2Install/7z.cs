@@ -70,7 +70,7 @@ namespace AA2Install.Archives
                 List<int> indicies = new List<int>();
                 foreach (var d in z.ArchiveFileData)
                 {
-                    if (!d.FileName.EndsWith(".empty") && r.IsMatch(d.FileName))
+                    if (!d.FileName.EndsWith(".empty") && r.IsMatch(d.FileName.ToLower()))
                         indicies.Add(d.Index);
                     else if (d.FileName.EndsWith(".empty"))
                     {
@@ -78,7 +78,7 @@ namespace AA2Install.Archives
                     }
                 }
 
-                z.ExtractFiles(dest, indicies.ToArray());       
+                z.ExtractFiles(dest, indicies.ToArray());
             }
         }
         /// <summary>

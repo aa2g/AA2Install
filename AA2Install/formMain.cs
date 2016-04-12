@@ -1179,9 +1179,11 @@ namespace AA2Install
                 rtbDescription.Clear();
                 rtbDescription.AppendText("Loading...");
 
+                Mod item = lsvMods.SelectedItems[0].Tag as Mod;
                 string name = lsvMods.SelectedItems[0].Text;
+                
                 if (!File.Exists(Paths.CACHE + "\\" + name + ".txt") && !File.Exists(Paths.CACHE + "\\" + name + ".jpg"))
-                    _7z.Extract(Paths.MODS + "\\" + name + ".7z", name + ".+", Paths.CACHE);
+                    _7z.Extract(item.Filename, name + @"\.(jpg|txt)", Paths.CACHE);
 
                 rtbDescription.Clear();
                 Font temp = rtbDescription.SelectionFont;
