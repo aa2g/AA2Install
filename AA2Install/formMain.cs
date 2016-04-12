@@ -1165,6 +1165,15 @@ namespace AA2Install
         #region Image and Description
         int imageIndex = 1;
         List<string> imageLoop = new List<string>();
+
+        public List<string> GetFilesRegex(string directory, string regex)
+        {
+            Regex r = new Regex(regex);
+            return Directory.GetFiles(directory)
+                .Where(x => r.IsMatch(x))
+                .ToList();
+        }
+
         private void lsvMods_SelectedIndexChanged(object sender, EventArgs e)
         {
             deleteToolStripMenuItem.Enabled = forceInstallToolStripMenuItem.Enabled 
@@ -1182,8 +1191,9 @@ namespace AA2Install
                 Mod item = lsvMods.SelectedItems[0].Tag as Mod;
                 string name = lsvMods.SelectedItems[0].Text;
                 
-                if (!File.Exists(Paths.CACHE + "\\" + name + ".txt") && !File.Exists(Paths.CACHE + "\\" + name + ".jpg"))
-                    _7z.Extract(item.Filename, name + @"\.(jpg|txt)", Paths.CACHE);
+                if (!File.Exists(Paths.CACHE + "\\" + name + ".txt") ||
+                    !GetFilesRegex(Paths.CACHE, Regex.Escape(name) + @"\d?\.jpg").Any())
+                    _7z.Extract(item.Filename, Regex.Escape(name) + @"\d?\.(jpg|txt)", Paths.CACHE);
 
                 rtbDescription.Clear();
                 Font temp = rtbDescription.SelectionFont;
@@ -1234,25 +1244,16 @@ namespace AA2Install
                     rtbDescription.AppendText("[ No description found. ]");
                     rtbDescription.SelectionFont = temp;
                 }
+                string r = Regex.Escape(name) + @"\d?\.jpg";
+                imageLoop = GetFilesRegex(Paths.CACHE, Regex.Escape(name) + @"\d?\.jpg");
 
-                if (File.Exists(Paths.CACHE + "\\" + name + ".jpg"))
+                if (imageLoop.Count > 0)
                 {
-                    imageLoop.Add(Paths.CACHE + "\\" + name + ".jpg");
+                   
                     using (Stream s = new FileStream(imageLoop[0], FileMode.Open))
                         imagePreview.Image = new Bitmap(s);
-                    int index = 1;
-                    string newFile = Paths.CACHE + "\\" + name + index.ToString() + ".jpg";
-                    while (File.Exists(newFile))
-                    {
-                        imageLoop.Add(newFile);
-                        index++;
-                        newFile = Paths.CACHE + "\\" + name + index.ToString() + ".jpg";
-                    }
-
                 }
-            
-            }           
-            
+            }
         }
         private void imageTimer_Tick(object sender, EventArgs e)
         {
