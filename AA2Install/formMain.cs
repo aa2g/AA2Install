@@ -316,9 +316,8 @@ namespace AA2Install
                 {
                     List<string> sfiles;
 
-                    SevenZip.SevenZipBase.SetLibraryPath(Paths._7Za);
-                    using (SevenZip.SevenZipExtractor sz = new SevenZip.SevenZipExtractor(m.Filename))
-                        sfiles = sz.ArchiveFileData.Select(s => s.FileName).ToList();
+                    SevenZipNET.SevenZipExtractor sz = new SevenZipNET.SevenZipExtractor(m.Filename);
+                    sfiles = sz.Files.Select(s => s.Filename).ToList();
 
                     if (sfiles.Any(s => s.EndsWith(".7z") || s.EndsWith(".zip")))
                     {
@@ -1146,6 +1145,7 @@ namespace AA2Install
             //Create necessary folders
             if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
             if (!Directory.Exists(Paths.MODS)) { Directory.CreateDirectory(Paths.MODS + @"\"); }
+            if (!Directory.Exists(Paths.CACHE)) { Directory.CreateDirectory(Paths.CACHE + @"\"); }
 
             //Setup sorting
             lsvMods.ListViewItemSorter = new CustomListViewSorter(int.Parse(Configuration.ReadSetting("SORTMODE") ?? "0"));
@@ -1193,7 +1193,7 @@ namespace AA2Install
                 
                 if (!File.Exists(Paths.CACHE + "\\" + name + ".txt") ||
                     !GetFilesRegex(Paths.CACHE, Regex.Escape(name) + @"\d?\.jpg").Any())
-                    _7z.Extract(item.Filename, Regex.Escape(name) + @"\d?\.(jpg|txt)", Paths.CACHE);
+                    _7z.Extract(item.Filename, name + "*.*", Paths.CACHE);
 
                 rtbDescription.Clear();
                 Font temp = rtbDescription.SelectionFont;

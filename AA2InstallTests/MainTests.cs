@@ -14,8 +14,7 @@ using System.Diagnostics;
 namespace AA2Install.Tests
 {
     [TestClass()]
-    [DeploymentItem(@"AA2Install\7za.dll")]
-    [DeploymentItem(@"AA2Install\7za_64.dll")]
+    [DeploymentItem(@"AA2Install\7za.exe")]
     [DeploymentItem(@"mods\", "mods")]
     [DeploymentItem(@"testdir\", "testdir")]
     public class MainTests
