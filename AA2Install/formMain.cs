@@ -20,6 +20,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Threading;
 using Microsoft.Win32;
+using CG.Web.MegaApiClient;
 
 namespace AA2Install
 {
@@ -1516,6 +1517,14 @@ namespace AA2Install
             
         }
         #endregion
+
+        private void btnLoadModpack_Click(object sender, EventArgs e)
+        {
+            MegaApiClient m = new MegaApiClient();
+            m.LoginAnonymous();
+            var node = m.GetNodeFromLink(new Uri(@"https://mega.nz/#!0gtlhJpa!x135IbHRdXxtd4PGN7Z0ff-4RvVIL-tIqwaPww92VYE"));
+            string name = node.Name;
+        }
     }
     #region Structures
     [XmlRoot("mod")]

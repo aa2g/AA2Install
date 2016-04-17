@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AA2InstallTests.ruleset" />
+    <None Include="app.config" />
     <None Include="mods\[AA2] DUMMY MOD.7z">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
