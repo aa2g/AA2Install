@@ -14,6 +14,9 @@ namespace AA2Install.Archives
 {
     public static class _7z
     {
+        public delegate void ProgressUpdatedEventArgs(int progress);
+        public static event ProgressUpdatedEventArgs ProgressUpdated;
+
         /// <summary>
         /// Creates a mod index from a 7Zip file
         /// </summary>
@@ -61,6 +64,15 @@ namespace AA2Install.Archives
                 dest = Paths.TEMP;
 
             SevenZipExtractor z = new SevenZipExtractor(filename);
+
+            z.ProgressUpdated += (i) =>
+            {
+                var invoke = ProgressUpdated;
+                if (invoke != null)
+                {
+                    invoke(i);
+                }
+            };
 
             z.ExtractWildcard(dest + "\\", wildcard);
         }

@@ -2,8 +2,10 @@
 
 v7
 + Completely reworked 7z handling
+++ Console tab removed since no more use
 + Now detects if mods are valid
 ++ Also checks if actual mod is inside 7z
++ Rewritten preview loading
 
 v6.3
 + Added force installation

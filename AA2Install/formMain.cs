@@ -387,11 +387,9 @@ namespace AA2Install
             initializeBench();
             cancelPending = false;
             updateStatus("Compiling changes...", LogIcon.Processing);
+
             //Compile changes
-            Queue<string> prearc = new Queue<string>();
-            Queue<string> postarc = new Queue<string>();
             List<string> rsub = new List<string>();
-            //List<string> arc = new List<string>();
             List<Mod> mods = new List<Mod>();
             List<Mod> unmods = new List<Mod>();
             foreach (ListViewItem l in lsvMods.Items)
@@ -401,36 +399,28 @@ namespace AA2Install
                 {
                     if (l.Checked)
                     {
-                        postarc.Enqueue(m.Filename);
                         mods.Add(m);
                     }
                     else
                     {
-                        prearc.Enqueue(Paths.BACKUP + "\\" + m.Name.Replace(".zip", ".7z"));
                         unmods.Add(m);
                         rsub.AddRange(m.SubFilenames);
                     }
                 }
             }
 
-            if (prearc.Count + postarc.Count == 0)
+            if (mods.Count + unmods.Count == 0)
             {
                 updateStatus("No changes in selected mods found.", LogIcon.Error, false);
                 updateStatus("FAILED: No changes in selected mods", LogIcon.Error, false, true);
                 return false;
             }
 
-            //while (prearc.Count > 0)
-            //arc.Add(prearc.Dequeue());
-            //while (postarc.Count > 0)
-            //arc.Add(postarc.Dequeue());
-
             //Reset controls
             setEnabled(false);
             btnCancel.Enabled = true;
             prgMinor.Value = 0;
             prgMajor.Value = 0;
-            prgMajor.Style = ProgressBarStyle.Marquee;
             int index = 0;
 
             //Check if directory exists
@@ -560,32 +550,35 @@ namespace AA2Install
 
 
             //Extract all mods
-            
+
+            List<Mod> combined = mods.Concat(unmods).ToList();
+
             index = 0;
-            prgMinor.Maximum = prearc.Count + postarc.Count;
+            prgMajor.Maximum = combined.Count;
+            prgMinor.Maximum = 100;
 
-            foreach (string item in prearc)
+            string name = "";
+
+            _7z.ProgressUpdated += (i) => {
+                prgMinor.Value = i;
+                updateStatus("(" + index + "/" + prgMajor.Maximum + ") Extracting " + name + " (" + i + "%)...", LogIcon.Processing, false, true);
+            }; 
+
+            foreach (Mod item in combined)
             {
-                updateStatus("(" + (index + 1).ToString() + "/" + prgMinor.Maximum.ToString() + ") Extracting " + item.Remove(0, item.LastIndexOf('\\') + 1) + "...");
-                _7z.Extract(item, Paths.TEMP + @"\BACKUP\");
                 index++;
-                prgMinor.Value = index;
+                name = item.Name;
+                updateStatus("(" + index + "/" + prgMajor.Maximum + ") Extracting " + name + " (0%)...", LogIcon.Processing);
+
+                if (mods.Contains(item))
+                    _7z.Extract(item.Filename);
+                else
+                    _7z.Extract(Paths.BACKUP + "\\" + item.Name.Replace(".zip", ".7z"), Paths.TEMP + @"\BACKUP\");
+
+                prgMajor.Value = index;
                 if (tryCancel())
                     return false;
             }
-
-            foreach (string item in postarc)
-            {
-                updateStatus("(" + (index + 1).ToString() + "/" + prgMinor.Maximum.ToString() + ") Extracting " + item.Remove(0, item.LastIndexOf('\\') + 1) + "...");
-                _7z.Extract(item);
-                index++;
-                prgMinor.Value = index;
-                if (tryCancel())
-                    return false;
-            }
-
-            if (tryCancel())
-                return false;
 
             //Reached point of no return.
             btnCancel.Enabled = false;
@@ -698,7 +691,7 @@ namespace AA2Install
             }
 
             prgMinor.Value = 0;
-            prgMajor.Style = ProgressBarStyle.Continuous;
+            prgMajor.Value = 0;
 
             //Process .pp files
             prgMajor.Maximum = ppQueue.Count;
