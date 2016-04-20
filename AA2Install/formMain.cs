@@ -187,6 +187,7 @@ namespace AA2Install
         private void btnCancel_Click(object sender, EventArgs e)
         {
             cancelPending = true;
+#warning I can't remember why I duplicated these
             updateStatus("Pending cancellation...", LogIcon.Warning);
             updateStatus("Pending cancellation...", LogIcon.Warning, false, true);
         }
@@ -423,6 +424,11 @@ namespace AA2Install
             prgMajor.Value = 0;
             int index = 0;
 
+            foreach (ListViewItem item in lsvMods.Items)
+            {
+                item.BackColor = Color.Transparent;
+            }
+
             //Check if directory exists
             if (!(Directory.Exists(Paths.AA2Play) && Directory.Exists(Paths.AA2Edit)))
             {
@@ -447,7 +453,7 @@ namespace AA2Install
                         l.Checked = false;
             }
 
-                //Clear and create temp
+            //Clear and create temp
             updateStatus("Clearing TEMP folder...");
             updateStatus("Clearing temporary folders...");
 
@@ -471,79 +477,43 @@ namespace AA2Install
 
             //Check conflicts
             if (checkConflicts) { 
-                index = 0;
                 updateStatus("Checking conflicts...");
 
                 Dictionary<string, string> files = new Dictionary<string, string>();
-                List<string> conflicts = new List<string>();
+
                 foreach (Mod m in modDict.Values)
-                {
-                    if (!m.Installed || 
-                        !lsvMods.Items[lsvMods.Items.IndexOfKey(m.Name)].Checked)
-                        continue;
-
-                    foreach (string s in m.SubFilenames)
-                    {
-                        files[s] = m.Name;
-                    }
-                }
-
-                foreach (ListViewItem item in lsvMods.Items)
-                {
-                    lsvMods.Items[item.Index].BackColor = Color.Transparent;
-                }
+                    if (lsvMods.Items[m.Name].Checked)
+                        m.SubFilenames.ForEach(x => files[x] = m.Name); //Set each subfile to their respective owner(s)
 
                 bool conflict = false;
-                foreach (ListViewItem item in lsvMods.Items)
+                var lv = lsvMods.Items.Cast<ListViewItem>();
+
+                foreach (ListViewItem item in lv.Where(x => x.Checked)) //Loop through list items, we only care about ones that are / will be installed
                 {
-                    if (item.Checked)
+                    Mod m = item.Tag as Mod;
+                    var intersect = files.Where(x => x.Key != m.Name)
+                        .Select(x => x.Value)
+                        .Intersect(m.SubFilenames)
+                        .ToList(); //List of conflicting subfiles
+
+                    if (intersect.Count > 0)
                     {
-                        lsvMods.Items[index].ImageIndex = 1; //Ready
-                        foreach (string s in ((Mod)item.Tag).SubFilenames)
-                        {
-                            if (files.ContainsKey(s))
-                            {
-                                if (files[s] == ((Mod)item.Tag).Name)
-                                    break;
-                                conflict = true;
+                        conflict = true;
 
-                                foreach (ListViewItem i in lsvMods.Items) //Clusterfuck to find the other conflicting mod
-                                {
-                                    Mod m = (Mod)i.Tag;
-                                    if (m.SubFilenames.Contains(s) && i.Checked)
-                                    {
-                                        //lsvMods.Items[i.Index].ImageIndex = 3; //Triangle error
-                                        //updateStatus(i.Text + ": " + s, LogIcon.Error);
-                                        string temp = i.Text + ": " + s;
-                                        if (!conflicts.Contains(temp))
-                                            conflicts.Add(temp);
-                                        lsvMods.Items[i.Index].BackColor = Color.FromArgb(255, 255, 111);
-                                    }
-                                }
+                        foreach (string s in intersect)
+                            updateStatus(item.Text + ": " + s, LogIcon.Error, false);
 
-                                //lsvMods.Items[item.Index].ImageIndex = 3; //Triangle error
-                                //updateStatus(item.Text + ": " + s, LogIcon.Error);
-                                string temp2 = item.Text + ": " + s;
-                                if (!conflicts.Contains(temp2))
-                                    conflicts.Add(temp2);
-                                lsvMods.Items[item.Index].BackColor = Color.FromArgb(255, 255, 111);
-                            }
-                            files[s] = ((Mod)item.Tag).Name;
-                        }
+                        item.BackColor = Color.FromArgb(255, 255, 111);
                     }
-                    index++;
                 }
                 if (conflict)
                 {
-                    foreach (string c in conflicts)
-                        updateStatus(c, LogIcon.Error, false);
                     updateStatus("Collision detected.", LogIcon.Error, false);
-                    updateStatus("FAILED: The highlighted mods have conflicting files", LogIcon.Ready, false, true);
+                    updateStatus("FAILED: The highlighted mods have conflicting files", LogIcon.Error, false, true);
                     MessageBox.Show("Some mods have been detected to have conflicting files.\nYou can use the log to manually fix the conflicting files in the mods (if they can be fixed) or you can proceed anyway by changing the relevant setting in the preferences.\nNote: if you proceed anyway, to uninstall you must uninstall mods in the reverse order you installed them to ensure that wrong files are not left behind.", "Collision detected", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     setEnabled(true);
                     prgMinor.Value = 0;
                     prgMajor.Value = 0;
-                    prgMajor.Style = ProgressBarStyle.Continuous;
                     return false;
                 }
             }
