@@ -533,10 +533,14 @@ namespace AA2Install
 
             string name = "";
 
-            _7z.ProgressUpdated += (i) => {
-                prgMinor.Value = i;
+            _7z.ProgressUpdatedEventArgs updateProgress = (i) => {
+                this.Invoke((MethodInvoker)delegate {
+                    prgMinor.Value = i;
+                });
                 updateStatus("(" + index + "/" + prgMajor.Maximum + ") Extracting " + name + " (" + i + "%)...", LogIcon.Processing, false, true);
-            }; 
+            };
+
+            _7z.ProgressUpdated += updateProgress;
 
             foreach (Mod item in combined)
             {
@@ -553,6 +557,8 @@ namespace AA2Install
                 if (tryCancel())
                     return false;
             }
+
+            _7z.ProgressUpdated -= updateProgress;
 
             //Reached point of no return.
             btnCancel.Enabled = false;
@@ -647,7 +653,7 @@ namespace AA2Install
             prgMinor.Maximum = ppList.Count();
             foreach (basePP b in ppList)
             {
-                updateStatus("(" + (ii + 1).ToString() + "/" + prgMinor.Maximum.ToString() + ") Reverting " + b.ppFile + "...");
+                updateStatus("(" + (ii + 1).ToString() + "/" + prgMinor.Maximum.ToString() + ") Reverting " + b.ppFile + "...", LogIcon.Processing);
                 if (b.pp.Subfiles.Count > 0)
                 {
                     BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true);
@@ -675,7 +681,7 @@ namespace AA2Install
             {
                 basePP b = ppQueue.Dequeue();
 
-                updateStatus("(" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Injecting " + b.ppFile + "...");
+                updateStatus("(" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Injecting " + b.ppFile + " (0%)...", LogIcon.Processing);
 
                 prgMinor.Style = ProgressBarStyle.Continuous;
                 prgMinor.Maximum = Directory.GetFiles(b.ppRAW).Length;
@@ -742,7 +748,15 @@ namespace AA2Install
                 }
                 if (b.pp.Subfiles.Count > 0)
                 {
+                    prgMinor.Maximum = 100;
                     BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true);
+
+                    bb.ProgressChanged += ((s, e) =>
+                    {
+                        prgMinor.Value = e.ProgressPercentage;
+                        updateStatus("(" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Injecting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
+                    });
+
                     bb.RunWorkerAsync();
                     while (bb.IsBusy)
                     {
