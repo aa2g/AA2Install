@@ -424,11 +424,6 @@ namespace AA2Install
             prgMajor.Value = 0;
             int index = 0;
 
-            foreach (ListViewItem item in lsvMods.Items)
-            {
-                item.BackColor = Color.Transparent;
-            }
-
             //Check if directory exists
             if (!(Directory.Exists(Paths.AA2Play) && Directory.Exists(Paths.AA2Edit)))
             {
@@ -479,31 +474,41 @@ namespace AA2Install
             if (checkConflicts) { 
                 updateStatus("Checking conflicts...");
 
-                Dictionary<string, string> files = new Dictionary<string, string>();
+                Dictionary<string, List<Mod>> files = new Dictionary<string, List<Mod>>();
 
                 foreach (Mod m in modDict.Values)
                     if (lsvMods.Items[m.Name].Checked)
-                        m.SubFilenames.ForEach(x => files[x] = m.Name); //Set each subfile to their respective owner(s)
+                        m.SubFilenames.ForEach(x =>
+                            {
+                                if (files.ContainsKey(x))
+                                    files[x].Add(m);
+                                else
+                                    files[x] = new List<Mod> { m };
+                            }); //Set each subfile to their respective owner(s)
 
                 bool conflict = false;
-                var lv = lsvMods.Items.Cast<ListViewItem>();
 
-                foreach (ListViewItem item in lv.Where(x => x.Checked)) //Loop through list items, we only care about ones that are / will be installed
+                foreach (ListViewItem item in lsvMods.Items) //Loop through list items
                 {
-                    Mod m = item.Tag as Mod;
-                    var intersect = files.Where(x => x.Key != m.Name)
-                        .Select(x => x.Value)
-                        .Intersect(m.SubFilenames)
-                        .ToList(); //List of conflicting subfiles
+                    if (!item.Checked) //We only care about ones that are / will be installed
+                        continue;
 
-                    if (intersect.Count > 0)
+                    Mod m = item.Tag as Mod; //The current mod we are checking
+
+                    List<string> conflicts = files.Where(x => x.Value.Any(y => y.Name == m.Name)) //If the subfile is contained by the mod
+                                                  .Where(x => x.Value.Count > 1) //If there is more than one owner
+                                                  .Select(x => x.Key)
+                                                  .ToList(); //Convert it to a list
+                    
+
+                    if (conflicts.Count > 0)
                     {
                         conflict = true;
 
-                        foreach (string s in intersect)
+                        foreach (string s in conflicts)
                             updateStatus(item.Text + ": " + s, LogIcon.Error, false);
 
-                        item.BackColor = Color.FromArgb(255, 255, 111);
+                        item.BackColor = Color.FromArgb(255, 255, 160);
                     }
                 }
                 if (conflict)
@@ -901,9 +906,10 @@ namespace AA2Install
                 res = MessageBox.Show("Are you sure you want to synchronize? (check pending changes)", "Synchronize", MessageBoxButtons.YesNo);
 
             if (res == DialogResult.Yes)
-                inject(false, !checkConflicts.Checked);
-
-            refreshModList(true, txtSearch.Text);
+            {
+                if (inject(false, !checkConflicts.Checked))
+                    refreshModList(true, txtSearch.Text);
+            }
         }
 
         private void cmbSorting_SelectedIndexChanged(object sender, EventArgs e)
