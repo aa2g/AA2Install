@@ -60,6 +60,16 @@ namespace AA2Install.Archives
         /// <returns>Location of extracted contents.</returns>
         public static void Extract(string filename, string wildcard, string dest = "")
         {
+            Task t = new Task(() => SyncExtract(filename, wildcard, dest)); //I have no idea how async methods work
+
+            t.Start();
+
+            while (!t.IsCompleted)
+                Application.DoEvents();
+        }
+
+        private static void SyncExtract(string filename, string wildcard, string dest = "")
+        {
             if (dest == "")
                 dest = Paths.TEMP;
 
@@ -76,6 +86,7 @@ namespace AA2Install.Archives
 
             z.ExtractWildcard(dest + "\\", wildcard);
         }
+
         /// <summary>
         /// Compresses a specified list of files into a 7z archive.
         /// </summary>
@@ -84,6 +95,16 @@ namespace AA2Install.Archives
         /// <param name="directory">Files to compress into the archive.</param>
         /// <returns>True if successful, otherwise false.</returns>
         public static void Compress(string filename, string workingdir, string directory)
+        {
+            Task t = new Task(() => SyncCompress(filename, workingdir, directory)); //I have no idea how async methods work
+
+            t.Start();
+
+            while (!t.IsCompleted)
+                Application.DoEvents();
+        }
+
+        private static void SyncCompress(string filename, string workingdir, string directory)
         {
             SevenZipCompressor z = new SevenZipCompressor(filename);
 
