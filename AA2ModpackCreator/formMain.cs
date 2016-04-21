@@ -60,9 +60,10 @@ namespace AA2ModpackCreator
                 path = save.FileName;
             }
 
-            XmlWriter xml = XmlWriter.Create(path);
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
 
-            xml.Settings.Indent = true;
+            XmlWriter xml = XmlWriter.Create(path, settings);
 
             xml.WriteStartElement("AA2Modpack");
 
