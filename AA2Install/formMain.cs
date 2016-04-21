@@ -32,7 +32,6 @@ namespace AA2Install
 #warning add measurement for 7z extraction and .pp sizes when injecting
 #warning measure own IO usage for ETAs
 #warning set exception error culture to english
-#warning add warning for no 7z
 #warning add a new panel for detailed installation info
 #warning add lst preservation option for certian files/check uncheck which subfiles to install
 #warning replace synchronization method with a queue for installs and uninstalls
@@ -1487,13 +1486,24 @@ namespace AA2Install
         }
         #endregion
 
+        #region Modpacks
         private void btnLoadModpack_Click(object sender, EventArgs e)
         {
-            MegaApiClient m = new MegaApiClient();
-            m.LoginAnonymous();
-            var node = m.GetNodeFromLink(new Uri(@"https://mega.nz/#!0gtlhJpa!x135IbHRdXxtd4PGN7Z0ff-4RvVIL-tIqwaPww92VYE"));
-            string name = node.Name;
+            string path;
+            using (OpenFileDialog file = new OpenFileDialog())
+            {
+                file.Filter = "AA2 Modpack file (*.a2m)|*.a2m|All Files (*.*)|*.*";
+                if (file.ShowDialog() != DialogResult.OK)
+                    return;
+                path = file.FileName;
+            }
+
+            Modpack pack = new Modpack(path);
+
+            MessageBox.Show(pack.Mods.Select(x => x.Name)
+                            .Aggregate((a, b) => a + "\r\n" + b));
         }
+        #endregion
     }
     #region Structures
     [XmlRoot("mod")]

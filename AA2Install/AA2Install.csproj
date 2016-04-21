@@ -134,6 +134,7 @@
       <DependentUpon>formSplash.cs</DependentUpon>
     </Compile>
     <Compile Include="GZip.cs" />
+    <Compile Include="Modpack.cs" />
     <Compile Include="Paths.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

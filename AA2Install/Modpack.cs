@@ -32,30 +32,36 @@ namespace AA2Install
 
         public Modpack(Stream modpackStream)
         {
-            XmlReader xml = XmlReader.Create(modpackStream);
-
-            xml.ReadStartElement();
-
-            if (xml.GetAttribute("revision") != CurrentRev.ToString())
-                throw new ArgumentException("Modpack supplied is invalid or not supported.");
-
-            Name = xml.ReadElementContentAsString();
-            Description = xml.ReadElementContentAsString();
-            Authors = xml.ReadElementContentAsString();
-            Version = xml.ReadElementContentAsInt();
-
-            while (xml.IsStartElement("mod"))
+            using (Stream stream = modpackStream)
+            using (XmlReader xml = XmlReader.Create(stream))
             {
-                xml.ReadStartElement();
 
-                string name = xml.ReadElementContentAsString();
-                Uri uri = new Uri(xml.ReadElementContentAsString());
-                Mods.Add(new ModDL(name, uri));
+                xml.ReadToFollowing("AA2Modpack");
+                xml.MoveToFirstAttribute();
 
-                xml.ReadEndElement();
+                Revision = xml.ReadContentAsInt();
+
+                if (Revision != CurrentRev)
+                    throw new ArgumentException("Modpack supplied is invalid or not supported.");
+
+                xml.ReadToFollowing("title");
+                Name = xml.ReadElementContentAsString();
+                xml.ReadToFollowing("description");
+                Description = xml.ReadElementContentAsString();
+                xml.ReadToFollowing("authors");
+                Authors = xml.ReadElementContentAsString();
+                xml.ReadToFollowing("version");
+                Version = xml.ReadElementContentAsInt();
+                
+                while (xml.ReadToFollowing("mod"))
+                {
+                    xml.ReadToFollowing("name");
+                    string name = xml.ReadElementContentAsString();
+                    xml.ReadToFollowing("url");
+                    Uri uri = new Uri(xml.ReadElementContentAsString());
+                    Mods.Add(new ModDL(name, uri));
+                }
             }
-
-            xml.ReadEndElement();
         }
 
         public Modpack(string filename) : this(new FileStream(filename, FileMode.Open))
