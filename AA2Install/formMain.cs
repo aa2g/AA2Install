@@ -1514,8 +1514,8 @@ namespace AA2Install
 
             Modpack pack = new Modpack(path);
 
-            MessageBox.Show(pack.Mods.Select(x => x.Name)
-                            .Aggregate((a, b) => a + "\r\n" + b));
+            using (formLoadModpack f = new formLoadModpack(pack))
+                f.ShowDialog();
         }
         #endregion
     }
