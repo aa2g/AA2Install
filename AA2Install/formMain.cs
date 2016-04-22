@@ -29,8 +29,6 @@ namespace AA2Install
         public ModDictionary modDict = new ModDictionary();
         public formChanges change;
 #warning add ordered installation
-#warning add measurement for 7z extraction and .pp sizes when injecting
-#warning measure own IO usage for ETAs
 #warning set exception error culture to english
 #warning add a new panel for detailed installation info
 #warning add lst preservation option for certian files/check uncheck which subfiles to install
@@ -653,10 +651,18 @@ namespace AA2Install
             prgMinor.Maximum = ppList.Count();
             foreach (basePP b in ppList)
             {
-                updateStatus("(" + (ii + 1).ToString() + "/" + prgMinor.Maximum.ToString() + ") Reverting " + b.ppFile + "...", LogIcon.Processing);
+                ii++;
+                updateStatus("(" + ii + "/" + prgMinor.Maximum + ") Reverting " + b.ppFile + " (0%)...", LogIcon.Processing);
                 if (b.pp.Subfiles.Count > 0)
                 {
                     BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true);
+
+                    bb.ProgressChanged += ((s, e) =>
+                    {
+                        prgMinor.Value = e.ProgressPercentage;
+                        updateStatus("(" + ii + "/" + prgMinor.Maximum + ") Injecting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
+                    });
+
                     bb.RunWorkerAsync();
                     while (bb.IsBusy)
                     {
@@ -667,7 +673,6 @@ namespace AA2Install
                 {
                     File.Delete(b.pp.FilePath);
                 }
-                ii++;
             }
 
             prgMinor.Value = 0;
@@ -748,6 +753,7 @@ namespace AA2Install
                 }
                 if (b.pp.Subfiles.Count > 0)
                 {
+                    prgMinor.Value = 0;
                     prgMinor.Maximum = 100;
                     BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true);
 
@@ -780,7 +786,7 @@ namespace AA2Install
             int ind = 0;
             prgMinor.Value = 0;
             //Archive backups
-            prgMinor.Style = ProgressBarStyle.Marquee;
+            prgMinor.Maximum = 100;
             prgMajor.Value = 0;
             if (!Directory.Exists(Paths.WORKING + "\\BACKUP\\")) { Directory.CreateDirectory(Paths.WORKING + "\\BACKUP\\"); }
             List<string> tempBackup = new List<string>(Directory.GetDirectories(Paths.WORKING + "\\BACKUP\\"));
@@ -789,7 +795,16 @@ namespace AA2Install
             {
                 ind++;
                 prgMajor.Value = ind;
-                updateStatus("(" + ind.ToString() + "/" + tempBackup.Count.ToString() + ") Archiving backup of " + s + "...");
+                updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (0%)...");
+
+                updateProgress = (i) => {
+                    this.Invoke((MethodInvoker)delegate {
+                        prgMinor.Value = i;
+                    });
+                    updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (" + i + "%)...");
+                };
+
+                _7z.ProgressUpdated += updateProgress;
 
                 string item = s.Remove(0, s.LastIndexOf('\\') + 1);
                 string archive = Paths.BACKUP + "\\" + item + ".7z";
@@ -809,6 +824,8 @@ namespace AA2Install
                         _7z.Compress(archive, s, g);
                     }
                 }
+
+                _7z.ProgressUpdated -= updateProgress;
             }
 
             //Finish up

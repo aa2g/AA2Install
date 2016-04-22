@@ -108,6 +108,15 @@ namespace AA2Install.Archives
         {
             SevenZipCompressor z = new SevenZipCompressor(filename);
 
+            z.ProgressUpdated += (i) =>
+            {
+                var invoke = ProgressUpdated;
+                if (invoke != null)
+                {
+                    invoke(i);
+                }
+            };
+
             z.CompressDirectory(directory, workingdir);
         }
     }
