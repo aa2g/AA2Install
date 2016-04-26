@@ -8,6 +8,7 @@ v7
 ++ Also checks if actual mod is inside 7z
 + Rewritten preview loading
 + Added modpacks
++ Now checks for free space on required drives
 
 v6.3
 + Added force installation

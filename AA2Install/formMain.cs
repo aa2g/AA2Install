@@ -21,6 +21,7 @@ using System.Xml.Schema;
 using System.Threading;
 using Microsoft.Win32;
 using CG.Web.MegaApiClient;
+using SevenZipNET;
 
 namespace AA2Install
 {
@@ -177,6 +178,33 @@ namespace AA2Install
             return (string[])alFiles.ToArray(typeof(string));
         }
 
+        private string BytesToString(long bytes)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB" };
+            double len = bytes;
+            int order = 0;
+            while (len >= 1024 && order + 1 < sizes.Length)
+            {
+                order++;
+                len = len / 1024;
+            }
+
+            return string.Format("{0:0.##} {1}", len, sizes[order]);
+        }
+
+        /// <summary>
+        /// Returns true or false if the drive indicated has enough space for the operation.
+        /// </summary>
+        /// <param name="drivePath">The path to the drive (eg. "C:\")</param>
+        /// <param name="requiredBytes">The amount of bytes required for the operation.</param>
+        /// <returns></returns>
+        public bool IsEnoughFreeSpace(string drivePath, long requiredBytes)
+        {
+            var drive = DriveInfo.GetDrives().First(x => x.Name.First() == drivePath.First());
+
+            return drive.AvailableFreeSpace > requiredBytes;
+        }
+
         /// <summary>
         /// Flag for if cancellation is pending.
         /// </summary>
@@ -184,9 +212,7 @@ namespace AA2Install
         private void btnCancel_Click(object sender, EventArgs e)
         {
             cancelPending = true;
-#warning I can't remember why I duplicated these
-            updateStatus("Pending cancellation...", LogIcon.Warning);
-            updateStatus("Pending cancellation...", LogIcon.Warning, false, true);
+            updateStatus("Pending cancellation...", LogIcon.Warning, false);
         }
         /// <summary>
         /// Cancels if cancelPending is set to true.
@@ -197,8 +223,7 @@ namespace AA2Install
             if (cancelPending)
             {
                 setEnabled(true);
-                updateStatus("User cancelled operation.", LogIcon.Error);
-                updateStatus("User cancelled operation.", LogIcon.Error, false, true);
+                updateStatus("User cancelled operation.", LogIcon.Error, false);
                 refreshModList(false, txtSearch.Text);
                 return true;
             }
@@ -520,6 +545,46 @@ namespace AA2Install
                 }
             }
 
+            //Check for free space
+
+            long total7zSize = mods.Select(x => new SevenZipExtractor(x.Filename).UnpackedSize)
+                                   .Sum(x => (long)x);
+
+            long totalAA2PlaySize = mods.Select(x => new SevenZipExtractor(x.Filename).Files
+                                            .Where(y => y.Filename.StartsWith("AA2_PLAY"))
+                                            .Select(y => y.UnpackedSize))
+                                        .Sum(x => x.Sum(y => (long)y));
+
+            long totalAA2EditSize = mods.Select(x => new SevenZipExtractor(x.Filename).Files
+                                            .Where(y => y.Filename.StartsWith("AA2_MAKE"))
+                                            .Select(y => y.UnpackedSize))
+                                        .Sum(x => x.Sum(y => (long)y));
+
+            AdditionDictionary requiredSizes = new AdditionDictionary();
+
+            requiredSizes[Paths.TEMP.Remove(1)] = total7zSize;
+
+            requiredSizes[Paths.AA2Edit.Remove(1)] = (long)(totalAA2EditSize + Math.Pow(1024, 3)); //an approx. extra 1gb for temp files
+
+            requiredSizes[Paths.AA2Play.Remove(1)] = (long)(totalAA2PlaySize + Math.Pow(1024, 3)); //an approx. extra 1gb for temp files
+
+            foreach (var kv in requiredSizes)
+            { 
+                if (!IsEnoughFreeSpace(kv.Key, kv.Value))
+                {
+                    updateStatus("FAILED: There is not enough free space", LogIcon.Error, false);
+
+                    string spaces = requiredSizes.Select(x => "Drive " + x.Key + ":\\ : Required " + BytesToString(x.Value) + "; Available: " + BytesToString(new DriveInfo(kv.Key).AvailableFreeSpace))
+                                    .Aggregate((a, b) => a + "\n" + b);
+
+#warning change to a retry cancel ignore dialog
+                    MessageBox.Show("There is not enough free space to allow an approximate safe installation.\n" + spaces, "Not enough free space", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    setEnabled(true);
+                    prgMinor.Value = 0;
+                    prgMajor.Value = 0;
+                    return false;
+                }
+            }
 
             //Extract all mods
 

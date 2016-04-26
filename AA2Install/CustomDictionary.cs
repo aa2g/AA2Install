@@ -189,3 +189,69 @@ public class SerializableDictionary<TKey, TValue>
     }
     #endregion
 }
+
+public class AdditionDictionary
+    : IDictionary<string, long>
+{
+    public Dictionary<string, long> baseDict = new Dictionary<string, long>();
+    public ICollection<string> Keys => baseDict.Keys;
+
+    public ICollection<long> Values => baseDict.Values;
+
+    public int Count => baseDict.Count;
+
+    public bool IsReadOnly => false;
+
+    public long this[string key]
+    {
+        get
+        {
+            return baseDict[key];
+        }
+
+        set
+        {
+            if (baseDict.ContainsKey(key))
+                baseDict[key] += value;
+            else
+                baseDict[key] = value;
+        }
+    }
+
+    public void Add(string key, long value)
+    {
+        baseDict.Add(key, value);
+    }
+
+    public bool ContainsKey(string key) => baseDict.ContainsKey(key);
+
+    public bool Remove(string key) => baseDict.Remove(key);
+
+    public bool TryGetValue(string key, out long value) => baseDict.TryGetValue(key, out value);
+
+    public void Add(KeyValuePair<string, long> item)
+    {
+        baseDict.Add(item.Key, item.Value);
+    }
+
+    public void Clear()
+    {
+        baseDict.Clear();
+    }
+
+    public bool Contains(KeyValuePair<string, long> item) => (baseDict.ContainsKey(item.Key) && baseDict.ContainsValue(item.Value));
+
+    public void CopyTo(KeyValuePair<string, long>[] array, int arrayIndex)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Remove(KeyValuePair<string, long> item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerator<KeyValuePair<string, long>> GetEnumerator() => baseDict.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => baseDict.GetEnumerator();
+}
