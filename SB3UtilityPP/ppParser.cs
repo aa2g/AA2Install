@@ -4,6 +4,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.ComponentModel;
 using SB3Utility;
+using System.Linq;
 
 namespace SB3Utility
 {
@@ -16,6 +17,7 @@ namespace SB3Utility
 		private string destPath;
 		private bool keepBackup;
 		private string backupExt;
+        private bool enableRLE;
 
 		public ppParser(string path, ppFormat format)
 		{
@@ -31,11 +33,12 @@ namespace SB3Utility
             }
 		}
 
-		public BackgroundWorker WriteArchive(string destPath, bool keepBackup, string backupExtension, bool background)
+		public BackgroundWorker WriteArchive(string destPath, bool keepBackup, string backupExtension, bool background = true, bool enableRLE = false)
 		{
 			this.destPath = destPath;
 			this.keepBackup = keepBackup;
 			this.backupExt = backupExtension;
+            this.enableRLE = enableRLE;
 
 			BackgroundWorker worker = new BackgroundWorker();
 			worker.WorkerSupportsCancellation = true;
@@ -93,6 +96,7 @@ namespace SB3Utility
 					long offset = writer.BaseStream.Position;
 					uint[] sizes = new uint[Subfiles.Count];
 					object[] metadata = new object[Subfiles.Count];
+                    var Hashes = new List<Tuple<IWriteFile, uint, uint, object>>();
 
 					for (int i = 0; i < Subfiles.Count; i++)
 					{
@@ -107,36 +111,105 @@ namespace SB3Utility
 						ppSubfile subfile = Subfiles[i] as ppSubfile;
 						if ((subfile != null) && (subfile.ppFormat == this.Format))
 						{
-							using (BinaryReader reader = new BinaryReader(File.OpenRead(subfile.ppPath)))
-							{
-								reader.BaseStream.Seek(subfile.offset, SeekOrigin.Begin);
+                            using (MD5 md5 = MD5.Create())
+                            using (MemoryStream mem = new MemoryStream())
+                            using (BinaryReader reader = new BinaryReader(File.OpenRead(subfile.ppPath)))
+                            {
+                                reader.BaseStream.Seek(subfile.offset, SeekOrigin.Begin);
 
-								uint readSteps = subfile.size / (uint)Utility.BufSize;
-								for (int j = 0; j < readSteps; j++)
-								{
-									writer.Write(reader.ReadBytes((int)Utility.BufSize));
-								}
-								writer.Write(reader.ReadBytes((int)(subfile.size % Utility.BufSize)));
-							}
+                                uint readSteps = subfile.size / (uint)Utility.BufSize;
+
+                                byte[] buf;
+
+                                for (int j = 0; j < readSteps; j++)
+                                {
+                                    buf = reader.ReadBytes((int)Utility.BufSize);
+
+                                    if (enableRLE)
+                                        md5.TransformBlock(buf, 0, Utility.BufSize, buf, 0);
+                                    
+                                    mem.WriteBytes(buf);
+                                }
+                                int remaining = (int)(subfile.size % Utility.BufSize);
+
+                                buf = reader.ReadBytes(remaining);
+                                mem.WriteBytes(buf);
+
+                                if (enableRLE)
+                                {
+                                    md5.TransformFinalBlock(buf, 0, remaining);
+                                    uint hash = BitConverter.ToUInt32(md5.Hash, 0);
+
+                                    if (!Hashes.Any(x => x.Item2 == hash))
+                                    {
+                                        writer.Write(mem.ToArray());
+                                    }
+
+                                    long ppos = writer.BaseStream.Position;
+
+                                    Hashes.Add(new Tuple<IWriteFile, uint, uint, object>(
+                                        subfile, hash, (uint)(ppos - offset), subfile.Metadata));
+                                }
+                                else
+                                {
+                                    writer.Write(mem.ToArray());
+                                }
+                            }
 							metadata[i] = subfile.Metadata;
 						}
 						else
 						{
-							Stream stream = Format.WriteStream(writer.BaseStream);
-							Subfiles[i].WriteTo(stream);
-							metadata[i] = Format.FinishWriteTo(stream);
-						}
+                            Stream stream = Format.WriteStream(writer.BaseStream);
+                            if (enableRLE)
+                            {
+                                using (MD5 md5 = MD5.Create())
+                                using (MemoryStream mem = new MemoryStream())
+                                {
+                                    Subfiles[i].WriteTo(mem);
 
-						long pos = writer.BaseStream.Position;
-						sizes[i] = (uint)(pos - offset);
-						offset = pos;
+                                    uint hash = BitConverter.ToUInt32(md5.ComputeHash(mem.ToArray()), 0);
+
+                                    object meta;
+
+                                    if (Hashes.Any(x => x.Item2 == hash))
+                                    {
+                                        meta = Hashes.First(x => x.Item2 == hash).Item4;
+                                    }
+                                    else
+                                    {
+                                        mem.WriteTo(stream);
+                                        metadata[i] = meta = Format.FinishWriteTo(stream);
+                                    }
+
+                                    long ppos = writer.BaseStream.Position;
+
+                                    Hashes.Add(new Tuple<IWriteFile, uint, uint, object>(
+                                            Subfiles[i], hash, (uint)(ppos - offset), meta));
+                                }
+                            }
+                            else
+                            {
+                                Subfiles[i].WriteTo(stream);
+                                metadata[i] = Format.FinishWriteTo(stream);
+                            }
+                        }
+
+                        long pos = writer.BaseStream.Position;
+                        sizes[i] = (uint)(pos - offset);
+                        offset = pos;
 					}
 
 					if (!e.Cancel)
 					{
 						writer.BaseStream.Seek(0, SeekOrigin.Begin);
-						Format.ppHeader.WriteHeader(writer.BaseStream, Subfiles, sizes, metadata);
-						offset = writer.BaseStream.Position;
+
+                        if (enableRLE)
+                            Format.ppHeader.WriteRLEHeader(writer.BaseStream, Hashes);
+                        else
+                            Format.ppHeader.WriteHeader(writer.BaseStream, Subfiles, sizes, metadata);
+
+
+                        offset = writer.BaseStream.Position;
 						for (int i = 0; i < Subfiles.Count; i++)
 						{
 							ppSubfile subfile = Subfiles[i] as ppSubfile;

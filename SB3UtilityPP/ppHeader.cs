@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
 
 namespace SB3Utility
 {
@@ -12,7 +13,8 @@ namespace SB3Utility
 		public abstract uint HeaderSize(int numFiles);
 		public abstract List<IWriteFile> ReadHeader(string path, ppFormat format);
 		public abstract void WriteHeader(Stream stream, List<IWriteFile> files, uint[] sizes, object[] metadata);
-		public abstract ppHeader TryHeader(string path);
+        public abstract void WriteRLEHeader(Stream stream, List<Tuple<IWriteFile, uint, uint, object>> data);
+        public abstract ppHeader TryHeader(string path);
 		public abstract ppFormat[] ppFormats { get; }
 	}
 
@@ -127,6 +129,60 @@ namespace SB3Utility
 			writer.Flush();
 			stream.Write(headerBuf, 0, headerBuf.Length);
 		}
+
+        public override void WriteRLEHeader(Stream stream, List<Tuple<IWriteFile, uint, uint, object>> data)
+        {
+            byte[] headerBuf = new byte[HeaderSize(data.Count)];
+            BinaryWriter writer = new BinaryWriter(new MemoryStream(headerBuf));
+
+            writer.Write(ppVersionBytes);
+            writer.Write(ppHeader_SMRetail.DecryptHeaderBytes(BitConverter.GetBytes(Version)));
+
+            writer.Write(ppHeader_SMRetail.DecryptHeaderBytes(new byte[] { FirstByte }));
+            writer.Write(ppHeader_SMRetail.DecryptHeaderBytes(BitConverter.GetBytes(data.Count)));
+
+            List<uint> offsets = new List<uint>();
+
+            byte[] fileHeaderBuf = new byte[288 * data.Count];
+            uint fileOffset = (uint)headerBuf.Length;
+            for (int i = 0; i < data.Count; i++)
+            {
+                IWriteFile subfile = data[i].Item1;
+                uint hash = data[i].Item2;
+                uint size = data[i].Item3;
+                object metadata = data[i].Item4;
+
+                bool collision = data.GetRange(0, i)
+                                    .Any(x => x.Item2 == hash);
+
+                uint currentOffset = fileOffset;
+
+                if (collision)
+                {
+                    int index = data.IndexOf(data.GetRange(0, i)
+                                        .First(x => x.Item2 == hash));
+
+                    currentOffset = offsets[index];
+                }
+
+                int idx = i * 288;
+                Utility.EncodingShiftJIS.GetBytes(subfile.Name).CopyTo(fileHeaderBuf, idx);
+                BitConverter.GetBytes(size).CopyTo(fileHeaderBuf, idx + 260);
+                BitConverter.GetBytes(currentOffset).CopyTo(fileHeaderBuf, idx + 264);
+
+                Metadata wakeariMetadata = (Metadata)metadata;
+                System.Array.Copy(wakeariMetadata.LastBytes, 0, fileHeaderBuf, idx + 268, 20);
+                BitConverter.GetBytes(size).CopyTo(fileHeaderBuf, idx + 284);
+
+                if (!collision)
+                    fileOffset += size;
+            }
+
+            writer.Write(ppHeader_SMRetail.DecryptHeaderBytes(fileHeaderBuf));
+            writer.Write(ppHeader_SMRetail.DecryptHeaderBytes(BitConverter.GetBytes(headerBuf.Length)));
+            writer.Flush();
+            stream.Write(headerBuf, 0, headerBuf.Length);
+        }
 
 		public override ppHeader TryHeader(string path)
 		{

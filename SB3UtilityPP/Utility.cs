@@ -145,5 +145,9 @@ namespace SB3Utility
 			return true;
 		}
 
+        public static void WriteBytes(this Stream stream, byte[] bytes)
+        {
+            stream.Write(bytes, 0, bytes.Length);
+        }
 	}
 }
