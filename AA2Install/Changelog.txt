@@ -3,6 +3,7 @@
 v7
 + Installation now shows proper percentage progress
 + Completely reworked 7z handling
++ Experimental RLE compression to decrease size of output .pp files
 ++ Console tab removed since no more use
 + Now detects if mods are valid
 ++ Also checks if actual mod is inside 7z

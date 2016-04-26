@@ -147,10 +147,10 @@ namespace AA2Install.Tests
             };
 
             //Assert.IsFalse(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count, "Subfiles have not changed.");
-            Assert.IsTrue(diff.Count == TrueCRC.Count, "Amount of changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", TrueCRC.Count, diff.Count);
+            Assert.AreEqual(diff.Count, TrueCRC.Count, "Amount of changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", TrueCRC.Count, diff.Count);
 
             foreach (KeyValuePair<string, uint> kv in TrueCRC)
-                Assert.IsTrue(kv.Value == diff[kv.Key], "CRC check failed after installation. Key: {0}; Expected value: {1}; Actual value: {2}", kv.Key, kv.Value, diff[kv.Key]);
+                Assert.AreEqual(kv.Value, diff[kv.Key], "CRC check failed after installation. Key: {0}; Expected value: {1}; Actual value: {2}", kv.Key, kv.Value, diff[kv.Key]);
 
             foreach (ListViewItem lv in form.lsvMods.Items)
                 lv.Checked = false;
@@ -415,6 +415,13 @@ namespace AA2Install.Tests
             };
 
             Configuration.saveMods(form.modDict);
+        }
+
+        [TestMethod]
+        public void injectRLETest()
+        {
+            Configuration.WriteSetting("COMPRESS", "True");
+            injectTest();
         }
 
         [ClassCleanup()]

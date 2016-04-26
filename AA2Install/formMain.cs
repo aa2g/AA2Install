@@ -49,6 +49,7 @@ namespace AA2Install
             txtAA2EDIT.Text = Configuration.ReadSetting("AA2EDIT_Path") ?? "";
             checkConflicts.Checked = Configuration.getBool("CONFLICTS");
             checkSuppress.Checked = Configuration.getBool("SUPPRESS");
+            checkCompress.Checked = Configuration.getBool("COMPRESS");
 
             lblEditPath.Text = "Current AA2_EDIT path: " + Paths.AA2Edit;
             lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
@@ -144,6 +145,11 @@ namespace AA2Install
             Configuration.WriteSetting("SUPPRESS", checkSuppress.Checked.ToString());
         }
 
+        private void checkCompress_CheckedChanged(object sender, EventArgs e)
+        {
+            Configuration.WriteSetting("COMPRESS", checkCompress.Checked.ToString());
+        }
+
         #endregion
         #region Methods
         /// <summary>
@@ -157,7 +163,7 @@ namespace AA2Install
                 checkAA2PLAY.Enabled = txtAA2PLAY.Enabled = btnAA2PLAY.Enabled =
                 checkConflicts.Enabled = btnMigrate.Enabled = btnBrowseMigrate.Enabled =
                 txtMigrate.Enabled = txtBrowseMigrate.Enabled = btnCancel.Enabled = 
-                cmbSorting.Enabled = enabled;
+                cmbSorting.Enabled = checkCompress.Enabled = enabled;
         }
 
         /// <summary>
@@ -712,6 +718,8 @@ namespace AA2Install
                 ppQueue.Enqueue(p);
             }
 
+            bool compress = Configuration.getBool("COMPRESS");
+
             int ii = 0;
             prgMajor.Value = 0;
             prgMinor.Value = 0;
@@ -723,7 +731,7 @@ namespace AA2Install
                 updateStatus("(" + ii + "/" + prgMinor.Maximum + ") Reverting " + b.ppFile + " (0%)...", LogIcon.Processing);
                 if (b.pp.Subfiles.Count > 0)
                 {
-                    BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true);
+                    BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true, compress);
 
                     bb.ProgressChanged += ((s, e) =>
                     {
@@ -825,7 +833,7 @@ namespace AA2Install
                 {
                     prgMinor.Value = 0;
                     prgMinor.Maximum = 100;
-                    BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true);
+                    BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true, compress);
 
                     bb.ProgressChanged += ((s, e) =>
                     {

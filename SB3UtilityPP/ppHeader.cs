@@ -165,6 +165,8 @@ namespace SB3Utility
                     currentOffset = offsets[index];
                 }
 
+                offsets.Add(currentOffset);
+
                 int idx = i * 288;
                 Utility.EncodingShiftJIS.GetBytes(subfile.Name).CopyTo(fileHeaderBuf, idx);
                 BitConverter.GetBytes(size).CopyTo(fileHeaderBuf, idx + 260);

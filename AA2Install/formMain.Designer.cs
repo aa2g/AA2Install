@@ -81,6 +81,7 @@
             this.txtPLAYreg = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkSuppress = new System.Windows.Forms.CheckBox();
+            this.checkCompress = new System.Windows.Forms.CheckBox();
             this.checkConflicts = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblTextures = new System.Windows.Forms.Label();
@@ -638,6 +639,7 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.checkSuppress);
+            this.groupBox2.Controls.Add(this.checkCompress);
             this.groupBox2.Controls.Add(this.checkConflicts);
             this.groupBox2.Location = new System.Drawing.Point(8, 134);
             this.groupBox2.Name = "groupBox2";
@@ -656,6 +658,17 @@
             this.checkSuppress.Text = "Suppress confirmation dialog";
             this.checkSuppress.UseVisualStyleBackColor = true;
             this.checkSuppress.CheckedChanged += new System.EventHandler(this.checkSuppress_CheckedChanged);
+            // 
+            // checkCompress
+            // 
+            this.checkCompress.AutoSize = true;
+            this.checkCompress.Location = new System.Drawing.Point(330, 19);
+            this.checkCompress.Name = "checkCompress";
+            this.checkCompress.Size = new System.Drawing.Size(201, 17);
+            this.checkCompress.TabIndex = 0;
+            this.checkCompress.Text = "Enable experimental .pp compression";
+            this.checkCompress.UseVisualStyleBackColor = true;
+            this.checkCompress.CheckedChanged += new System.EventHandler(this.checkCompress_CheckedChanged);
             // 
             // checkConflicts
             // 
@@ -995,7 +1008,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.PictureBox imagePreview;
-        private System.Windows.Forms.Timer imageTimer;
         private System.Windows.Forms.Label lblEditPath;
         private System.Windows.Forms.Label lblPlayPath;
         private System.Windows.Forms.RichTextBox rtbDescription;
@@ -1047,6 +1059,8 @@
         private System.Windows.Forms.Panel panelTasks;
         private System.Windows.Forms.ToolStrip toolStrip2;
         private System.Windows.Forms.ToolStripButton btnLoadModpack;
+        private System.Windows.Forms.CheckBox checkCompress;
+        public System.Windows.Forms.Timer imageTimer;
     }
 }
 
