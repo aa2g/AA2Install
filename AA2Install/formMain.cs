@@ -648,7 +648,10 @@ namespace AA2Install
             }
 
             int ii = 0;
-            prgMinor.Maximum = ppList.Count();
+            prgMajor.Value = 0;
+            prgMinor.Value = 0;
+            prgMajor.Maximum = ppList.Count();
+            prgMinor.Maximum = 100;
             foreach (basePP b in ppList)
             {
                 ii++;
@@ -659,7 +662,9 @@ namespace AA2Install
 
                     bb.ProgressChanged += ((s, e) =>
                     {
-                        prgMinor.Value = e.ProgressPercentage;
+                        this.Invoke((MethodInvoker)delegate {
+                            prgMinor.Value = e.ProgressPercentage;
+                        });
                         updateStatus("(" + ii + "/" + prgMinor.Maximum + ") Injecting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
                     });
 
@@ -759,7 +764,9 @@ namespace AA2Install
 
                     bb.ProgressChanged += ((s, e) =>
                     {
-                        prgMinor.Value = e.ProgressPercentage;
+                        this.Invoke((MethodInvoker)delegate
+                            { prgMinor.Value = e.ProgressPercentage; });
+                        
                         updateStatus("(" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Injecting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
                     });
 
