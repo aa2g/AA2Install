@@ -178,18 +178,20 @@ namespace SB3Utility
 
                                     if (Hashes.Any(x => x.Item2 == hash))
                                     {
-                                        meta = Hashes.First(x => x.Item2 == hash).Item4;
+                                        var first = Hashes.First(x => x.Item2 == hash);
+
+                                        Hashes.Add(new Tuple<IWriteFile, uint, uint, object>(
+                                            Subfiles[i], hash, first.Item3, first.Item4));
                                     }
                                     else
                                     {
                                         mem.WriteTo(stream);
                                         metadata[i] = meta = Format.FinishWriteTo(stream);
+                                        long ppos = writer.BaseStream.Position;
+
+                                        Hashes.Add(new Tuple<IWriteFile, uint, uint, object>(
+                                                Subfiles[i], hash, (uint)(ppos - offset), meta));
                                     }
-
-                                    long ppos = writer.BaseStream.Position;
-
-                                    Hashes.Add(new Tuple<IWriteFile, uint, uint, object>(
-                                            Subfiles[i], hash, (uint)(ppos - offset), meta));
                                 }
                             }
                             else
