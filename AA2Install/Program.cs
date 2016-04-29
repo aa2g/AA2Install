@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,6 +63,9 @@ namespace AA2Install
         {
             try
             {
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
                 SerializableDictionary<string, string> log = new SerializableDictionary<string, string>();
 
                 //log["userdata"] = ((SerializableDictionary<string, string>)ex.Data).SerializeObject();
