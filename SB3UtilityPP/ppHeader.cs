@@ -162,6 +162,8 @@ namespace SB3Utility
                     int index = data.IndexOf(data.GetRange(0, i)
                                         .First(x => x.Item2 == hash));
 
+                    size = data[index].Item3;
+
                     currentOffset = offsets[index];
                 }
 

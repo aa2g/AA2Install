@@ -30,7 +30,6 @@ namespace AA2Install
         public ModDictionary modDict = new ModDictionary();
         public formChanges change;
 #warning add ordered installation
-#warning set exception error culture to english
 #warning add a new panel for detailed installation info
 #warning add lst preservation option for certian files/check uncheck which subfiles to install
 #warning replace synchronization method with a queue for installs and uninstalls
