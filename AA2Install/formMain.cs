@@ -728,7 +728,7 @@ namespace AA2Install
             foreach (basePP b in ppList)
             {
                 ii++;
-                updateStatus("(" + ii + "/" + prgMinor.Maximum + ") Reverting " + b.ppFile + " (0%)...", LogIcon.Processing);
+                updateStatus("(" + ii + "/" + prgMajor.Maximum + ") Reverting " + b.ppFile + " (0%)...", LogIcon.Processing);
                 if (b.pp.Subfiles.Count > 0)
                 {
                     BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup, "", true, compress);
@@ -738,7 +738,7 @@ namespace AA2Install
                         this.Invoke((MethodInvoker)delegate {
                             prgMinor.Value = e.ProgressPercentage;
                         });
-                        updateStatus("(" + ii + "/" + prgMinor.Maximum + ") Injecting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
+                        updateStatus("(" + ii + "/" + prgMajor.Maximum + ") Injecting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
                     });
 
                     bb.RunWorkerAsync();
