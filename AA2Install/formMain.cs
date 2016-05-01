@@ -880,8 +880,8 @@ namespace AA2Install
                 updateProgress = (i) => {
                     this.Invoke((MethodInvoker)delegate {
                         prgMinor.Value = i;
+                        updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (" + i + "%)...");
                     });
-                    updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (" + i + "%)...");
                 };
 
                 _7z.ProgressUpdated += updateProgress;
