@@ -49,14 +49,23 @@ public static class TaskbarProgress
 
     private static ITaskbarList3 taskbarInstance = (ITaskbarList3)new TaskbarInstance();
     private static bool taskbarSupported = Environment.OSVersion.Version >= new Version(6, 1);
+    public static bool CompatibilityMode = false;
+
+    private static bool useTaskbar
+    {
+        get
+        {
+            return !CompatibilityMode && taskbarSupported;
+        }
+    }
 
     public static void SetState(IntPtr windowHandle, TaskbarStates taskbarState)
     {
-        if (taskbarSupported) taskbarInstance.SetProgressState(windowHandle, taskbarState);
+        if (useTaskbar) taskbarInstance.SetProgressState(windowHandle, taskbarState);
     }
 
     public static void SetValue(IntPtr windowHandle, double progressValue, double progressMax)
     {
-        if (taskbarSupported) taskbarInstance.SetProgressValue(windowHandle, (ulong)progressValue, (ulong)progressMax);
+        if (useTaskbar) taskbarInstance.SetProgressValue(windowHandle, (ulong)progressValue, (ulong)progressMax);
     }
 }

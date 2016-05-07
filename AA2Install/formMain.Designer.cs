@@ -80,6 +80,7 @@
             this.btnPLAYreg = new System.Windows.Forms.Button();
             this.txtPLAYreg = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.checkCompatibility = new System.Windows.Forms.CheckBox();
             this.checkSuppress = new System.Windows.Forms.CheckBox();
             this.checkCompress = new System.Windows.Forms.CheckBox();
             this.checkConflicts = new System.Windows.Forms.CheckBox();
@@ -638,6 +639,7 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.checkCompatibility);
             this.groupBox2.Controls.Add(this.checkSuppress);
             this.groupBox2.Controls.Add(this.checkCompress);
             this.groupBox2.Controls.Add(this.checkConflicts);
@@ -647,6 +649,17 @@
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Installation";
+            // 
+            // checkCompatibility
+            // 
+            this.checkCompatibility.AutoSize = true;
+            this.checkCompatibility.Location = new System.Drawing.Point(330, 42);
+            this.checkCompatibility.Name = "checkCompatibility";
+            this.checkCompatibility.Size = new System.Drawing.Size(193, 17);
+            this.checkCompatibility.TabIndex = 2;
+            this.checkCompatibility.Text = "Enable XP/Vista compatibility mode";
+            this.checkCompatibility.UseVisualStyleBackColor = true;
+            this.checkCompatibility.CheckedChanged += new System.EventHandler(this.chkCompatibility_CheckedChanged);
             // 
             // checkSuppress
             // 
@@ -1061,6 +1074,7 @@
         private System.Windows.Forms.ToolStripButton btnLoadModpack;
         private System.Windows.Forms.CheckBox checkCompress;
         public System.Windows.Forms.Timer imageTimer;
+        private System.Windows.Forms.CheckBox checkCompatibility;
     }
 }
 

@@ -3,13 +3,15 @@
 v7
 + Installation now shows proper percentage progress
 + Completely reworked 7z handling
-+ Experimental RLE compression to decrease size of output .pp files
 ++ Console tab removed since no more use
++ Experimental RLE compression to decrease size of output .pp files
 + Now detects if mods are valid
 ++ Also checks if actual mod is inside 7z
 + Rewritten preview loading
 + Added modpacks
 + Now checks for free space on required drives
++ Added Vista/XP Compatibility mode
++ Fixed a whole heap of bugs
 
 v6.3
 + Added force installation

@@ -49,6 +49,7 @@ namespace AA2Install
             checkConflicts.Checked = Configuration.getBool("CONFLICTS");
             checkSuppress.Checked = Configuration.getBool("SUPPRESS");
             checkCompress.Checked = Configuration.getBool("COMPRESS");
+            checkCompatibility.Checked = Configuration.getBool("COMPATIBILITY");
 
             lblEditPath.Text = "Current AA2_EDIT path: " + Paths.AA2Edit;
             lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
@@ -149,6 +150,12 @@ namespace AA2Install
             Configuration.WriteSetting("COMPRESS", checkCompress.Checked.ToString());
         }
 
+        private void chkCompatibility_CheckedChanged(object sender, EventArgs e)
+        {
+            TaskbarProgress.CompatibilityMode = checkCompatibility.Checked;
+            Configuration.WriteSetting("COMPATIBILITY", checkCompatibility.Checked.ToString());
+        }
+
         #endregion
         #region Methods
         /// <summary>
@@ -162,7 +169,8 @@ namespace AA2Install
                 checkAA2PLAY.Enabled = txtAA2PLAY.Enabled = btnAA2PLAY.Enabled =
                 checkConflicts.Enabled = btnMigrate.Enabled = btnBrowseMigrate.Enabled =
                 txtMigrate.Enabled = txtBrowseMigrate.Enabled = btnCancel.Enabled = 
-                cmbSorting.Enabled = checkCompress.Enabled = enabled;
+                cmbSorting.Enabled = checkCompress.Enabled = checkSuppress.Enabled = 
+                checkCompatibility.Checked = enabled;
         }
 
         /// <summary>
@@ -365,7 +373,7 @@ namespace AA2Install
                     lsvMods.Items[index].Checked = true;
                 }
 
-                m.Properties["Estimated Size"] = (m.Size / (1024)).ToString("#,## kB");
+                m.Properties["Maximum Size"] = (m.Size / (1024)).ToString("#,## kB");
 
                 if (m.Installed && m.InstallTime.Year > 2000)
                     m.Properties["Installed on"] = m.InstallTime.ToString();
@@ -846,7 +854,6 @@ namespace AA2Install
                     while (bb.IsBusy)
                     {
                         Application.DoEvents();
-                        Thread.Sleep(100);
                     }
                 }
                 else
@@ -874,12 +881,12 @@ namespace AA2Install
             {
                 ind++;
                 prgMajor.Value = ind;
-                updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (0%)...");
+                updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (0%)...", LogIcon.Processing);
 
                 updateProgress = (i) => {
                     this.Invoke((MethodInvoker)delegate {
                         prgMinor.Value = i;
-                        updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (" + i + "%)...");
+                        updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (" + i + "%)...", LogIcon.Processing, false, true);
                     });
                 };
 
