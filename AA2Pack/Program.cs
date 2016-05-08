@@ -48,6 +48,9 @@ namespace AA2Pack
                 args.ContainsSwitch("h"))
             {
                 PrintHelp();
+#if DEBUG
+                Console.ReadKey();
+#endif
                 return;
             }
 
@@ -82,7 +85,7 @@ namespace AA2Pack
                         using (FileStream fs = new FileStream(path, FileMode.Create))
                             iw.WriteTo(fs);
 
-                        ConsoleWriter.WriteFormat("[{0}/{1}] Processed {2}... ({3})",
+                        ConsoleWriter.WriteLineFormat("[{0}/{1}] Processed {2}... ({3})",
                             (++i).ToString(), //processed subfiles
                             pp.Subfiles.Count.ToString(), //total subfiles
                             iw.Name, //current subfile
@@ -95,11 +98,7 @@ namespace AA2Pack
                 {
                     //packing into a .pp
                     
-                    string localPath = s.TrimEnd('\\') + ".pp";
-                    if (localPath.Contains("\\"))
-                        localPath = localPath.Remove(0, s.LastIndexOf('\\'));
-
-                    string ppPath = Path.Combine(Path.GetDirectoryName(s.TrimEnd('\\')), localPath);
+                    string ppPath = Path.GetFullPath(s).TrimEnd('\\') + ".pp";
 
                     if (File.Exists(ppPath))
                     {
@@ -122,7 +121,7 @@ namespace AA2Pack
                     bg.ProgressChanged += (sender, e) =>
                     {
                         ConsoleWriter.ClearLine();
-                        ConsoleWriter.WriteFormat("Writing " + localPath + "... ({0})", e.ProgressPercentage + "%");
+                        ConsoleWriter.WriteFormat("Writing " + ppPath + "... ({0})", e.ProgressPercentage + "%");
                     };
 
                     bg.RunWorkerAsync();
@@ -131,10 +130,13 @@ namespace AA2Pack
                         System.Threading.Thread.Sleep(50);
 
                     ConsoleWriter.ClearLine();
-                    ConsoleWriter.WriteLineFormat("Writing " + localPath + "... ({0})", "100%");
+                    ConsoleWriter.WriteLineFormat("Writing " + ppPath + "... ({0})", "100%");
                 }
-
             }
+
+#if DEBUG
+            Console.ReadKey();
+#endif
         }
     }
 }
