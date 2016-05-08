@@ -46,7 +46,8 @@ namespace AA2Install.Tests
 
             Configuration.saveMods(new ModDictionary());
             form = new formMain();
-            
+
+            form.Visible = true;
             form.CreateControl();
             form.imageTimer.Enabled = false;
             

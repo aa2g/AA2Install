@@ -1202,6 +1202,8 @@ namespace AA2Install
                 using (var splashForm = new formSplash())
                 {
                     splashForm.lblVer.Text = "AA2Install v" + formAbout.AssemblyVersion;
+                    splashForm.Visible = true;
+                    splashForm.CreateControl();
                     statusUpdated += (s) =>
                     {
                         splashForm.BeginInvoke(new MethodInvoker(() =>
@@ -1577,27 +1579,31 @@ namespace AA2Install
                 statusUpdated(entry);
             if (onlyStatusBar)
             {
-                labelStatus.Text = entry;
+                this.Invoke((MethodInvoker)delegate {
+                    labelStatus.Text = entry;
+                });
             }
             else
             {
-                Console.ProgramLog.Add(new LogEntry(entry, icon));
-                        if (lsvLog.Items.Count > 0 && showTime)
-                        {
-                            lsvLog.Items[lsvLog.Items.Count - 1].SubItems.Add((getTimeSinceLastCheck().TotalMilliseconds / 1000).ToString("F2") + "s");
-                        }
-                        showTime = displayTime;
-                switch (icon)
-                {
-                    case LogIcon.Error:
-                    case LogIcon.Warning:
-                        lsvLog.Items.Add(entry, (int)icon);
-                        break;
-                    default:
-                        lsvLog.Items.Add(entry, (int)icon);
-                        labelStatus.Text = entry;
-                        break;
-                }
+                this.Invoke((MethodInvoker)delegate {
+                    Console.ProgramLog.Add(new LogEntry(entry, icon));
+                    if (lsvLog.Items.Count > 0 && showTime)
+                    {
+                        lsvLog.Items[lsvLog.Items.Count - 1].SubItems.Add((getTimeSinceLastCheck().TotalMilliseconds / 1000).ToString("F2") + "s");
+                    }
+                    showTime = displayTime;
+                    switch (icon)
+                    {
+                        case LogIcon.Error:
+                        case LogIcon.Warning:
+                            lsvLog.Items.Add(entry, (int)icon);
+                            break;
+                        default:
+                            lsvLog.Items.Add(entry, (int)icon);
+                            labelStatus.Text = entry;
+                            break;
+                    }
+                });
             }
             
         }
