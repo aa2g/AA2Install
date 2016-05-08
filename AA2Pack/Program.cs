@@ -36,6 +36,10 @@ namespace AA2Pack
         
         static void Main(string[] args)
         {
+#if DEBUG
+            System.Diagnostics.Debugger.Launch();
+#endif
+
             ConsoleWriter.WriteLineFormat("AA2Pack v{0}", Assembly.GetExecutingAssembly().GetName().Version.ToString());
             ConsoleWriter.WriteLineFormat("by {0}", "drpavel");
             ConsoleWriter.WriteLine();
@@ -44,9 +48,6 @@ namespace AA2Pack
                 args.ContainsSwitch("h"))
             {
                 PrintHelp();
-#if DEBUG
-                Console.ReadKey();
-#endif
                 return;
             }
 
@@ -63,14 +64,16 @@ namespace AA2Pack
 
                     ppParser pp = new ppParser(s, new ppFormat_AA2());
 
-                    string dirPath = Path.Combine(Path.GetDirectoryName(s), Path.GetFileNameWithoutExtension(s));
+                    string dirPath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(s)), Path.GetFileNameWithoutExtension(s));
 
                     if (Directory.Exists(dirPath))
+                    {
                         if (!suppress &&
                             !PromptUser("Are you sure you want to overwrite \"" + dirPath + "\"?"))
-                        {
                             continue;
-                        }
+                    } 
+                    else
+                        Directory.CreateDirectory(dirPath);
 
                     int i = 0;
                     foreach (IWriteFile iw in pp.Subfiles)
@@ -91,17 +94,24 @@ namespace AA2Pack
                 else if (Directory.Exists(s))
                 {
                     //packing into a .pp
+                    
+                    string localPath = s.TrimEnd('\\') + ".pp";
+                    if (localPath.Contains("\\"))
+                        localPath = localPath.Remove(0, s.LastIndexOf('\\'));
 
-                    string localPath = s.Remove(0, s.LastIndexOf('\\')) + ".pp";
                     string ppPath = Path.Combine(Path.GetDirectoryName(s.TrimEnd('\\')), localPath);
 
                     if (File.Exists(ppPath))
+                    {
                         if (!suppress &&
                             !PromptUser("Are you sure you want to overwrite \"" + ppPath + "\"?"))
                         {
                             continue;
                         }
-
+                        else
+                            File.Delete(ppPath);
+                    }
+                    
                     ppParser pp = new ppParser(ppPath, new ppFormat_AA2());
                     
                     foreach (string file in Directory.GetFiles(s))
@@ -121,14 +131,10 @@ namespace AA2Pack
                         System.Threading.Thread.Sleep(50);
 
                     ConsoleWriter.ClearLine();
-                    ConsoleWriter.WriteLineFormat("Writing " + localPath + "... ({0})" + Environment.NewLine, "100%");
+                    ConsoleWriter.WriteLineFormat("Writing " + localPath + "... ({0})", "100%");
                 }
 
             }
-
-#if DEBUG
-            Console.ReadKey();
-#endif
         }
     }
 }
