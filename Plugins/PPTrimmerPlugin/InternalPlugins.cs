@@ -10,9 +10,9 @@ using ImageMagick;
 
 namespace PPTrimmerPlugin
 {
-    internal class InternalPlugins
+    internal static class InternalPlugins
     {
-        internal List<ITrimPlugin> AllInternalPlugins => new List<ITrimPlugin>
+        internal static List<ITrimPlugin> AllInternalPlugins => new List<ITrimPlugin>
         {
             new PPWavAudioTrimmer(),
             new PPTgaImageCompressor(),

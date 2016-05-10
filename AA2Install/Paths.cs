@@ -85,6 +85,7 @@ namespace AA2Install
         /// Config file path.
         /// </summary>
         public static string CONFIG => Environment.CurrentDirectory + @"\config.json";
+        public static string PLUGINS => Environment.CurrentDirectory + @"\plugins";
 
     }
 }

@@ -15,13 +15,7 @@ namespace PPTrimmerPlugin
 
         public PluginType Type => PluginType.UserControl;
 
-        public object Payload
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public object Payload => new UserControlMethod("PP Trimmer", new ucMain());
     }
 
     public delegate void ProgressUpdatedEventArgs(int progress);

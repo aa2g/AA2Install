@@ -22,6 +22,7 @@ using System.Threading;
 using Microsoft.Win32;
 using CG.Web.MegaApiClient;
 using SevenZipNET;
+using PluginLoader;
 
 namespace AA2Install
 {
@@ -29,6 +30,7 @@ namespace AA2Install
     {
         public ModDictionary modDict = new ModDictionary();
         public formChanges change;
+        public List<IPlugin> Plugins = new List<IPlugin>();
 #warning add ordered installation
 #warning add a new panel for detailed installation info
 #warning add lst preservation option for certian files/check uncheck which subfiles to install
@@ -1188,7 +1190,7 @@ namespace AA2Install
         }
 
 
-        public void formMain_Shown(object sender, EventArgs ev)
+        public void formMain_Shown(object sender, EventArgs events)
         {
             //Hide();
             bool done = false;
@@ -1220,6 +1222,43 @@ namespace AA2Install
                     this.BeginInvoke(new MethodInvoker((() => { this.Activate(); })));
                 }
             });
+
+            //Load plugins
+            Plugins.AddRange(PluginLoader.PluginLoader.LoadAllDLLs(Paths.PLUGINS + "\\"));
+
+            foreach (IPlugin plugin in Plugins)
+            {
+                switch (plugin.Type)
+                {
+                    case PluginType.StartupScript:
+                        Method script = (Method)plugin.Payload;
+
+                        script.Invoke();
+                        break;
+                    case PluginType.MenuStripButton:
+                        MenuStripMethod strip = (MenuStripMethod)plugin.Payload;
+
+                        ToolStripMenuItem button = new ToolStripMenuItem();
+                        button.Text = strip.Text;
+                        button.AutoSize = true;
+                        button.Click += new EventHandler((s, ev) =>
+                        {
+                            strip.Method.Invoke();
+                        });
+
+                        pluginsToolStripMenuItem.DropDownItems.Add(button);
+                        break;
+                    case PluginType.UserControl:
+                        UserControlMethod control = (UserControlMethod)plugin.Payload;
+
+                        TabPage page = new TabPage(control.Text);
+                        page.Controls.Add(control.Method);
+                        page.Controls[0].Dock = DockStyle.Fill;
+
+                        tabControl1.TabPages.Add(page);
+                        break;
+                }
+            }
 
             //Resize the column
             lsvMods_SizeChanged(null, null);
