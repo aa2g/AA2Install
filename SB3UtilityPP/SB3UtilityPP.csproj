@@ -70,6 +70,7 @@
     <Compile Include="IReadFile.cs" />
     <Compile Include="IWriteFile.cs" />
     <Compile Include="JchStream.cs" />
+    <Compile Include="MemSubFile.cs" />
     <Compile Include="ppFormat.cs" />
     <Compile Include="ppHeader.cs" />
     <Compile Include="ppParser.cs" />
