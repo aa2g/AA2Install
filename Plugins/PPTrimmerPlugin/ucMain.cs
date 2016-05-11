@@ -118,6 +118,7 @@ namespace PPTrimmerPlugin
                     System.Threading.Thread.Sleep(50);
                 }
 
+                prgMinor.Value = 100;
                 fi = new FileInfo(fi.FullName);
                 long offsetSize = originalSize - fi.Length;
                 item.SubItems.Add(BytesToString(offsetSize));

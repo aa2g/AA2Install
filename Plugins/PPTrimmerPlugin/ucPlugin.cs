@@ -36,6 +36,7 @@ namespace PPTrimmerPlugin
             {
                 plugin.ProcessPP(pp);
             }
+            prgProgress.Value = 100;
         }
 
         public void Reload()
