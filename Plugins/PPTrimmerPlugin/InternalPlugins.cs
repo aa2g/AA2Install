@@ -21,11 +21,11 @@ namespace PPTrimmerPlugin
 
     public class PPWavAudioTrimmer : ITrimPlugin
     {
-        public string Name => ".wav Audio Channel Trimmer";
+        public string Name => ".wav ADPCM Channel Trimmer";
 
-        public string DisplayName => "Split .wav files to mono";
+        public string DisplayName => "Split .wav files to mono and compress";
 
-        public Version Version => new Version("1.0.0.0");
+        public Version Version => new Version("1.1.0.0");
 
         public event ProgressUpdatedEventArgs ProgressUpdated;
 
@@ -45,10 +45,15 @@ namespace PPTrimmerPlugin
                     mem.Position = 0;
                     using (WaveFileReader wv = new WaveFileReader(mem))
                     {
-                        WaveFormat f = new WaveFormat(wv.WaveFormat.SampleRate, wv.WaveFormat.BitsPerSample, 1);
-
-                        using (WaveFormatConversionStream str = new WaveFormatConversionStream(f, wv))
-                            pp.Subfiles[i] = new MemSubfile(new MemoryStream(ToByteArray(str)), iw.Name);
+                        if (wv.WaveFormat.Channels > 1 || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm)
+                        {
+                            WaveFormat f = new AdpcmWaveFormat(wv.WaveFormat.SampleRate, 1);//new WaveFormat(wv.WaveFormat.SampleRate, wv.WaveFormat.BitsPerSample, 1);
+                            
+                            using (WaveFormatConversionStream str = new WaveFormatConversionStream(f, wv))
+                            {
+                                pp.Subfiles[i] = new MemSubfile(new MemoryStream(ToByteArray(str)), iw.Name);
+                            }
+                        }                        
                     }
                     
                 }
@@ -76,7 +81,7 @@ namespace PPTrimmerPlugin
 
         public string Name => ".tga File Compressor";
 
-        public Version Version => new Version("1.0.0.0");
+        public Version Version => new Version("1.0.1.0");
 
         public event ProgressUpdatedEventArgs ProgressUpdated;
 
@@ -91,18 +96,21 @@ namespace PPTrimmerPlugin
 
                 using (MemoryStream mem = new MemoryStream())
                 {
-                    iw.WriteTo(mem);
-
-                    mem.Position = 0;
-                    var settings = new MagickReadSettings();
-                    MagickImage m = new MagickImage(mem);
-                    m.CompressionMethod = CompressionMethod.RLE;
-
-                    using (MemoryStream rle = new MemoryStream())
+                    try
                     {
-                        m.Write(rle, MagickFormat.Tga);
-                        pp.Subfiles[i] = new MemSubfile(new MemoryStream(rle.ToArray()), iw.Name);
+                        iw.WriteTo(mem);
+
+                        mem.Position = 0;
+                        MagickImage m = new MagickImage(mem);
+                        m.CompressionMethod = CompressionMethod.RLE;
+
+                        using (MemoryStream rle = new MemoryStream())
+                        {
+                            m.Write(rle, MagickFormat.Tga);
+                            pp.Subfiles[i] = new MemSubfile(new MemoryStream(rle.ToArray()), iw.Name);
+                        }
                     }
+                    catch (MagickException) { }
                 }
 
                 if (ProgressUpdated != null)
