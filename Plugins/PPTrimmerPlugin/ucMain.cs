@@ -46,6 +46,7 @@ namespace PPTrimmerPlugin
                 FileInfo fi = new FileInfo(pp);
                 ListViewItem item = lsvPP.Items.Add(Path.GetFileName(pp));
                 item.SubItems.Add(BytesToString(fi.Length));
+                item.SubItems.Add(" ");
                 item.Tag = fi;
             }
         }
@@ -121,10 +122,15 @@ namespace PPTrimmerPlugin
                 prgMinor.Value = 100;
                 fi = new FileInfo(fi.FullName);
                 long offsetSize = originalSize - fi.Length;
-                item.SubItems.Add(BytesToString(offsetSize));
+                item.SubItems[1].Text = BytesToString(offsetSize);
 
                 prgMajor.Value++;
             }
+        }
+
+        private void btnRefreshPP_Click(object sender, EventArgs e)
+        {
+            ReloadPPs();
         }
     }
 }

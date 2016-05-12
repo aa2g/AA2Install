@@ -21,9 +21,9 @@ namespace PPTrimmerPlugin
 
     public class PPWavAudioTrimmer : ITrimPlugin
     {
-        public string Name => ".wav ADPCM Channel Trimmer";
+        public string Name => ".wav Resampler & Trimmer";
 
-        public string DisplayName => "Split .wav files to mono and compress";
+        public string DisplayName => "Split .wav files to mono and lower quality";
 
         public Version Version => new Version("1.1.0.0");
 
@@ -45,14 +45,31 @@ namespace PPTrimmerPlugin
                     mem.Position = 0;
                     using (WaveFileReader wv = new WaveFileReader(mem))
                     {
-                        if (wv.WaveFormat.Channels > 1 || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm)
+                        if (wv.WaveFormat.Channels > 1) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
                         {
-                            WaveFormat f = new AdpcmWaveFormat(wv.WaveFormat.SampleRate, 1);//new WaveFormat(wv.WaveFormat.SampleRate, wv.WaveFormat.BitsPerSample, 1);
-                            
+                            WaveFormat f = new WaveFormat(wv.WaveFormat.SampleRate, 16, 1); //new AdpcmWaveFormat(wv.WaveFormat.SampleRate, 1);
+
+                            MediaFoundationResampler resampledAudio = new MediaFoundationResampler(wv, f)
+                            {
+                                ResamplerQuality = 60
+                            };
+
                             using (WaveFormatConversionStream str = new WaveFormatConversionStream(f, wv))
                             {
-                                pp.Subfiles[i] = new MemSubfile(new MemoryStream(ToByteArray(str)), iw.Name);
+                                MemoryStream o = new MemoryStream();
+                                using (WaveFileWriter wr = new WaveFileWriter(o, f))
+                                {
+                                    int count = 0;
+                                    byte[] buffer = new byte[2048];
+                                    while ((count = resampledAudio.Read(buffer, 0, 2048)) > 0)
+                                    {
+                                        wr.Write(buffer, 0, count);
+                                    }
+                                    wr.Flush();
+                                    pp.Subfiles[i] = new MemSubfile(new MemoryStream(ToByteArray(o)), iw.Name);
+                                }
                             }
+                           
                         }                        
                     }
                     

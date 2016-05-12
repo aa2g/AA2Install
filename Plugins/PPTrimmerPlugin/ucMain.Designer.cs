@@ -38,6 +38,7 @@
             this.btnTrim = new System.Windows.Forms.Button();
             this.prgMinor = new System.Windows.Forms.ProgressBar();
             this.prgMajor = new System.Windows.Forms.ProgressBar();
+            this.btnRefreshPP = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -105,6 +106,7 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.btnRefreshPP);
             this.splitContainer2.Panel1.Controls.Add(this.prgMajor);
             this.splitContainer2.Panel1.Controls.Add(this.prgMinor);
             this.splitContainer2.Panel1.Controls.Add(this.btnTrim);
@@ -128,7 +130,7 @@
             // 
             this.btnTrim.Location = new System.Drawing.Point(12, 15);
             this.btnTrim.Name = "btnTrim";
-            this.btnTrim.Size = new System.Drawing.Size(75, 23);
+            this.btnTrim.Size = new System.Drawing.Size(94, 23);
             this.btnTrim.TabIndex = 0;
             this.btnTrim.Text = "Trim";
             this.btnTrim.UseVisualStyleBackColor = true;
@@ -151,6 +153,16 @@
             this.prgMajor.Name = "prgMajor";
             this.prgMajor.Size = new System.Drawing.Size(241, 20);
             this.prgMajor.TabIndex = 1;
+            // 
+            // btnRefreshPP
+            // 
+            this.btnRefreshPP.Location = new System.Drawing.Point(12, 44);
+            this.btnRefreshPP.Name = "btnRefreshPP";
+            this.btnRefreshPP.Size = new System.Drawing.Size(94, 23);
+            this.btnRefreshPP.TabIndex = 2;
+            this.btnRefreshPP.Text = "Refresh PP files";
+            this.btnRefreshPP.UseVisualStyleBackColor = true;
+            this.btnRefreshPP.Click += new System.EventHandler(this.btnRefreshPP_Click);
             // 
             // ucMain
             // 
@@ -184,5 +196,6 @@
         private System.Windows.Forms.Button btnTrim;
         private System.Windows.Forms.ProgressBar prgMajor;
         private System.Windows.Forms.ProgressBar prgMinor;
+        private System.Windows.Forms.Button btnRefreshPP;
     }
 }
