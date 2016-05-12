@@ -27,6 +27,8 @@ namespace PPTrimmerPlugin
 
         public Version Version => new Version("1.1.0.0");
 
+        public readonly int SampleRate = 32000;
+
         public event ProgressUpdatedEventArgs ProgressUpdated;
 
         public long AnalyzePP(ppParser pp)
@@ -45,11 +47,21 @@ namespace PPTrimmerPlugin
                     iw.WriteTo(mem);
 
                     mem.Position = 0;
+
+                    if (mem.Length == 0)
+                        continue;
+
                     using (WaveFileReader wv = new WaveFileReader(mem))
                     {
+                        long remaining = wv.Length;
                         if (wv.WaveFormat.Channels > 1) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
                         {
                             total += (wv.Length / 2);
+                            remaining /= 2;
+                        }
+                        if (wv.WaveFormat.SampleRate > SampleRate)
+                        {
+                            total += remaining - (long)(((float)SampleRate / wv.WaveFormat.SampleRate) * remaining);
                         }
                     }
 
@@ -78,9 +90,9 @@ namespace PPTrimmerPlugin
                     mem.Position = 0;
                     using (WaveFileReader wv = new WaveFileReader(mem))
                     {
-                        if (wv.WaveFormat.Channels > 1) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
+                        if (wv.WaveFormat.Channels > 1 || wv.WaveFormat.SampleRate > SampleRate) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
                         {
-                            WaveFormat f = new WaveFormat(wv.WaveFormat.SampleRate, 16, 1); //new AdpcmWaveFormat(wv.WaveFormat.SampleRate, 1);
+                            WaveFormat f = new WaveFormat(SampleRate, 16, 1); //new AdpcmWaveFormat(wv.WaveFormat.SampleRate, 1);
 
                             using (MediaFoundationResampler resampledAudio = new MediaFoundationResampler(wv, f))
                             {
