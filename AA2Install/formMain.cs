@@ -1223,6 +1223,12 @@ namespace AA2Install
                 }
             });
 
+            //Create necessary folders
+            if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
+            if (!Directory.Exists(Paths.MODS)) { Directory.CreateDirectory(Paths.MODS + @"\"); }
+            if (!Directory.Exists(Paths.CACHE)) { Directory.CreateDirectory(Paths.CACHE + @"\"); }
+            if (!Directory.Exists(Paths.PLUGINS)) { Directory.CreateDirectory(Paths.PLUGINS + @"\"); }
+
             //Load plugins
             Plugins.AddRange(PluginLoader.PluginLoader.LoadAllDLLs(Paths.PLUGINS + "\\"));
 
@@ -1268,11 +1274,6 @@ namespace AA2Install
             {
                 MessageBox.Show("You don't seem to have AA2Play and/or AA2Edit (properly) installed.\nPlease install it, use the registry fixer (if you've already installed it) or manually specify the install path in the preferences.", "AA2 Not Installed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
-
-            //Create necessary folders
-            if (!Directory.Exists(Paths.BACKUP)) { Directory.CreateDirectory(Paths.BACKUP + @"\"); }
-            if (!Directory.Exists(Paths.MODS)) { Directory.CreateDirectory(Paths.MODS + @"\"); }
-            if (!Directory.Exists(Paths.CACHE)) { Directory.CreateDirectory(Paths.CACHE + @"\"); }
 
             //Setup sorting
             lsvMods.ListViewItemSorter = new CustomListViewSorter(int.Parse(Configuration.ReadSetting("SORTMODE") ?? "0"));
