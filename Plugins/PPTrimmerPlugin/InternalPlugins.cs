@@ -29,6 +29,39 @@ namespace PPTrimmerPlugin
 
         public event ProgressUpdatedEventArgs ProgressUpdated;
 
+        public long AnalyzePP(ppParser pp)
+        {
+            long total = 0;
+
+            for (int i = 0; i < pp.Subfiles.Count; i++)
+            {
+                IWriteFile iw = pp.Subfiles[i];
+
+                if (!iw.Name.EndsWith(".wav"))
+                    continue;
+
+                using (MemoryStream mem = new MemoryStream())
+                {
+                    iw.WriteTo(mem);
+
+                    mem.Position = 0;
+                    using (WaveFileReader wv = new WaveFileReader(mem))
+                    {
+                        if (wv.WaveFormat.Channels > 1) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
+                        {
+                            total += (wv.Length / 2);
+                        }
+                    }
+
+                }
+
+                if (ProgressUpdated != null)
+                    ProgressUpdated((int)Math.Floor((double)(100 * i) / pp.Subfiles.Count));
+            }
+
+            return total;
+        }
+
         public void ProcessPP(ppParser pp)
         {
             for (int i = 0; i < pp.Subfiles.Count; i++)
@@ -49,13 +82,10 @@ namespace PPTrimmerPlugin
                         {
                             WaveFormat f = new WaveFormat(wv.WaveFormat.SampleRate, 16, 1); //new AdpcmWaveFormat(wv.WaveFormat.SampleRate, 1);
 
-                            MediaFoundationResampler resampledAudio = new MediaFoundationResampler(wv, f)
+                            using (MediaFoundationResampler resampledAudio = new MediaFoundationResampler(wv, f))
                             {
-                                ResamplerQuality = 60
-                            };
-
-                            using (WaveFormatConversionStream str = new WaveFormatConversionStream(f, wv))
-                            {
+                                resampledAudio.ResamplerQuality = 60;
+                            
                                 MemoryStream o = new MemoryStream();
                                 using (WaveFileWriter wr = new WaveFileWriter(o, f))
                                 {
@@ -101,6 +131,13 @@ namespace PPTrimmerPlugin
         public Version Version => new Version("1.0.1.0");
 
         public event ProgressUpdatedEventArgs ProgressUpdated;
+
+        public long AnalyzePP(ppParser pp)
+        {
+            return 0;
+            //probably not possible
+            //can't be assed
+        }
 
         public void ProcessPP(ppParser pp)
         {

@@ -34,11 +34,13 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.panelPlugins = new System.Windows.Forms.Panel();
-            this.btnTrim = new System.Windows.Forms.Button();
-            this.prgMinor = new System.Windows.Forms.ProgressBar();
-            this.prgMajor = new System.Windows.Forms.ProgressBar();
             this.btnRefreshPP = new System.Windows.Forms.Button();
+            this.prgMajor = new System.Windows.Forms.ProgressBar();
+            this.prgMinor = new System.Windows.Forms.ProgressBar();
+            this.btnTrim = new System.Windows.Forms.Button();
+            this.panelPlugins = new System.Windows.Forms.Panel();
+            this.btnSelectAll = new System.Windows.Forms.Button();
+            this.btnAnalyze = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -106,6 +108,8 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.btnAnalyze);
+            this.splitContainer2.Panel1.Controls.Add(this.btnSelectAll);
             this.splitContainer2.Panel1.Controls.Add(this.btnRefreshPP);
             this.splitContainer2.Panel1.Controls.Add(this.prgMajor);
             this.splitContainer2.Panel1.Controls.Add(this.prgMinor);
@@ -118,13 +122,33 @@
             this.splitContainer2.SplitterDistance = 186;
             this.splitContainer2.TabIndex = 0;
             // 
-            // panelPlugins
+            // btnRefreshPP
             // 
-            this.panelPlugins.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelPlugins.Location = new System.Drawing.Point(0, 0);
-            this.panelPlugins.Name = "panelPlugins";
-            this.panelPlugins.Size = new System.Drawing.Size(265, 150);
-            this.panelPlugins.TabIndex = 0;
+            this.btnRefreshPP.Location = new System.Drawing.Point(12, 98);
+            this.btnRefreshPP.Name = "btnRefreshPP";
+            this.btnRefreshPP.Size = new System.Drawing.Size(94, 23);
+            this.btnRefreshPP.TabIndex = 2;
+            this.btnRefreshPP.Text = "Refresh PP files";
+            this.btnRefreshPP.UseVisualStyleBackColor = true;
+            this.btnRefreshPP.Click += new System.EventHandler(this.btnRefreshPP_Click);
+            // 
+            // prgMajor
+            // 
+            this.prgMajor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.prgMajor.Location = new System.Drawing.Point(12, 163);
+            this.prgMajor.Name = "prgMajor";
+            this.prgMajor.Size = new System.Drawing.Size(241, 20);
+            this.prgMajor.TabIndex = 1;
+            // 
+            // prgMinor
+            // 
+            this.prgMinor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.prgMinor.Location = new System.Drawing.Point(12, 137);
+            this.prgMinor.Name = "prgMinor";
+            this.prgMinor.Size = new System.Drawing.Size(241, 20);
+            this.prgMinor.TabIndex = 1;
             // 
             // btnTrim
             // 
@@ -136,33 +160,33 @@
             this.btnTrim.UseVisualStyleBackColor = true;
             this.btnTrim.Click += new System.EventHandler(this.btnTrim_Click);
             // 
-            // prgMinor
+            // panelPlugins
             // 
-            this.prgMinor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.prgMinor.Location = new System.Drawing.Point(12, 137);
-            this.prgMinor.Name = "prgMinor";
-            this.prgMinor.Size = new System.Drawing.Size(241, 20);
-            this.prgMinor.TabIndex = 1;
+            this.panelPlugins.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelPlugins.Location = new System.Drawing.Point(0, 0);
+            this.panelPlugins.Name = "panelPlugins";
+            this.panelPlugins.Size = new System.Drawing.Size(265, 150);
+            this.panelPlugins.TabIndex = 0;
             // 
-            // prgMajor
+            // btnSelectAll
             // 
-            this.prgMajor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.prgMajor.Location = new System.Drawing.Point(12, 163);
-            this.prgMajor.Name = "prgMajor";
-            this.prgMajor.Size = new System.Drawing.Size(241, 20);
-            this.prgMajor.TabIndex = 1;
+            this.btnSelectAll.Location = new System.Drawing.Point(112, 15);
+            this.btnSelectAll.Name = "btnSelectAll";
+            this.btnSelectAll.Size = new System.Drawing.Size(94, 23);
+            this.btnSelectAll.TabIndex = 3;
+            this.btnSelectAll.Text = "Select All";
+            this.btnSelectAll.UseVisualStyleBackColor = true;
+            this.btnSelectAll.Click += new System.EventHandler(this.btnSelectAll_Click);
             // 
-            // btnRefreshPP
+            // btnAnalyze
             // 
-            this.btnRefreshPP.Location = new System.Drawing.Point(12, 44);
-            this.btnRefreshPP.Name = "btnRefreshPP";
-            this.btnRefreshPP.Size = new System.Drawing.Size(94, 23);
-            this.btnRefreshPP.TabIndex = 2;
-            this.btnRefreshPP.Text = "Refresh PP files";
-            this.btnRefreshPP.UseVisualStyleBackColor = true;
-            this.btnRefreshPP.Click += new System.EventHandler(this.btnRefreshPP_Click);
+            this.btnAnalyze.Location = new System.Drawing.Point(12, 44);
+            this.btnAnalyze.Name = "btnAnalyze";
+            this.btnAnalyze.Size = new System.Drawing.Size(94, 23);
+            this.btnAnalyze.TabIndex = 4;
+            this.btnAnalyze.Text = "Analyze";
+            this.btnAnalyze.UseVisualStyleBackColor = true;
+            this.btnAnalyze.Click += new System.EventHandler(this.btnAnalyze_Click);
             // 
             // ucMain
             // 
@@ -197,5 +221,7 @@
         private System.Windows.Forms.ProgressBar prgMajor;
         private System.Windows.Forms.ProgressBar prgMinor;
         private System.Windows.Forms.Button btnRefreshPP;
+        private System.Windows.Forms.Button btnSelectAll;
+        private System.Windows.Forms.Button btnAnalyze;
     }
 }

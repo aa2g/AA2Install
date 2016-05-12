@@ -39,6 +39,17 @@ namespace PPTrimmerPlugin
             prgProgress.Value = 100;
         }
 
+        public long Analyze(ppParser pp)
+        {
+            long savings = 0;
+            if (checkEnable.Checked)
+            {
+                savings = plugin.AnalyzePP(pp);
+            }
+            prgProgress.Value = 100;
+            return savings;
+        }
+
         public void Reload()
         {
             prgProgress.Value = 0;

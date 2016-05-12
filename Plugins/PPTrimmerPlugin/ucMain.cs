@@ -75,6 +75,9 @@ namespace PPTrimmerPlugin
 
         private void btnTrim_Click(object sender, EventArgs e)
         {
+            foreach (ListViewItem item in lsvPP.Items)
+                item.SubItems[2].Text = " ";
+
             prgMajor.Value = 0;
             var items = lsvPP.Items.Cast<ListViewItem>().Where(x => x.Checked);
             prgMajor.Maximum = items.Count();
@@ -122,7 +125,7 @@ namespace PPTrimmerPlugin
                 prgMinor.Value = 100;
                 fi = new FileInfo(fi.FullName);
                 long offsetSize = originalSize - fi.Length;
-                item.SubItems[1].Text = BytesToString(offsetSize);
+                item.SubItems[2].Text = BytesToString(offsetSize);
 
                 prgMajor.Value++;
             }
@@ -131,6 +134,54 @@ namespace PPTrimmerPlugin
         private void btnRefreshPP_Click(object sender, EventArgs e)
         {
             ReloadPPs();
+        }
+
+        private void btnSelectAll_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lsvPP.Items)
+                item.Checked = true;
+        }
+
+        private void btnAnalyze_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in lsvPP.Items)
+                item.SubItems[2].Text = " ";
+
+            prgMajor.Value = 0;
+            var items = lsvPP.Items.Cast<ListViewItem>().Where(x => x.Checked);
+            prgMajor.Maximum = items.Count();
+            foreach (ListViewItem item in items)
+            {
+                FileInfo fi = item.Tag as FileInfo;
+                long savings = 0;
+
+                ppParser pp = new ppParser(fi.FullName, new ppFormat_AA2());
+
+                BackgroundWorker bb = new BackgroundWorker();
+                bb.DoWork += (s, ev) => {
+                    foreach (UserControl uc in panelPlugins.Controls)
+                    {
+                        ucPlugin ucp = uc as ucPlugin;
+                        ucp.Invoke(new MethodInvoker(() =>
+                        {
+                            savings += ucp.Analyze(pp);
+                        }));
+                    }
+                };
+
+                bb.RunWorkerAsync();
+
+                while (bb.IsBusy)
+                {
+                    Application.DoEvents();
+                    System.Threading.Thread.Sleep(50);
+                }
+
+                prgMinor.Value = 100;
+                item.SubItems[2].Text = BytesToString(savings);
+
+                prgMajor.Value++;
+            }
         }
     }
 }

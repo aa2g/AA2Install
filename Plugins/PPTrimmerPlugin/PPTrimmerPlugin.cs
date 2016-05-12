@@ -24,6 +24,7 @@ namespace PPTrimmerPlugin
     {
         event ProgressUpdatedEventArgs ProgressUpdated;
         void ProcessPP(SB3Utility.ppParser pp);
+        long AnalyzePP(SB3Utility.ppParser pp);
         string Name { get; }
         string DisplayName { get; }
         Version Version { get; }
