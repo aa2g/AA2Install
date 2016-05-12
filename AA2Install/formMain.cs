@@ -154,7 +154,7 @@ namespace AA2Install
 
         private void chkCompatibility_CheckedChanged(object sender, EventArgs e)
         {
-            TaskbarProgress.CompatibilityMode = checkCompatibility.Checked;
+            //TaskbarProgress.CompatibilityMode = checkCompatibility.Checked;
             Configuration.WriteSetting("COMPATIBILITY", checkCompatibility.Checked.ToString());
         }
 
@@ -172,7 +172,7 @@ namespace AA2Install
                 checkConflicts.Enabled = btnMigrate.Enabled = btnBrowseMigrate.Enabled =
                 txtMigrate.Enabled = txtBrowseMigrate.Enabled = btnCancel.Enabled = 
                 cmbSorting.Enabled = checkCompress.Enabled = checkSuppress.Enabled = 
-                checkCompatibility.Checked = enabled;
+                checkCompatibility.Enabled = enabled;
         }
 
         /// <summary>

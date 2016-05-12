@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AA2Install;
+using System;
 using System.Runtime.InteropServices;
 
 public static class TaskbarProgress
@@ -49,13 +50,13 @@ public static class TaskbarProgress
 
     private static ITaskbarList3 taskbarInstance = (ITaskbarList3)new TaskbarInstance();
     private static bool taskbarSupported = Environment.OSVersion.Version >= new Version(6, 1);
-    public static bool CompatibilityMode = false;
 
     private static bool useTaskbar
     {
         get
         {
-            return !CompatibilityMode && taskbarSupported;
+            bool compatMode = Configuration.getBool("COMPATIBILITY");
+            return !compatMode && taskbarSupported;
         }
     }
 
