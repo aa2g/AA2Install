@@ -257,6 +257,13 @@ namespace SB3Utility
 						File.Delete(backup);
 					}
 				}
+
+                foreach (IWriteFile iw in Subfiles)
+                    if (iw is MemSubfile)
+                    {
+                        MemSubfile mem = iw as MemSubfile;
+                        mem.data.Close();
+                    }
 			}
 			catch (Exception ex)
 			{
