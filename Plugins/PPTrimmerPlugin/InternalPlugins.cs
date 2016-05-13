@@ -42,29 +42,47 @@ namespace PPTrimmerPlugin
                 if (!iw.Name.EndsWith(".wav"))
                     continue;
 
-                using (MemoryStream mem = new MemoryStream())
+                Stream str;
+                
+                if (iw is MemSubfile)
                 {
-                    iw.WriteTo(mem);
+                    MemSubfile m = iw as MemSubfile;
+                    str = m.data;
 
-                    mem.Position = 0;
+                    str.Position = 0;
+                }
+                else if (iw is IReadFile)
+                {
+                    IReadFile p = iw as IReadFile;
+                    str = p.CreateReadStream();
+                }
+                else
+                {
+                    str = new MemoryStream();
+                    iw.WriteTo(str);
 
-                    if (mem.Length == 0)
-                        continue;
+                    str.Position = 0;
+                }
 
-                    using (WaveFileReader wv = new WaveFileReader(mem))
+                if (str.Length == 0)
+                {
+                    str.Close();
+                    continue;
+                }
+
+                using (str)
+                using (WaveFileReader wv = new WaveFileReader(str))
+                {
+                    long remaining = wv.Length;
+                    if (wv.WaveFormat.Channels > 1) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
                     {
-                        long remaining = wv.Length;
-                        if (wv.WaveFormat.Channels > 1) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
-                        {
-                            total += (wv.Length / 2);
-                            remaining /= 2;
-                        }
-                        if (wv.WaveFormat.SampleRate > SampleRate)
-                        {
-                            total += remaining - (long)(((float)SampleRate / wv.WaveFormat.SampleRate) * remaining);
-                        }
+                        total += (wv.Length / 2);
+                        remaining /= 2;
                     }
-
+                    if (wv.WaveFormat.SampleRate > SampleRate)
+                    {
+                        total += remaining - (long)(((float)SampleRate / wv.WaveFormat.SampleRate) * remaining);
+                    }
                 }
 
                 if (ProgressUpdated != null)
