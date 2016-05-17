@@ -6,14 +6,14 @@ using System.IO;
 
 namespace SB3Utility
 {
-    public class MemSubfile : IReadFile, IWriteFile
+    public class MemSubfile : IReadFile, IWriteFile, IDisposable
     {
         public string Name { get; set; }
-        public MemoryStream data;
+        public byte[] data;
 
-        public MemSubfile(MemoryStream mem, string name)
+        public MemSubfile(byte[] data, string name)
         {
-            data = mem;
+            this.data = data;
             Name = name;
         }
 
@@ -33,11 +33,12 @@ namespace SB3Utility
 
         public Stream CreateReadStream()
         {
-            MemoryStream mem = new MemoryStream();
-            data.Position = 0;
-            data.CopyTo(mem);
-            mem.Position = 0;
-            return mem;
+            return new MemoryStream(data);
+        }
+
+        public void Dispose()
+        {
+            data = null;
         }
     }
 }

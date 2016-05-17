@@ -69,16 +69,12 @@
   <ItemGroup>
     <Compile Include="IReadFile.cs" />
     <Compile Include="IWriteFile.cs" />
-    <Compile Include="JchStream.cs" />
     <Compile Include="MemSubFile.cs" />
     <Compile Include="ppFormat.cs" />
     <Compile Include="ppHeader.cs" />
     <Compile Include="ppParser.cs" />
     <Compile Include="ppSubfile.cs" />
-    <Compile Include="ppSwapfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Report.cs" />
-    <Compile Include="Structures.cs" />
     <Compile Include="Subfile.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="WakeariStream.cs" />

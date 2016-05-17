@@ -406,11 +406,7 @@ namespace AA2Install.Tests
                 using (MemoryStream mem = new MemoryStream())
                 {
                     kv.WriteTo(mem);
-                    byte[] buffer = new byte[mem.Length];
-                    mem.Position = 0;
-                    mem.Read(buffer, 0, (int)mem.Length);
-
-                    var value = DamienG.Security.Cryptography.Crc32.Compute(buffer);
+                    var value = DamienG.Security.Cryptography.Crc32.Compute(mem.ToArray());
                     Assert.IsTrue(CRCValues[kv.Name] == value, "CRC check failed after uninstallation. Key: {0}; Expected value: {1}; Actual value: {2}", kv.Name, CRCValues[kv.Name], value);
                 }
             };
@@ -425,8 +421,16 @@ namespace AA2Install.Tests
             injectTest();
         }
 
+        [TestCleanup()]
+        public void TestCleanup()
+        {
+            form.Hide();
+            form.change.Close();
+            form.Close();
+        }
+
         [ClassCleanup()]
-        public static void Cleanup()
+        public static void ClassCleanup()
         {
             foreach (string s in Directory.GetFiles(Environment.CurrentDirectory + @"\testdir\"))
                 try { File.Delete(s); }

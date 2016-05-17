@@ -27,6 +27,7 @@ namespace SB3Utility
 
 		public void WriteTo(Stream stream)
 		{
+            //CreateReadStream().CopyTo(stream);
 			using (BinaryReader reader = new BinaryReader(CreateReadStream()))
 			{
 				BinaryWriter writer = new BinaryWriter(stream);
@@ -48,13 +49,13 @@ namespace SB3Utility
 				fs.Seek(offset, SeekOrigin.Begin);
 				return ppFormat.ReadStream(new PartialStream(fs, size));
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				if (fs != null)
 				{
 					fs.Close();
 				}
-				throw e;
+				throw;
 			}
 		}
 

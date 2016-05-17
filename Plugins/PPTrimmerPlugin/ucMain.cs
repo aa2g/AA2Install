@@ -153,6 +153,7 @@ namespace PPTrimmerPlugin
             foreach (ListViewItem item in items)
             {
                 FileInfo fi = item.Tag as FileInfo;
+                item.SubItems[1].Text = BytesToString(fi.Length);
                 long savings = 0;
 
                 ppParser pp = new ppParser(fi.FullName, new ppFormat_AA2());

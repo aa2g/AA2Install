@@ -259,16 +259,13 @@ namespace SB3Utility
 				}
 
                 foreach (IWriteFile iw in Subfiles)
-                    if (iw is MemSubfile)
-                    {
-                        MemSubfile mem = iw as MemSubfile;
-                        mem.data.Close();
-                    }
+                    if (iw is IDisposable)
+                        ((IDisposable)iw).Dispose();
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				RestoreBackup(destPath, backup);
-				Utility.ReportException(ex);
+                throw;
 			}
 		}
 
