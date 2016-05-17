@@ -48,7 +48,7 @@ namespace PPTrimmerPlugin
                 if (iw is MemSubfile)
                 {
                     MemSubfile m = iw as MemSubfile;
-                    str = m.data;
+                    str = m.CreateReadStream();
 
                     str.Position = 0;
                 }
@@ -129,7 +129,7 @@ namespace PPTrimmerPlugin
                                         wr.Write(buffer, 0, count);
                                     }
                                     wr.Flush();
-                                    pp.Subfiles[i] = new MemSubfile(new MemoryStream(ToByteArray(o)), iw.Name);
+                                    pp.Subfiles[i] = new MemSubfile(ToByteArray(o), iw.Name);
                                 }
                             }
                            
@@ -194,7 +194,7 @@ namespace PPTrimmerPlugin
                         using (MemoryStream rle = new MemoryStream())
                         {
                             m.Write(rle, MagickFormat.Tga);
-                            pp.Subfiles[i] = new MemSubfile(new MemoryStream(rle.ToArray()), iw.Name);
+                            pp.Subfiles[i] = new MemSubfile(rle.ToArray(), iw.Name);
                         }
                     }
                     catch (MagickException) { }

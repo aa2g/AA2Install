@@ -98,7 +98,7 @@ namespace DamienG.Security.Cryptography
             return createTable;
         }
 
-        static UInt32 CalculateHash(UInt32[] table, UInt32 seed, IList<byte> buffer, int start, int size)
+        static UInt32 CalculateHash(UInt32[] table, UInt32 seed, byte[] buffer, int start, int size)
         {
             var crc = seed;
             for (var i = start; i < size - start; i++)

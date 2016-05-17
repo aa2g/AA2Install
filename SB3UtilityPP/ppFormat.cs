@@ -96,59 +96,6 @@ namespace SB3Utility
 	}
 
 	#region CryptoTransform
-	public class CryptoTransformSB3 : ICryptoTransform
-	{
-		#region ICryptoTransform Members
-		public bool CanReuseTransform
-		{
-			get { return true; }
-		}
-
-		public bool CanTransformMultipleBlocks
-		{
-			get { return true; }
-		}
-
-		public int InputBlockSize
-		{
-			get { return 1; }
-		}
-
-		public int OutputBlockSize
-		{
-			get { return 1; }
-		}
-
-		public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
-		{
-			for (int i = 0; i < inputCount; i++)
-			{
-				outputBuffer[outputOffset + i] = (byte)(~inputBuffer[inputOffset + i] + 1);
-			}
-			return inputCount;
-		}
-
-		public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
-		{
-			byte[] outputBuffer = new byte[inputCount];
-			for (int i = 0; i < inputCount; i++)
-			{
-				outputBuffer[i] = (byte)(~inputBuffer[inputOffset + i] + 1);
-			}
-			return outputBuffer;
-		}
-		#endregion
-
-		#region IDisposable Members
-		public void Dispose()
-		{
-		}
-		#endregion
-
-		public CryptoTransformSB3()
-		{
-		}
-	}
 
 	public class CryptoTransformOneCode : ICryptoTransform
 	{
@@ -212,79 +159,6 @@ namespace SB3Utility
 		public CryptoTransformOneCode(byte[] code)
 		{
 			this.code = code;
-		}
-	}
-
-	public class CryptoTransformTwoCodes : ICryptoTransform
-	{
-		#region ICryptoTransform Members
-		public bool CanReuseTransform
-		{
-			get { return false; }
-		}
-
-		public bool CanTransformMultipleBlocks
-		{
-			get { return true; }
-		}
-
-		public int InputBlockSize
-		{
-			get { return 2; }
-		}
-
-		public int OutputBlockSize
-		{
-			get { return 2; }
-		}
-
-		public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
-		{
-			for (int i = 0; i < inputCount; )
-			{
-				codeA[codeIdx] = codeA[codeIdx] + codeB[codeIdx];
-				outputBuffer[outputOffset + i] = (byte)(inputBuffer[inputOffset + i] ^ codeA[codeIdx]);
-				i++;
-				outputBuffer[outputOffset + i] = (byte)(inputBuffer[inputOffset + i] ^ (codeA[codeIdx] >> 8));
-				i++;
-				codeIdx = (codeIdx + 1) & 0x3;
-			}
-			return inputCount;
-		}
-
-		public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
-		{
-			byte[] outputBuffer = new byte[inputCount];
-			int remainder = inputCount % 2;
-			int transformLength = inputCount - remainder;
-			for (int i = 0; i < transformLength; )
-			{
-				codeA[codeIdx] = codeA[codeIdx] + codeB[codeIdx];
-				outputBuffer[i] = (byte)(inputBuffer[inputOffset + i] ^ codeA[codeIdx]);
-				i++;
-				outputBuffer[i] = (byte)(inputBuffer[inputOffset + i] ^ (codeA[codeIdx] >> 8));
-				i++;
-				codeIdx = (codeIdx + 1) & 0x3;
-			}
-			Array.Copy(inputBuffer, inputOffset + transformLength, outputBuffer, transformLength, remainder);
-			return outputBuffer;
-		}
-		#endregion
-
-		#region IDisposable Members
-		public void Dispose()
-		{
-		}
-		#endregion
-
-		private int[] codeA = null;
-		private int[] codeB = null;
-		private int codeIdx = 0;
-
-		public CryptoTransformTwoCodes(int[] codeA, int[] codeB)
-		{
-			this.codeA = codeA;
-			this.codeB = codeB;
 		}
 	}
 	#endregion
