@@ -20,6 +20,17 @@ namespace PPTrimmerPlugin
             InitializeComponent();
         }
 
+        public void updateProgress(int progress)
+        {
+            if (prgProgress.InvokeRequired)
+                prgProgress.Invoke(new MethodInvoker(() =>
+                {
+                    prgProgress.Value = progress;
+                }));
+            else
+                prgProgress.Value = progress;
+        }
+
         public ucPlugin(ITrimPlugin plugin)
         {
             InitializeComponent();
@@ -27,7 +38,10 @@ namespace PPTrimmerPlugin
 
             checkEnable.Text = plugin.DisplayName;
 
-            plugin.ProgressUpdated += (p) => { prgProgress.Value = p; };
+            plugin.ProgressUpdated += (p) => 
+            {
+                updateProgress(p);
+            };
         }
 
         public void Execute(ppParser pp)
@@ -46,7 +60,7 @@ namespace PPTrimmerPlugin
             {
                 savings = plugin.AnalyzePP(pp);
             }
-            prgProgress.Value = 100;
+            updateProgress(100);
             return savings;
         }
 

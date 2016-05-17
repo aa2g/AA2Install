@@ -148,40 +148,32 @@ namespace PPTrimmerPlugin
                 item.SubItems[2].Text = " ";
 
             prgMajor.Value = 0;
-            var items = lsvPP.Items.Cast<ListViewItem>().Where(x => x.Checked);
+            var items = lsvPP.Items.Cast<ListViewItem>().Where(x => x.Checked).ToList();
             prgMajor.Maximum = items.Count();
-            foreach (ListViewItem item in items)
-            {
-                FileInfo fi = item.Tag as FileInfo;
-                long savings = 0;
 
-                ppParser pp = new ppParser(fi.FullName, new ppFormat_AA2());
+            BackgroundWorker bb = new BackgroundWorker();
+            bb.DoWork += (s, ev) => {
+                foreach (ListViewItem item in items)
+                {
+                    FileInfo fi = item.Tag as FileInfo;
+                    long savings = 0;
 
-                BackgroundWorker bb = new BackgroundWorker();
-                bb.DoWork += (s, ev) => {
+                    ppParser pp = new ppParser(fi.FullName, new ppFormat_AA2());
+
                     foreach (UserControl uc in panelPlugins.Controls)
                     {
                         ucPlugin ucp = uc as ucPlugin;
-                        ucp.Invoke(new MethodInvoker(() =>
-                        {
-                            savings += ucp.Analyze(pp);
-                        }));
+                        savings += ucp.Analyze(pp);
                     }
-                };
 
-                bb.RunWorkerAsync();
+                    prgMinor.Value = 100;
+                    item.SubItems[2].Text = BytesToString(savings);
 
-                while (bb.IsBusy)
-                {
-                    Application.DoEvents();
-                    System.Threading.Thread.Sleep(50);
+                    prgMajor.Value++;
                 }
+            };
 
-                prgMinor.Value = 100;
-                item.SubItems[2].Text = BytesToString(savings);
-
-                prgMajor.Value++;
-            }
+            bb.RunWorkerAsync();
         }
     }
 }

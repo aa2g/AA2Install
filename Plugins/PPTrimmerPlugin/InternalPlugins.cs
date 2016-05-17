@@ -7,6 +7,7 @@ using System.IO;
 using SB3Utility;
 using NAudio.Wave;
 using ImageMagick;
+using NAudio.FileFormats.Wav;
 
 namespace PPTrimmerPlugin
 {
@@ -64,24 +65,26 @@ namespace PPTrimmerPlugin
                     str.Position = 0;
                 }
 
-                if (str.Length == 0)
+                if (str.CanSeek && str.Length == 0)
                 {
                     str.Close();
                     continue;
                 }
 
                 using (str)
-                using (WaveFileReader wv = new WaveFileReader(str))
                 {
-                    long remaining = wv.Length;
-                    if (wv.WaveFormat.Channels > 1) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
+                    WaveFileChunkReader wv = new WaveFileChunkReader();
+                    WaveFormat f = wv.ReadWaveHeader(str);
+                    long length = wv.DataChunkLength;
+                    long remaining = length;
+                    if (f.Channels > 1) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
                     {
-                        total += (wv.Length / 2);
+                        total += (length / 2);
                         remaining /= 2;
                     }
-                    if (wv.WaveFormat.SampleRate > SampleRate)
+                    if (f.SampleRate > SampleRate)
                     {
-                        total += remaining - (long)(((float)SampleRate / wv.WaveFormat.SampleRate) * remaining);
+                        total += remaining - (long)(((float)SampleRate / f.SampleRate) * remaining);
                     }
                 }
 
