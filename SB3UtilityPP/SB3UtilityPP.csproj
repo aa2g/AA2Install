@@ -75,6 +75,7 @@
     <Compile Include="ppParser.cs" />
     <Compile Include="ppSubfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SeekableCryptoStream.cs" />
     <Compile Include="Subfile.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="WakeariStream.cs" />

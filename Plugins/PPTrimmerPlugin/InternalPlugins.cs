@@ -43,29 +43,9 @@ namespace PPTrimmerPlugin
                 if (!iw.Name.EndsWith(".wav"))
                     continue;
 
-                Stream str;
-                
-                if (iw is MemSubfile)
-                {
-                    MemSubfile m = iw as MemSubfile;
-                    str = m.CreateReadStream();
+                Stream str = Tools.GetReadStream(iw);
 
-                    str.Position = 0;
-                }
-                else if (iw is IReadFile)
-                {
-                    IReadFile p = iw as IReadFile;
-                    str = p.CreateReadStream();
-                }
-                else
-                {
-                    str = new MemoryStream();
-                    iw.WriteTo(str);
-
-                    str.Position = 0;
-                }
-
-                if (str.CanSeek && str.Length == 0)
+                if (!str.CanSeek || str.Length == 0)
                 {
                     str.Close();
                     continue;
@@ -74,8 +54,19 @@ namespace PPTrimmerPlugin
                 using (str)
                 {
                     WaveFileChunkReader wv = new WaveFileChunkReader();
-                    WaveFormat f = wv.ReadWaveHeader(str);
-                    long length = wv.DataChunkLength;
+
+                    WaveFormat f;
+                    try
+                    {
+                        f = wv.ReadWaveHeader(str);
+                    }
+                    catch (FormatException)
+                    {
+                        str.Close();
+                        continue;
+                    }
+
+                    long length = str.Length;
                     long remaining = length;
                     if (f.Channels > 1) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
                     {
@@ -104,38 +95,40 @@ namespace PPTrimmerPlugin
                 if (!iw.Name.EndsWith(".wav"))
                     continue;
 
-                using (MemoryStream mem = new MemoryStream())
+                Stream str = Tools.GetReadStream(iw);
+
+                if (!str.CanSeek || str.Length == 0)
                 {
-                    iw.WriteTo(mem);
+                    str.Close();
+                    continue;
+                }
 
-                    mem.Position = 0;
-                    using (WaveFileReader wv = new WaveFileReader(mem))
+                using (str)
+                using (WaveFileReader wv = new WaveFileReader(str))
+                {
+                    if (wv.WaveFormat.Channels > 1 || wv.WaveFormat.SampleRate > SampleRate) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
                     {
-                        if (wv.WaveFormat.Channels > 1 || wv.WaveFormat.SampleRate > SampleRate) // || wv.WaveFormat.Encoding != WaveFormatEncoding.Adpcm
-                        {
-                            WaveFormat f = new WaveFormat(SampleRate, 16, 1); //new AdpcmWaveFormat(wv.WaveFormat.SampleRate, 1);
+                        WaveFormat f = new WaveFormat(SampleRate, 16, 1); //new AdpcmWaveFormat(wv.WaveFormat.SampleRate, 1);
 
-                            using (MediaFoundationResampler resampledAudio = new MediaFoundationResampler(wv, f))
-                            {
-                                resampledAudio.ResamplerQuality = 60;
+                        using (MediaFoundationResampler resampledAudio = new MediaFoundationResampler(wv, f))
+                        {
+                            resampledAudio.ResamplerQuality = 60;
                             
-                                MemoryStream o = new MemoryStream();
-                                using (WaveFileWriter wr = new WaveFileWriter(o, f))
+                            MemoryStream o = new MemoryStream();
+                            using (WaveFileWriter wr = new WaveFileWriter(o, f))
+                            {
+                                int count = 0;
+                                byte[] buffer = new byte[2048];
+                                while ((count = resampledAudio.Read(buffer, 0, 2048)) > 0)
                                 {
-                                    int count = 0;
-                                    byte[] buffer = new byte[2048];
-                                    while ((count = resampledAudio.Read(buffer, 0, 2048)) > 0)
-                                    {
-                                        wr.Write(buffer, 0, count);
-                                    }
-                                    wr.Flush();
-                                    pp.Subfiles[i] = new MemSubfile(ToByteArray(o), iw.Name);
+                                    wr.Write(buffer, 0, count);
                                 }
+                                wr.Flush();
+                                pp.Subfiles[i] = new MemSubfile(ToByteArray(o), iw.Name);
                             }
+                        }
                            
-                        }                        
-                    }
-                    
+                    }    
                 }
 
                 if (ProgressUpdated != null)
@@ -167,9 +160,43 @@ namespace PPTrimmerPlugin
 
         public long AnalyzePP(ppParser pp)
         {
-            return 0;
-            //probably not possible
-            //can't be assed
+            long savings = 0;
+            for (int i = 0; i < pp.Subfiles.Count; i++)
+            {
+                IWriteFile iw = pp.Subfiles[i];
+
+                if (!iw.Name.EndsWith(".tga"))
+                    continue;
+
+                Stream str = Tools.GetReadStream(iw);
+
+                if (!str.CanSeek || str.Length == 0)
+                {
+                    str.Close();
+                    continue;
+                }
+            
+                using (str)
+                {
+                    try
+                    {
+                        MagickImage m = new MagickImage(str);
+                        m.CompressionMethod = CompressionMethod.RLE;
+
+                        using (MemoryStream rle = new MemoryStream())
+                        {
+                            m.Write(rle, MagickFormat.Tga);
+                            savings += str.Length - rle.Length;
+                        }
+                    }
+                    catch (MagickException) { }
+                }
+
+                if (ProgressUpdated != null)
+                    ProgressUpdated((int)Math.Floor((double)(100 * i) / pp.Subfiles.Count));
+            }
+
+            return savings;
         }
 
         public void ProcessPP(ppParser pp)
@@ -181,14 +208,19 @@ namespace PPTrimmerPlugin
                 if (!iw.Name.EndsWith(".tga"))
                     continue;
 
-                using (MemoryStream mem = new MemoryStream())
+                Stream str = Tools.GetReadStream(iw);
+
+                if (!str.CanSeek || str.Length == 0)
+                {
+                    str.Close();
+                    continue;
+                }
+
+                using (str)
                 {
                     try
                     {
-                        iw.WriteTo(mem);
-
-                        mem.Position = 0;
-                        MagickImage m = new MagickImage(mem);
+                        MagickImage m = new MagickImage(str);
                         m.CompressionMethod = CompressionMethod.RLE;
 
                         using (MemoryStream rle = new MemoryStream())

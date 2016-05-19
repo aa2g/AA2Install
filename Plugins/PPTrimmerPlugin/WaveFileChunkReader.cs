@@ -12,25 +12,21 @@ namespace NAudio.FileFormats.Wav
 {
     class WaveFileChunkReader
     {
-        private WaveFormat waveFormat;
         private long dataChunkPosition;
         private long dataChunkLength;
         private List<RiffChunk> riffChunks;
         private readonly bool strictMode;
         private bool isRf64;
-        private readonly bool storeAllChunks;
         private long riffSize;
 
         public WaveFileChunkReader()
         {
-            storeAllChunks = true;
             strictMode = false;
         }
 
         public WaveFormat ReadWaveHeader(Stream stream)
         {
             this.dataChunkPosition = -1;
-            this.waveFormat = null;
             this.riffChunks = new List<RiffChunk>();
             this.dataChunkLength = 0;
 

@@ -2,6 +2,7 @@
 
 v7
 + Installation now shows proper percentage progress
++ Massive optimizations and speedups
 + Completely reworked 7z handling
 ++ Console tab removed since no more use
 + Experimental RLE compression to decrease size of output .pp files
@@ -12,6 +13,8 @@ v7
 + Now checks for free space on required drives
 + Added Vista/XP Compatibility mode
 + Fixed a whole heap of bugs
++ Added a plugin system
+++ Comes with an experimental .PP content trimmer
 
 v6.3
 + Added force installation

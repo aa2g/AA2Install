@@ -74,6 +74,10 @@ namespace SB3Utility
 
 				ppHeader_SMRetail.DecryptHeaderBytes(reader.ReadBytes(1));  // first byte
 				int numFiles = BitConverter.ToInt32(ppHeader_SMRetail.DecryptHeaderBytes(reader.ReadBytes(4)), 0);
+
+                if (numFiles < 0) //surely there must be other ways of detecting this
+                    throw new InvalidDataException("The supplied file is not a PP archive.");
+
 				byte[] buf = ppHeader_SMRetail.DecryptHeaderBytes(reader.ReadBytes(numFiles * 288));
 
 				subfiles = new List<IWriteFile>(numFiles);

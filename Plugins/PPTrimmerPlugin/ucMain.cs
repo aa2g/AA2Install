@@ -150,6 +150,7 @@ namespace PPTrimmerPlugin
             prgMajor.Value = 0;
             var items = lsvPP.Items.Cast<ListViewItem>().Where(x => x.Checked).ToList();
             prgMajor.Maximum = items.Count();
+            long totalsavings = 0;
 
             BackgroundWorker bb = new BackgroundWorker();
             bb.DoWork += (s, ev) => {
@@ -158,7 +159,15 @@ namespace PPTrimmerPlugin
                     FileInfo fi = item.Tag as FileInfo;
                     long savings = 0;
 
-                    ppParser pp = new ppParser(fi.FullName, new ppFormat_AA2());
+                    ppParser pp;
+                    try
+                    {
+                        pp = new ppParser(fi.FullName, new ppFormat_AA2());
+                    }
+                    catch (InvalidDataException)
+                    {
+                        continue;
+                    }
 
                     foreach (UserControl uc in panelPlugins.Controls)
                     {
@@ -166,11 +175,20 @@ namespace PPTrimmerPlugin
                         savings += ucp.Analyze(pp);
                     }
 
-                    prgMinor.Value = 100;
-                    item.SubItems[2].Text = BytesToString(savings);
+                    totalsavings += savings;
 
-                    prgMajor.Value++;
+                    this.Invoke(new MethodInvoker(() =>
+                    {
+                       prgMinor.Value = 100;
+                       item.SubItems[2].Text = BytesToString(savings);
+                       prgMajor.Value++;
+                    }));
+                    
                 }
+                this.Invoke(new MethodInvoker(() =>
+                {
+                    lblSavings.Text = "Total savings: " + BytesToString(totalsavings);
+                }));
             };
 
             bb.RunWorkerAsync();

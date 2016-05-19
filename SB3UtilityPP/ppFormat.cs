@@ -44,12 +44,12 @@ namespace SB3Utility
 
 		public override Stream ReadStream(Stream stream)
 		{
-			return new CryptoStream(stream, CryptoTransform(), CryptoStreamMode.Read);
+			return new SeekableCryptoStream(stream, CryptoTransform(), CryptoStreamMode.Read);
 		}
 
 		public override Stream WriteStream(Stream stream)
 		{
-			return new CryptoStream(stream, CryptoTransform(), CryptoStreamMode.Write);
+			return new SeekableCryptoStream(stream, CryptoTransform(), CryptoStreamMode.Write);
 		}
 
 		public override object FinishWriteTo(Stream stream)

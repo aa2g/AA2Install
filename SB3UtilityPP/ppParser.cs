@@ -117,20 +117,22 @@ namespace SB3Utility
                             {
                                 reader.BaseStream.Seek(subfile.offset, SeekOrigin.Begin);
 
-                                uint readSteps = subfile.size / (uint)Utility.BufSize;
+                                int bufsize = Utility.EstBufSize(subfile.size);
+
+                                uint readSteps = subfile.size / (uint)bufsize;
 
                                 byte[] buf;
 
                                 for (int j = 0; j < readSteps; j++)
                                 {
-                                    buf = reader.ReadBytes((int)Utility.BufSize);
+                                    buf = reader.ReadBytes(bufsize);
 
                                     if (enableRLE)
-                                        md5.TransformBlock(buf, 0, Utility.BufSize, buf, 0);
+                                        md5.TransformBlock(buf, 0, bufsize, buf, 0);
                                     
                                     mem.WriteBytes(buf);
                                 }
-                                int remaining = (int)(subfile.size % Utility.BufSize);
+                                int remaining = (int)(subfile.size % bufsize);
 
                                 buf = reader.ReadBytes(remaining);
                                 mem.WriteBytes(buf);

@@ -34,13 +34,14 @@
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.btnAnalyze = new System.Windows.Forms.Button();
+            this.btnSelectAll = new System.Windows.Forms.Button();
             this.btnRefreshPP = new System.Windows.Forms.Button();
             this.prgMajor = new System.Windows.Forms.ProgressBar();
             this.prgMinor = new System.Windows.Forms.ProgressBar();
             this.btnTrim = new System.Windows.Forms.Button();
             this.panelPlugins = new System.Windows.Forms.Panel();
-            this.btnSelectAll = new System.Windows.Forms.Button();
-            this.btnAnalyze = new System.Windows.Forms.Button();
+            this.lblSavings = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -108,6 +109,7 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.lblSavings);
             this.splitContainer2.Panel1.Controls.Add(this.btnAnalyze);
             this.splitContainer2.Panel1.Controls.Add(this.btnSelectAll);
             this.splitContainer2.Panel1.Controls.Add(this.btnRefreshPP);
@@ -121,6 +123,26 @@
             this.splitContainer2.Size = new System.Drawing.Size(265, 340);
             this.splitContainer2.SplitterDistance = 186;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // btnAnalyze
+            // 
+            this.btnAnalyze.Location = new System.Drawing.Point(12, 44);
+            this.btnAnalyze.Name = "btnAnalyze";
+            this.btnAnalyze.Size = new System.Drawing.Size(94, 23);
+            this.btnAnalyze.TabIndex = 4;
+            this.btnAnalyze.Text = "Analyze";
+            this.btnAnalyze.UseVisualStyleBackColor = true;
+            this.btnAnalyze.Click += new System.EventHandler(this.btnAnalyze_Click);
+            // 
+            // btnSelectAll
+            // 
+            this.btnSelectAll.Location = new System.Drawing.Point(112, 15);
+            this.btnSelectAll.Name = "btnSelectAll";
+            this.btnSelectAll.Size = new System.Drawing.Size(94, 23);
+            this.btnSelectAll.TabIndex = 3;
+            this.btnSelectAll.Text = "Select All";
+            this.btnSelectAll.UseVisualStyleBackColor = true;
+            this.btnSelectAll.Click += new System.EventHandler(this.btnSelectAll_Click);
             // 
             // btnRefreshPP
             // 
@@ -168,25 +190,14 @@
             this.panelPlugins.Size = new System.Drawing.Size(265, 150);
             this.panelPlugins.TabIndex = 0;
             // 
-            // btnSelectAll
+            // lblSavings
             // 
-            this.btnSelectAll.Location = new System.Drawing.Point(112, 15);
-            this.btnSelectAll.Name = "btnSelectAll";
-            this.btnSelectAll.Size = new System.Drawing.Size(94, 23);
-            this.btnSelectAll.TabIndex = 3;
-            this.btnSelectAll.Text = "Select All";
-            this.btnSelectAll.UseVisualStyleBackColor = true;
-            this.btnSelectAll.Click += new System.EventHandler(this.btnSelectAll_Click);
-            // 
-            // btnAnalyze
-            // 
-            this.btnAnalyze.Location = new System.Drawing.Point(12, 44);
-            this.btnAnalyze.Name = "btnAnalyze";
-            this.btnAnalyze.Size = new System.Drawing.Size(94, 23);
-            this.btnAnalyze.TabIndex = 4;
-            this.btnAnalyze.Text = "Analyze";
-            this.btnAnalyze.UseVisualStyleBackColor = true;
-            this.btnAnalyze.Click += new System.EventHandler(this.btnAnalyze_Click);
+            this.lblSavings.AutoSize = true;
+            this.lblSavings.Location = new System.Drawing.Point(9, 82);
+            this.lblSavings.Name = "lblSavings";
+            this.lblSavings.Size = new System.Drawing.Size(76, 13);
+            this.lblSavings.TabIndex = 5;
+            this.lblSavings.Text = "Total savings: ";
             // 
             // ucMain
             // 
@@ -201,6 +212,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
@@ -223,5 +235,6 @@
         private System.Windows.Forms.Button btnRefreshPP;
         private System.Windows.Forms.Button btnSelectAll;
         private System.Windows.Forms.Button btnAnalyze;
+        private System.Windows.Forms.Label lblSavings;
     }
 }

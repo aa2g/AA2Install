@@ -579,9 +579,11 @@ namespace AA2Install
 
             requiredSizes[Paths.TEMP.Remove(1)] = total7zSize;
 
-            requiredSizes[Paths.AA2Edit.Remove(1)] = (long)(totalAA2EditSize + Math.Pow(1024, 3)); //an approx. extra 1gb for temp files
+            if (Paths.TEMP.Remove(1) != Paths.AA2Edit.Remove(1))
+                requiredSizes[Paths.AA2Edit.Remove(1)] = totalAA2EditSize + 0x40000000; //an approx. extra 1gb for temp files
 
-            requiredSizes[Paths.AA2Play.Remove(1)] = (long)(totalAA2PlaySize + Math.Pow(1024, 3)); //an approx. extra 1gb for temp files
+            if (Paths.TEMP.Remove(1) != Paths.AA2Play.Remove(1))
+                requiredSizes[Paths.AA2Play.Remove(1)] = totalAA2PlaySize + 0x40000000; //an approx. extra 1gb for temp files
 
             foreach (var kv in requiredSizes)
             { 
@@ -1049,6 +1051,9 @@ namespace AA2Install
 
         private void updateTaskbarProgress(int value, int maximum, TaskbarProgress.TaskbarStates state = TaskbarProgress.TaskbarStates.Normal)
         {
+            if (Configuration.getBool("COMPATIBILITY"))
+                return;
+
             try
             {
                 TaskbarProgress.SetState(this.Handle, state);
