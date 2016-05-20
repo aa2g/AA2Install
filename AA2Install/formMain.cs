@@ -748,8 +748,8 @@ namespace AA2Install
                     {
                         this.Invoke((MethodInvoker)delegate {
                             prgMinor.Value = e.ProgressPercentage;
+                            baseUpdateStatus("(" + ii + "/" + prgMajor.Maximum + ") Reverting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
                         });
-                        updateStatus("(" + ii + "/" + prgMajor.Maximum + ") Injecting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
                     });
 
                     bb.RunWorkerAsync();
@@ -1618,39 +1618,47 @@ namespace AA2Install
         public event statusUpdatedEventHandler statusUpdated;
 
         private bool showTime = false;
-        public void updateStatus(string entry, LogIcon icon = LogIcon.Ready, bool displayTime = true, bool onlyStatusBar = false)
+
+        private void baseUpdateStatus(string entry, LogIcon icon = LogIcon.Ready, bool displayTime = true, bool onlyStatusBar = false)
         {
             if (statusUpdated != null)
                 statusUpdated(entry);
             if (onlyStatusBar)
             {
-                this.Invoke((MethodInvoker)delegate {
-                    labelStatus.Text = entry;
-                });
+                labelStatus.Text = entry;
             }
             else
             {
-                this.Invoke((MethodInvoker)delegate {
-                    Console.ProgramLog.Add(new LogEntry(entry, icon));
-                    if (lsvLog.Items.Count > 0 && showTime)
-                    {
-                        lsvLog.Items[lsvLog.Items.Count - 1].SubItems.Add((getTimeSinceLastCheck().TotalMilliseconds / 1000).ToString("F2") + "s");
-                    }
-                    showTime = displayTime;
-                    switch (icon)
-                    {
-                        case LogIcon.Error:
-                        case LogIcon.Warning:
-                            lsvLog.Items.Add(entry, (int)icon);
-                            break;
-                        default:
-                            lsvLog.Items.Add(entry, (int)icon);
-                            labelStatus.Text = entry;
-                            break;
-                    }
-                });
+                Console.ProgramLog.Add(new LogEntry(entry, icon));
+                
+                if (lsvLog.Items.Count > 0 && showTime)
+                {
+                    lsvLog.Items[lsvLog.Items.Count - 1].SubItems.Add((getTimeSinceLastCheck().TotalMilliseconds / 1000).ToString("F2") + "s");
+                }
+                showTime = displayTime;
+                switch (icon)
+                {
+                    case LogIcon.Error:
+                    case LogIcon.Warning:
+                        lsvLog.Items.Add(entry, (int)icon);
+                        break;
+                    default:
+                        lsvLog.Items.Add(entry, (int)icon);
+                        labelStatus.Text = entry;
+                        break;
+                }
             }
-            
+
+        }
+
+        public void updateStatus(string entry, LogIcon icon = LogIcon.Ready, bool displayTime = true, bool onlyStatusBar = false)
+        {
+            if (this.InvokeRequired)
+                this.Invoke((MethodInvoker)delegate {
+                    baseUpdateStatus(entry, icon, displayTime, onlyStatusBar);
+                });
+            else
+                baseUpdateStatus(entry, icon, displayTime, onlyStatusBar);
         }
         #endregion
 
