@@ -38,6 +38,9 @@ namespace AA2Install
 #warning replace 7z handling, reload mod metadata everytime it's selected
 #warning investigate filter issues
 #warning display which .pps are going to get changed
+#warning add the ability to cancel during an install by uninstalling using the temp folder
+#warning check 7z integrity before un/install
+#warning run tests on .pp files before un/install
 
 
         #region Preferences

@@ -108,6 +108,8 @@ namespace SB3Utility
 
 						worker.ReportProgress(i * 100 / Subfiles.Count);
 
+                        System.Diagnostics.Trace.WriteLine(Subfiles[i].Name);
+
 						ppSubfile subfile = Subfiles[i] as ppSubfile;
 						if ((subfile != null) && (subfile.ppFormat == this.Format))
 						{
@@ -119,28 +121,35 @@ namespace SB3Utility
 
                                 int bufsize = Utility.EstBufSize(subfile.size);
 
-                                uint readSteps = subfile.size / (uint)bufsize;
+                                uint hash = 0;
 
-                                byte[] buf;
-
-                                for (int j = 0; j < readSteps; j++)
+                                if (bufsize > 0)
                                 {
-                                    buf = reader.ReadBytes(bufsize);
+                                    uint readSteps = subfile.size / (uint)bufsize;
 
-                                    if (enableRLE)
-                                        md5.TransformBlock(buf, 0, bufsize, buf, 0);
-                                    
+                                    byte[] buf;
+
+                                    for (int j = 0; j < readSteps; j++)
+                                    {
+                                        buf = reader.ReadBytes(bufsize);
+
+                                        if (enableRLE)
+                                            md5.TransformBlock(buf, 0, bufsize, buf, 0);
+
+                                        mem.WriteBytes(buf);
+                                    }
+                                    int remaining = (int)(subfile.size % bufsize);
+
+                                    buf = reader.ReadBytes(remaining);
                                     mem.WriteBytes(buf);
-                                }
-                                int remaining = (int)(subfile.size % bufsize);
 
-                                buf = reader.ReadBytes(remaining);
-                                mem.WriteBytes(buf);
+                                    md5.TransformFinalBlock(buf, 0, remaining);
+                                    hash = BitConverter.ToUInt32(md5.Hash, 0);
+                                }                                
 
                                 if (enableRLE)
                                 {
-                                    md5.TransformFinalBlock(buf, 0, remaining);
-                                    uint hash = BitConverter.ToUInt32(md5.Hash, 0);
+                                    
 
                                     if (!Hashes.Any(x => x.Item2 == hash))
                                     {
@@ -264,10 +273,10 @@ namespace SB3Utility
                     if (iw is IDisposable)
                         ((IDisposable)iw).Dispose();
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				RestoreBackup(destPath, backup);
-                throw;
+                throw new Exception("PP Parser has encountered an error.", ex);
 			}
 		}
 

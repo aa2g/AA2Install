@@ -20,16 +20,17 @@ namespace SB3Utility
         public void WriteTo(Stream stream)
         {
             using (BinaryReader reader = new BinaryReader(CreateReadStream()))
-            {
-                BinaryWriter writer = new BinaryWriter(stream);
-                byte[] buf;
-                int bufsize = Utility.EstBufSize(reader.BaseStream.Length);
-                while ((buf = reader.ReadBytes(bufsize)).Length == bufsize)
-                {
+                if (reader.BaseStream.Length > 0)
+                    {
+                    BinaryWriter writer = new BinaryWriter(stream);
+                    byte[] buf;
+                    int bufsize = Utility.EstBufSize(reader.BaseStream.Length);
+                    while ((buf = reader.ReadBytes(bufsize)).Length == bufsize)
+                    {
+                        writer.Write(buf);
+                    }
                     writer.Write(buf);
                 }
-                writer.Write(buf);
-            }
         }
 
         public Stream CreateReadStream()
