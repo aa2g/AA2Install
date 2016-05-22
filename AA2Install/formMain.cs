@@ -1238,7 +1238,12 @@ namespace AA2Install
             if (!Directory.Exists(Paths.PLUGINS)) { Directory.CreateDirectory(Paths.PLUGINS + @"\"); }
 
             //Load plugins
-            Plugins.AddRange(PluginLoader.PluginLoader.LoadAllDLLs(Paths.PLUGINS + "\\"));
+            ICollection<IPlugin> plugins;
+
+            if (PluginLoader.PluginLoader.LoadAllDLLs(Paths.PLUGINS + "\\", out plugins))
+                Plugins.AddRange(plugins);
+            else
+                MessageBox.Show("One or more plugin .dll files are blocked. Plugins will not be loaded.", "Blocked DLL files", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
             foreach (IPlugin plugin in Plugins)
             {
