@@ -37,17 +37,21 @@ namespace PPTrimmerPlugin
         public void ReloadPPs()
         {
             lsvPP.Items.Clear();
-            List<string> pps = Directory.GetFiles(Paths.AA2Play, "*.pp").Union(
+
+            if (Directory.Exists(Paths.AA2Edit) && Directory.Exists(Paths.AA2Play))
+            {
+                List<string> pps = Directory.GetFiles(Paths.AA2Play, "*.pp").Union(
                                Directory.GetFiles(Paths.AA2Edit, "*.pp"))
                                .ToList();
 
-            foreach (string pp in pps)
-            {
-                FileInfo fi = new FileInfo(pp);
-                ListViewItem item = lsvPP.Items.Add(Path.GetFileName(pp));
-                item.SubItems.Add(BytesToString(fi.Length));
-                item.SubItems.Add(" ");
-                item.Tag = fi;
+                foreach (string pp in pps)
+                {
+                    FileInfo fi = new FileInfo(pp);
+                    ListViewItem item = lsvPP.Items.Add(Path.GetFileName(pp));
+                    item.SubItems.Add(BytesToString(fi.Length));
+                    item.SubItems.Add(" ");
+                    item.Tag = fi;
+                }
             }
         }
 

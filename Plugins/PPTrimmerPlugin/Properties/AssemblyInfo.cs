@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("PPTrimmerPlugin")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Kardinia International College")]
+[assembly: AssemblyCompany("/aa2g/")]
 [assembly: AssemblyProduct("PPTrimmerPlugin")]
-[assembly: AssemblyCopyright("Copyright © Kardinia International College 2016")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
