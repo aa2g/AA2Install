@@ -122,7 +122,7 @@ namespace SB3Utility
 
 		public int TransformBlock(byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
 		{
-			int transformCount = 0;
+            /*int transformCount = 0;
 			while (transformCount < inputCount)
 			{
 				for (int i = 0; i < code.Length; i++, transformCount++)
@@ -130,7 +130,14 @@ namespace SB3Utility
 					outputBuffer[outputOffset + transformCount] = (byte)(inputBuffer[inputOffset + transformCount] ^ code[i]);
 				}
 			}
-			return transformCount;
+			return transformCount;*/
+            int blocksize = code.Length;
+            int transformCount = (int)Math.Ceiling((double)inputCount / blocksize) * blocksize;
+            for (int i = 0; i < transformCount; i++)
+            {
+                outputBuffer[outputOffset + i] = (byte)(inputBuffer[inputOffset + i] ^ code[i% blocksize]);
+            }
+            return transformCount;
 		}
 
 		public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
