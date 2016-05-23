@@ -18,9 +18,6 @@ namespace PluginLoader
 
             Assembly assembly = Assembly.LoadFrom(Filename);
 
-            /*Assembly core = AppDomain.CurrentDomain.GetAssemblies().Single(x => x.GetName().Name.Equals("PluginLoader"));
-            Type itype = core.GetType("PluginLoader.IPlugin");*/
-
             foreach (Type type in assembly.GetTypes())
             {
                 if (typeof(IPlugin).IsAssignableFrom(type) && type.IsAbstract == false)

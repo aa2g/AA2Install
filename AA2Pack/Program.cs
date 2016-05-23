@@ -20,7 +20,6 @@ namespace AA2Pack
 
             ConsoleWriter.WriteLine("Switches:");
             ConsoleWriter.WriteSwitch("-h", "Shows this help dialog.");
-            ConsoleWriter.WriteSwitch("-uc", "Disables .pp compression.");
             ConsoleWriter.WriteSwitch("-y", "Overwrites files without prompting.");
 
             ConsoleWriter.WriteLine();
@@ -53,8 +52,7 @@ namespace AA2Pack
 #endif
                 return;
             }
-
-            bool compress = !args.ContainsSwitch("uc");
+            
             bool suppress = args.ContainsSwitch("y");
 
             foreach (string s in args)
@@ -65,7 +63,7 @@ namespace AA2Pack
                     //extracting a .pp
                     ConsoleWriter.WriteLineFormat("Processing {0}...", Path.GetFileName(s));
 
-                    ppParser pp = new ppParser(s, new ppFormat_AA2());
+                    ppParser pp = new ppParser(s);
 
                     string dirPath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(s)), Path.GetFileNameWithoutExtension(s));
 
@@ -111,12 +109,12 @@ namespace AA2Pack
                             File.Delete(ppPath);
                     }
                     
-                    ppParser pp = new ppParser(ppPath, new ppFormat_AA2());
+                    ppParser pp = new ppParser(ppPath);
                     
                     foreach (string file in Directory.GetFiles(s))
                         pp.Subfiles.Add(new Subfile(file));
 
-                    var bg = pp.WriteArchive(ppPath, false, ".bak", true, compress);
+                    var bg = pp.WriteArchive(ppPath, false);
 
                     bg.ProgressChanged += (sender, e) =>
                     {

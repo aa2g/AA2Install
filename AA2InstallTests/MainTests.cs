@@ -89,7 +89,7 @@ namespace AA2Install.Tests
 
             form.refreshModList();
 
-            var subfiles = new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles;
+            var subfiles = new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles;
             Dictionary<string, uint> CRCValues = new Dictionary<string, uint>();
 
             foreach (IWriteFile kv in subfiles)
@@ -117,7 +117,7 @@ namespace AA2Install.Tests
 
             Dictionary<string, uint> diff = new Dictionary<string, uint>();
 
-            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles)
+            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles)
             {
                 using (MemoryStream mem = new MemoryStream())
                 {
@@ -159,9 +159,9 @@ namespace AA2Install.Tests
                 Assert.IsTrue(!m.Installed, "Backup archive for {0} was not deleted.", m.Name);
             }
 
-            Assert.IsTrue(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count, "Amount of restored changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", new object[] { subfiles.Count, new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count });
+            Assert.IsTrue(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles.Count, "Amount of restored changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", new object[] { subfiles.Count, new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles.Count });
 
-            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles)
+            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles)
             {
                 using (MemoryStream mem = new MemoryStream())
                 {
@@ -186,7 +186,7 @@ namespace AA2Install.Tests
             CopyFilesRecursively(new DirectoryInfo(Environment.CurrentDirectory + @"\mods\"), new DirectoryInfo(Environment.CurrentDirectory + @"\mods2\"));
             form.refreshModList();
 
-            var subfiles = new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles;
+            var subfiles = new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles;
             Dictionary<string, uint> CRCValues = new Dictionary<string, uint>();
 
             foreach (IWriteFile kv in subfiles)
@@ -215,7 +215,7 @@ namespace AA2Install.Tests
 
             Dictionary<string, uint> diff = new Dictionary<string, uint>();
 
-            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles)
+            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles)
             {
                 using (MemoryStream mem = new MemoryStream())
                 {
@@ -265,9 +265,9 @@ namespace AA2Install.Tests
                 Assert.IsTrue(!m.Installed, "Backup archive for {0} was not deleted.", m.Name);
             }
 
-            Assert.IsTrue(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count, "Amount of restored changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", new object[] { subfiles.Count, new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count });
+            Assert.IsTrue(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles.Count, "Amount of restored changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", new object[] { subfiles.Count, new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles.Count });
 
-            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles)
+            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles)
             {
                 using (MemoryStream mem = new MemoryStream())
                 {
@@ -299,7 +299,7 @@ namespace AA2Install.Tests
 
             CopyFilesRecursively(new DirectoryInfo(Environment.CurrentDirectory + @"\testdir\"), new DirectoryInfo(Environment.CurrentDirectory + @"\testdir2\"));
             
-            var subfiles = new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles;
+            var subfiles = new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles;
             Dictionary<string, uint> CRCValues = new Dictionary<string, uint>();
 
             foreach (IWriteFile kv in subfiles)
@@ -341,7 +341,7 @@ namespace AA2Install.Tests
 
             Dictionary<string, uint> diff = new Dictionary<string, uint>();
 
-            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles)
+            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles)
             {
                 using (MemoryStream mem = new MemoryStream())
                 {
@@ -386,9 +386,9 @@ namespace AA2Install.Tests
                 Assert.IsTrue(!m.Installed, "Backup archive for {0} was not deleted.", m.Name);
             }
 
-            Assert.IsTrue(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count, "Amount of restored changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", new object[] { subfiles.Count, new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles.Count });
+            Assert.IsTrue(subfiles.Count == new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles.Count, "Amount of restored changes in jg2p00_00_00.pp was incorrect. Expected value: {0}; Actual value: {1}", subfiles.Count, new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles.Count);
 
-            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp", new ppFormat_AA2()).Subfiles)
+            foreach (IWriteFile kv in new ppParser(Environment.CurrentDirectory + @"\testdir\jg2p00_00_00.pp").Subfiles)
             {
                 using (MemoryStream mem = new MemoryStream())
                 {
@@ -399,13 +399,6 @@ namespace AA2Install.Tests
             };
 
             Configuration.saveMods(form.modDict);
-        }
-
-        [TestMethod]
-        public void injectRLETest()
-        {
-            Configuration.WriteSetting("COMPRESS", "True");
-            injectTest();
         }
 
         [TestCleanup()]

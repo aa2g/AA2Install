@@ -14,7 +14,6 @@ namespace SB3Utility
 		public string ppPath;
 		public long offset;
 		public uint size;
-		public ppFormat ppFormat;
 
 		public object Metadata { get; set; }
 

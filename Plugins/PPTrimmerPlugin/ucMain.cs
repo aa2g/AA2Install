@@ -90,7 +90,7 @@ namespace PPTrimmerPlugin
                 FileInfo fi = item.Tag as FileInfo;
                 long originalSize = fi.Length;
 
-                ppParser pp = new ppParser(fi.FullName, new ppFormat_AA2());
+                ppParser pp = new ppParser(fi.FullName);
 
                 BackgroundWorker bb = new BackgroundWorker();
                 bb.DoWork += (s, ev) => {
@@ -112,7 +112,7 @@ namespace PPTrimmerPlugin
                     System.Threading.Thread.Sleep(50);
                 }
 
-                bb = pp.WriteArchive(pp.FilePath, false, ".bak", true, true);
+                bb = pp.WriteArchive(pp.FilePath, false);
                 bb.ProgressChanged += (s, ev) =>
                 {
                     prgMinor.Value = ev.ProgressPercentage;
@@ -166,7 +166,7 @@ namespace PPTrimmerPlugin
                     ppParser pp;
                     try
                     {
-                        pp = new ppParser(fi.FullName, new ppFormat_AA2());
+                        pp = new ppParser(fi.FullName);
                     }
                     catch (InvalidDataException)
                     {
