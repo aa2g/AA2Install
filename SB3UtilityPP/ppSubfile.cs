@@ -32,11 +32,15 @@ namespace SB3Utility
 				BinaryWriter writer = new BinaryWriter(stream);
 				byte[] buf;
                 int bufsize = Utility.EstBufSize(reader.BaseStream.Length);
-                while ((buf = reader.ReadBytes(bufsize)).Length == bufsize)
+                if (bufsize > 0)
                 {
-					writer.Write(buf);
-				}
-				writer.Write(buf);
+                    while ((buf = reader.ReadBytes(bufsize)).Length == bufsize)
+                    {
+					    writer.Write(buf);
+				    }
+				    writer.Write(buf);
+                }
+                
 			}
 		}
 

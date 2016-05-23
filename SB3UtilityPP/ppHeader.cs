@@ -9,6 +9,11 @@ namespace SB3Utility
 {
 	public static class ppHeader
 	{
+        public static byte DecryptHeaderBytes(byte buf)
+        {
+            return DecryptHeaderBytes(new byte[] { buf })[0];
+        }
+
         public static byte[] DecryptHeaderBytes(byte[] buf)
         {
             byte[] table = new byte[]
@@ -43,15 +48,15 @@ namespace SB3Utility
 		{
 			List<IWriteFile> subfiles = null;
 			using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
-			{
-				byte[] versionHeader = reader.ReadBytes(8);
+            {
+                if (!VerifyHeader(path))
+                    throw new InvalidDataException("The supplied file is not a PP archive.");
+
+                byte[] versionHeader = reader.ReadBytes(8);
 				int version = BitConverter.ToInt32(DecryptHeaderBytes(reader.ReadBytes(4)), 0);
 
 				DecryptHeaderBytes(reader.ReadBytes(1));  // first byte
 				int numFiles = BitConverter.ToInt32(DecryptHeaderBytes(reader.ReadBytes(4)), 0);
-
-                if (numFiles < 0) //surely there must be other ways of detecting this
-                    throw new InvalidDataException("The supplied file is not a PP archive.");
 
 				byte[] buf = DecryptHeaderBytes(reader.ReadBytes(numFiles * 288));
 
@@ -164,6 +169,59 @@ namespace SB3Utility
             writer.Write(DecryptHeaderBytes(BitConverter.GetBytes(headerBuf.Length)));
             writer.Flush();
             stream.Write(headerBuf, 0, headerBuf.Length);
+        }
+
+        private static bool ByteArrayCompare(this byte[] a1, byte[] a2)
+        {
+            if (a1.Length != a2.Length)
+                return false;
+
+            for (int i = 0; i < a1.Length; i++)
+                if (a1[i] != a2[i])
+                    return false;
+
+            return true;
+        }
+
+        public static bool VerifyHeader(string path)
+        {
+            using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
+            {
+                byte[] versionHeader = reader.ReadBytes(8);
+                if (!ppVersionBytes.ByteArrayCompare(versionHeader))
+                    return false;
+                
+                int version = BitConverter.ToInt32(DecryptHeaderBytes(reader.ReadBytes(4)), 0);
+                if (Version != version)
+                    return false;
+
+                byte first = DecryptHeaderBytes(reader.ReadByte());
+                if (FirstByte != first)
+                    return false;
+
+                int numFiles = BitConverter.ToInt32(DecryptHeaderBytes(reader.ReadBytes(4)), 0);
+                if (numFiles < 0)
+                    return false;
+
+                if (numFiles * 288 > reader.BaseStream.Length - reader.BaseStream.Position)
+                    return false;
+
+                byte[] buf = DecryptHeaderBytes(reader.ReadBytes(numFiles * 288));
+
+                var subfiles = new List<IWriteFile>(numFiles);
+                for (int i = 0; i < numFiles; i++)
+                {
+                    int offset = i * 288;
+                    uint size = BitConverter.ToUInt32(buf, offset + 260);
+                    uint poffset = BitConverter.ToUInt32(buf, offset + 264);
+
+                    if (poffset < 0 ||
+                        poffset + size > reader.BaseStream.Length)
+                        return false;
+                }
+
+            }
+            return true;
         }
 
 		public struct Metadata

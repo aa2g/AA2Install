@@ -201,7 +201,7 @@ namespace SB3Utility
                     if (iw is IDisposable)
                         ((IDisposable)iw).Dispose();
                 
-                ReloadSubfiles();
+                //ReloadSubfiles();
             }
 			catch (Exception ex)
 			{
