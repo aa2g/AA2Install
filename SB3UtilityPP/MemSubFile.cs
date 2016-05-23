@@ -21,7 +21,7 @@ namespace SB3Utility
         {
             using (BinaryReader reader = new BinaryReader(CreateReadStream()))
                 if (reader.BaseStream.Length > 0)
-                    {
+                {
                     BinaryWriter writer = new BinaryWriter(stream);
                     byte[] buf;
                     int bufsize = Utility.EstBufSize(reader.BaseStream.Length);
