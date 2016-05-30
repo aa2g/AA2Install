@@ -31,6 +31,7 @@ namespace AA2Install
         public ModDictionary modDict = new ModDictionary();
         public formChanges change;
         public List<IPlugin> Plugins = new List<IPlugin>();
+        private Form currentOwner;
 #warning add ordered installation
 #warning add a new panel for detailed installation info
 #warning add lst preservation option for certian files/check uncheck which subfiles to install
@@ -265,7 +266,7 @@ namespace AA2Install
                 }
                 catch (IOException)
                 {
-                    switch (MessageBox.Show("Failed to delete file " + filename + "; is it being accessed?", "Failed", MessageBoxButtons.AbortRetryIgnore))
+                    switch (currentOwner.InvokeMessageBox("Failed to delete file " + filename + "; is it being accessed?", "Failed", MessageBoxButtons.AbortRetryIgnore))
                     {
                         case DialogResult.Retry:
                             tryAgain = true;
@@ -555,7 +556,7 @@ namespace AA2Install
                 {
                     updateStatus("Collision detected.", LogIcon.Error, false);
                     updateStatus("FAILED: The highlighted mods have conflicting files", LogIcon.Error, false, true);
-                    MessageBox.Show("Some mods have been detected to have conflicting files.\nYou can use the log to manually fix the conflicting files in the mods (if they can be fixed) or you can proceed anyway by changing the relevant setting in the preferences.\nNote: if you proceed anyway, to uninstall you must uninstall mods in the reverse order you installed them to ensure that wrong files are not left behind.", "Collision detected", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    currentOwner.InvokeMessageBox("Some mods have been detected to have conflicting files.\nYou can use the log to manually fix the conflicting files in the mods (if they can be fixed) or you can proceed anyway by changing the relevant setting in the preferences.\nNote: if you proceed anyway, to uninstall you must uninstall mods in the reverse order you installed them to ensure that wrong files are not left behind.", "Collision detected", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     setEnabled(true);
                     prgMinor.Value = 0;
                     prgMajor.Value = 0;
@@ -598,7 +599,7 @@ namespace AA2Install
                                     .Aggregate((a, b) => a + "\n" + b);
 
 #warning change to a retry cancel ignore dialog
-                    MessageBox.Show("There is not enough free space to allow an approximate safe installation.\n" + spaces, "Not enough free space", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    currentOwner.InvokeMessageBox("There is not enough free space to allow an approximate safe installation.\n" + spaces, "Not enough free space", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     setEnabled(true);
                     prgMinor.Value = 0;
                     prgMajor.Value = 0;
@@ -941,11 +942,29 @@ namespace AA2Install
             updateStatus("Success!", LogIcon.OK, false);
             updateTaskbarProgress(TaskbarProgress.TaskbarStates.NoProgress);
             if (!suppressPopups)
-                MessageBox.Show("Mods successfully synced.");
+                currentOwner.InvokeMessageBox("Mods successfully synced.");
             refreshModList();
             return true;
         }
         
+        public void FlushCache()
+        {
+            imageTimer.Enabled = false;
+
+            if (imagePreview.Image != null)
+                imagePreview.Image.Dispose();
+            imagePreview.Image = null;
+
+            imageLoop.Clear();
+            if (Directory.Exists(Paths.CACHE))
+                TryDeleteDirectory(Paths.CACHE);
+            Directory.CreateDirectory(Paths.CACHE + "\\");
+
+            modDict = new ModDictionary();
+
+            Configuration.saveMods(modDict);
+            txtSearch.Text = "";
+        }
         #endregion
         #region UI
 
@@ -994,28 +1013,7 @@ namespace AA2Install
 
         private void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            imageTimer.Enabled = false;
-
-            if (imagePreview.Image != null)
-                imagePreview.Image.Dispose();
-            imagePreview.Image = null;
-
-            imageLoop.Clear();
-            if (Directory.Exists(Paths.CACHE))
-                TryDeleteDirectory(Paths.CACHE);
-            Directory.CreateDirectory(Paths.CACHE + "\\");
-
-            var iter = modDict.ToDictionary(entry => entry.Key,
-                entry => entry.Value);
-            /*
-            foreach (Mod m in iter.Values)
-                if (!m.Installed)
-                    modDict.Remove(m.Name);
-           */
-            modDict = new ModDictionary();
-
-            Configuration.saveMods(modDict);
-            txtSearch.Text = "";
+            FlushCache();
             refreshModList();
         }
 
@@ -1024,7 +1022,7 @@ namespace AA2Install
             DialogResult res = DialogResult.Yes;
 
             if (!Configuration.getBool("SUPPRESS"))
-                res = MessageBox.Show("Are you sure you want to synchronize? (check pending changes)", "Synchronize", MessageBoxButtons.YesNo);
+                res = currentOwner.InvokeMessageBox("Are you sure you want to synchronize? (check pending changes)", "Synchronize", MessageBoxButtons.YesNo);
 
             if (res == DialogResult.Yes)
             {
@@ -1082,7 +1080,7 @@ namespace AA2Install
 
                 DialogResult result = DialogResult.No;
                 if (!suppressDialogs)
-                    result = MessageBox.Show("Are you sure you want to force install mod(s): " + Environment.NewLine + mods.Select(m => m.Name).Aggregate((i, j) => i + Environment.NewLine + j) + "\nThis will delete backups of selected mods.", "Force mods?", MessageBoxButtons.YesNo);
+                    result = currentOwner.InvokeMessageBox("Are you sure you want to force install mod(s): " + Environment.NewLine + mods.Select(m => m.Name).Aggregate((i, j) => i + Environment.NewLine + j) + "\nThis will delete backups of selected mods.", "Force mods?", MessageBoxButtons.YesNo);
 
                 if (result == DialogResult.Yes || suppressDialogs)
                 {
@@ -1111,7 +1109,7 @@ namespace AA2Install
 
                 DialogResult result = DialogResult.No;
                 if (!suppressDialogs)
-                    result = MessageBox.Show("Are you sure you want to delete mod(s): " + Environment.NewLine + mods.Select(m => m.Name).Aggregate((i, j) => i + Environment.NewLine + j), "Delete mods?", MessageBoxButtons.YesNo);
+                    result = currentOwner.InvokeMessageBox("Are you sure you want to delete mod(s): " + Environment.NewLine + mods.Select(m => m.Name).Aggregate((i, j) => i + Environment.NewLine + j), "Delete mods?", MessageBoxButtons.YesNo);
 
                 if (result == DialogResult.Yes || suppressDialogs)
                 {
@@ -1200,6 +1198,7 @@ namespace AA2Install
         {
             //Hide();
             bool done = false;
+            currentOwner = this;
 
             //Change title
             this.Text = "AA2Install v" + formAbout.AssemblyVersion;
@@ -1209,6 +1208,7 @@ namespace AA2Install
             {
                 using (var splashForm = new formSplash())
                 {
+                    currentOwner = splashForm;
                     splashForm.lblVer.Text = "AA2Install v" + formAbout.AssemblyVersion;
                     splashForm.Visible = true;
                     splashForm.CreateControl();
@@ -1224,6 +1224,7 @@ namespace AA2Install
                         Application.DoEvents();
 
                     statusUpdated = null;
+                    currentOwner = this;
                     splashForm.Close();
                     this.BeginInvoke(new MethodInvoker((() => { this.Activate(); })));
                 }
@@ -1241,7 +1242,7 @@ namespace AA2Install
             if (PluginLoader.PluginLoader.LoadAllDLLs(Paths.PLUGINS + "\\", out plugins))
                 Plugins.AddRange(plugins);
             else
-                MessageBox.Show("One or more plugin .dll files are blocked. Plugins will not be loaded.", "Blocked DLL files", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                currentOwner.InvokeMessageBox("One or more plugin .dll files are blocked. Plugins will not be loaded.", "Blocked DLL files", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
             foreach (IPlugin plugin in Plugins)
             {
@@ -1283,7 +1284,7 @@ namespace AA2Install
             //Check if installed
             if (!(Directory.Exists(Paths.AA2Play) && Directory.Exists(Paths.AA2Edit)))
             {
-                MessageBox.Show("You don't seem to have AA2Play and/or AA2Edit (properly) installed.\nPlease install it, use the registry fixer (if you've already installed it) or manually specify the install path in the preferences.", "AA2 Not Installed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                currentOwner.InvokeMessageBox("You don't seem to have AA2Play and/or AA2Edit (properly) installed.\nPlease install it, use the registry fixer (if you've already installed it) or manually specify the install path in the preferences.", "AA2 Not Installed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
             //Setup sorting
@@ -1435,7 +1436,8 @@ namespace AA2Install
         {
             setEnabled(false);
 
-            var mods = Configuration.loadMods();
+            ModDictionary mods;
+            Configuration.loadMods(out mods);
 
             txtMigrate.Clear();
 
