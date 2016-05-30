@@ -171,10 +171,20 @@ namespace AA2Install
         /// Loads a list of installed mods from the "MODS" key in configuration.
         /// </summary>
         /// <returns>List of installed mods.</returns>
-        public static ModDictionary loadMods()
+        public static bool loadMods(out ModDictionary dict)
         {
-            if (ReadSetting("MODS") == null) { return new ModDictionary(); }
-            return DeserializeObject<ModDictionary>(ReadSetting("MODS"));
+            dict = new ModDictionary();
+            if (ReadSetting("MODS") == null) { return true; }
+            try
+            {
+                dict = DeserializeObject<ModDictionary>(ReadSetting("MODS"));
+                return true;
+            }
+            catch (InvalidOperationException ex)
+            {
+                Trace.Write("Invalid mod configuration caught. Details: " + ex.Message, "Exception");
+            }
+            return false;
         }
         #endregion
     }

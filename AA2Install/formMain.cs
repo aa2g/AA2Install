@@ -288,7 +288,13 @@ namespace AA2Install
         public void refreshModList(bool skipReload = false, string filter = "")
         {
             lsvMods.Items.Clear();
-            modDict = Configuration.loadMods();
+            ModDictionary modDict;
+            if (!Configuration.loadMods(out modDict))
+            {
+                currentOwner.InvokeMessageBox("The configuration file has been detected as corrupt. Cache will be cleared.", "Corrupt configuration", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                FlushCache();
+            }
+
             if (!skipReload)
             {
                 setEnabled(false);
