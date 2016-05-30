@@ -1,0 +1,90 @@
+﻿AA2Install FAQ for v7
+
+Make sure to read this before doing ANYTHING with the program, some issues require you to know about them before you actually deal with them.
+
+Q: How do I use this? It keeps uninstalling mods when I uncheck them!
+
+A: The way that it works is the easiest way I thought I could implement installations and uninstallations simultaneously.
+It works on the same principle as iTunes, whatever is checked will be installed after it's synchronized. This also applies to things that are unchecked.
+
+Simply put:
+1. Check mods you want to be installed.
+2. Uncheck mods that you want to be uninstalled.
+3. Click "Synchronize".
+If you want it a mod to stay installed, keep it checked. Otherwise the program will think you want to uninstall it.
+
+
+
+Q: I'm getting an error saying files are conflicting! What do I do?
+
+A: This is just to make sure you know what you are doing. When Wizzard does it's magic, it overwrites files without telling you.
+This is enabled by default because when mods do conflict, you need to uninstall them in the reverse order you installed them in.
+i.e. Installed mod A then B, uninstall B then A.
+There are currently two ways of making this easier; there is a sort by date option in the top right of the list, and when you click on a mod for more details it tells you when it was installed.
+If you think you can handle that, go ahead and check "Ignore conflicts" in the preferences tab.
+
+If by the off chance you are using this to find out what mods and files are conflicting on purpose, there will be more details about which files conflict in the Log tab.
+
+
+
+Q: It crashed! I got an error dialog! What do I do?
+
+A: First of all, do not panic. Your game files are (most likely) not corrupt.
+
+IF you were in the process of installing mods:
+Follow these steps to get your game back to working.
+1. Go into your data folder (where your .pp files are located).
+2. Look for any files ending with ".bak". These are your backup .pp files.
+3. Rename those .bak files back to what .pp file they were and delete the one that already exists.
+
+If you were installing a mod that creates new .pp files like HEXA, no .bak files will be created. Instead, (assuming you still have the window for AA2Install open)
+1. Look at the bottom of the main window of AA2Install. It should have the name of the current .pp file it's working on.
+2. Write the name of the file down, and close the window.
+3. Find and delete that .pp file.
+
+To get it back to working after all that, you just simply need to try and install the mod again (unless the error is still preventing you, then use something like Wizzard to install it).
+You *may not* be able to uninstall the mod later properly; some of the base files inside the .pp may have been lost.
+This shouldn't really affect you if you only uninstall just to install a newer version of the mod, but if you want to get back to a vanilla AA2 installation, it's more time effective to just install the game again from the start.
+
+IF however it crashed at startup, your game files have not been touched. Try deleting the plugins folder to see if that fixes it.
+
+Lastly, if you're still having issues, send me the files that it tells you to send and most importantly tell me what you were doing (what mods you were installing etc.)
+I'd prefer it if you did that on GitHub (https://github.com/aa2g/AA2Install/issues/new) as I can get in touch with you a lot faster compared to if you told me on HF (drpavel) or /aa2g/.
+
+
+
+Q: Why are my mods all sorts of colours?
+
+A: This is the status of the mod. There were more colours, but people thought they were too confusing.
+There are a total of 4 colors:
+
+White: Mod is uninstalled.
+Green: Mod is installed.
+Red: Mod is not able to be installed. It does not adhere to the Wizzard-ready mod standard.
+Orange: Same as red, but there is a .7z inside the mod that could potentially be the actual mod.
+
+
+
+Q: Help! I'm installing HEXACC / some other big mod and it's spending a really long time backing it up! What did I do wrong?
+
+A: You either:
+1. Did not uninstall the previous version of the mod before installing the new one.
+OR
+2. You used the HEXACC .exe installer / used Wizzard without migrating it to AA2Install.
+
+You can safely terminate the process in Task Manager without corrupting any game files, but note that you won't be able to install the mod.
+
+To resolve this, just simply delete any .pp files that the mod added. DO NOT delete files that were merely modified by the mod, because you'd be deleting base game files.
+i.e. for the HEXACC .exe installer:
+1. Go into the data folder.
+2. Delete any files with "HEXA" in the name (not "HEXAOC" or "HEXAPP", they're not part of HEXACC)
+
+
+Q: I have a feature request / Could you tell me more about the technical side of the program / I have another question!
+
+A: Just submit feature requests here: https://github.com/aa2g/AA2Install/issues/new
+Make sure to tag it as "enhancement".
+
+If you'd like to ask me questions about the technical side (or anything about the data formats in AA2), feel free to send me a PM on hongfire (drpavel)
+
+If you instead still aren't sure how to use the program /aa2g/ should be able to help you out or post in the HF thread
