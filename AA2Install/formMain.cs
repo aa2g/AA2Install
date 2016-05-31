@@ -303,7 +303,6 @@ namespace AA2Install
                 initializeBench();
                 
                 string[] paths = getFiles(Paths.MODS, "*.7z|*.zip", SearchOption.TopDirectoryOnly);
-                prgMajor.Maximum = paths.Length;
                 prgMinor.Style = ProgressBarStyle.Marquee;
             
                 int i = 0;
@@ -311,7 +310,7 @@ namespace AA2Install
                 foreach (string path in paths)
                 {
                     i++;
-                    updateStatus("(" + i.ToString() + "/" + prgMajor.Maximum.ToString() + ") Processing " + path.Remove(0, path.LastIndexOf('\\') + 1) + "...");
+                    updateStatus("(" + i + "/" + paths.Length + ") Processing " + path.Remove(0, path.LastIndexOf('\\') + 1) + "...");
 
                     bool flag = false;
                     foreach (Mod m in modDict.Values)
@@ -330,7 +329,7 @@ namespace AA2Install
 
                     modDict[path] = _7z.Index(path);
 
-                    prgMajor.Value = i;
+                    prgMajor.Value = (100 * i / paths.Length);
                 }
             }
 
@@ -438,7 +437,7 @@ namespace AA2Install
             foreach (ListViewItem l in lsvMods.Items)
             {
                 Mod m = (Mod)l.Tag;
-                if (l.Checked ^ (m.Installed))
+                if (l.Checked != m.Installed)
                 {
                     if (l.Checked)
                     {
@@ -466,13 +465,19 @@ namespace AA2Install
             prgMajor.Value = 0;
             int index = 0;
 
+            Action Fail = () =>
+            {
+                setEnabled(true);
+                prgMinor.Value = 0;
+                prgMajor.Value = 0;
+            };
+
             //Check if directory exists
             if (!(Directory.Exists(Paths.AA2Play) && Directory.Exists(Paths.AA2Edit)))
             {
                 updateStatus("AA2Play/AA2Edit is not installed/cannot be found", LogIcon.Error, false);
                 updateStatus("FAILED: AA2Play/AA2Edit is not installed/cannot be found", LogIcon.Error, false, true);
-                btnApply.Enabled = true;
-                btnRefresh.Enabled = true;
+                Fail();
                 return false;
             }
             
@@ -558,9 +563,7 @@ namespace AA2Install
                     updateStatus("Collision detected.", LogIcon.Error, false);
                     updateStatus("FAILED: The highlighted mods have conflicting files", LogIcon.Error, false, true);
                     currentOwner.InvokeMessageBox("Some mods have been detected to have conflicting files.\nYou can use the log to manually fix the conflicting files in the mods (if they can be fixed) or you can proceed anyway by changing the relevant setting in the preferences.\nNote: if you proceed anyway, to uninstall you must uninstall mods in the reverse order you installed them to ensure that wrong files are not left behind.", "Collision detected", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    setEnabled(true);
-                    prgMinor.Value = 0;
-                    prgMajor.Value = 0;
+                    Fail();
                     return false;
                 }
             }
@@ -601,9 +604,7 @@ namespace AA2Install
 
 #warning change to a retry cancel ignore dialog
                     currentOwner.InvokeMessageBox("There is not enough free space to allow an approximate safe installation.\n" + spaces, "Not enough free space", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    setEnabled(true);
-                    prgMinor.Value = 0;
-                    prgMajor.Value = 0;
+                    Fail();
                     return false;
                 }
             }
@@ -613,8 +614,6 @@ namespace AA2Install
             List<Mod> combined = mods.Concat(unmods).ToList();
 
             index = 0;
-            prgMajor.Maximum = combined.Count;
-            prgMinor.Maximum = 100;
 
             string name = "";
 
@@ -622,7 +621,7 @@ namespace AA2Install
                 this.Invoke((MethodInvoker)delegate {
                     prgMinor.Value = i;
                 });
-                updateStatus("(" + index + "/" + prgMajor.Maximum + ") Extracting " + name + " (" + i + "%)...", LogIcon.Processing, false, true);
+                updateStatus("(" + index + "/" + combined.Count + ") Extracting " + name + " (" + i + "%)...", LogIcon.Processing, false, true);
             };
 
             _7z.ProgressUpdated += updateProgress;
@@ -631,16 +630,19 @@ namespace AA2Install
             {
                 index++;
                 name = item.Name;
-                updateStatus("(" + index + "/" + prgMajor.Maximum + ") Extracting " + name + " (0%)...", LogIcon.Processing);
+                updateStatus("(" + index + "/" + combined.Count + ") Extracting " + name + " (0%)...", LogIcon.Processing);
 
                 if (mods.Contains(item))
                     _7z.Extract(item.Filename);
                 else
-                    _7z.Extract(Paths.BACKUP + "\\" + item.Name.Replace(".zip", ".7z"), Paths.TEMP + @"\BACKUP\");
+                    _7z.Extract(item.BackupFilename, Paths.TEMP + @"\BACKUP\");
 
-                prgMajor.Value = index;
+                prgMajor.Value = (100 * index / combined.Count);
                 if (tryCancel())
+                {
+                    Fail();
                     return false;
+                }
             }
 
             _7z.ProgressUpdated -= updateProgress;
@@ -685,7 +687,6 @@ namespace AA2Install
                 }
 
                 prgMinor.Style = ProgressBarStyle.Continuous;
-                prgMinor.Maximum = Directory.GetFiles(bp.ppRAW).Length;
                 int i = 1;
 
                 foreach (string s in Directory.GetFiles(bp.ppRAW))
@@ -699,7 +700,7 @@ namespace AA2Install
                             break;
                         }
                     }
-                    prgMinor.Value = i;
+                    prgMinor.Value = (i * 100 / Directory.GetFiles(bp.ppRAW).Length);
                     bp.pp.Subfiles.Add(new Subfile(s));
                     i++;
                 }
@@ -737,12 +738,10 @@ namespace AA2Install
             int ii = 0;
             prgMajor.Value = 0;
             prgMinor.Value = 0;
-            prgMajor.Maximum = ppList.Count();
-            prgMinor.Maximum = 100;
             foreach (basePP b in ppList)
             {
                 ii++;
-                updateStatus("(" + ii + "/" + prgMajor.Maximum + ") Reverting " + b.ppFile + " (0%)...", LogIcon.Processing);
+                updateStatus("(" + ii + "/" + ppList.Count + ") Reverting " + b.ppFile + " (0%)...", LogIcon.Processing);
                 if (b.pp.Subfiles.Count > 0)
                 {
                     BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup);
@@ -751,7 +750,7 @@ namespace AA2Install
                     {
                         this.Invoke((MethodInvoker)delegate {
                             prgMinor.Value = e.ProgressPercentage;
-                            baseUpdateStatus("(" + ii + "/" + prgMajor.Maximum + ") Reverting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
+                            baseUpdateStatus("(" + ii + "/" + ppList.Count + ") Reverting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
                         });
                     });
 
@@ -765,23 +764,23 @@ namespace AA2Install
                 {
                     File.Delete(b.pp.FilePath);
                 }
+                prgMajor.Value = (100 * ii / ppList.Count);
             }
 
             prgMinor.Value = 0;
             prgMajor.Value = 0;
 
             //Process .pp files
-            prgMajor.Maximum = ppQueue.Count;
+            int initial = ppQueue.Count;
             updateTaskbarProgress();
             index = 0;
             while (ppQueue.Count > 0)
             {
                 basePP b = ppQueue.Dequeue();
 
-                updateStatus("(" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Injecting " + b.ppFile + " (0%)...", LogIcon.Processing);
+                updateStatus("(" + (index + 1) + "/" + initial + ") Injecting " + b.ppFile + " (0%)...", LogIcon.Processing);
 
                 prgMinor.Style = ProgressBarStyle.Continuous;
-                prgMinor.Maximum = Directory.GetFiles(b.ppRAW).Length;
                 int i = 1;
 
                 foreach (Mod m in mods)
@@ -839,14 +838,13 @@ namespace AA2Install
                             break;
                         }
                     }
-                    prgMinor.Value = i;
+                    prgMinor.Value = (100 * i / Directory.GetFiles(b.ppRAW).Length);
                     b.pp.Subfiles.Add(new Subfile(s));
                     i++;
                 }
                 if (b.pp.Subfiles.Count > 0)
                 {
                     prgMinor.Value = 0;
-                    prgMinor.Maximum = 100;
                     BackgroundWorker bb = b.pp.WriteArchive(b.pp.FilePath, createBackup);
 
                     bb.ProgressChanged += ((s, e) =>
@@ -854,7 +852,7 @@ namespace AA2Install
                         this.Invoke((MethodInvoker)delegate
                             { prgMinor.Value = e.ProgressPercentage; });
                         
-                        updateStatus("(" + (index + 1).ToString() + "/" + prgMajor.Maximum.ToString() + ") Injecting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
+                        updateStatus("(" + (index + 1) + "/" + initial + ") Injecting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
                     });
 
                     bb.RunWorkerAsync();
@@ -872,22 +870,20 @@ namespace AA2Install
                 TryDeleteDirectory(b.ppRAW + "\\");
 
                 index++;
-                prgMajor.Value = index;
+                prgMajor.Value = (100 * index / initial);
                 updateTaskbarProgress();
             }
 
             int ind = 0;
-            prgMinor.Value = 0;
             //Archive backups
-            prgMinor.Maximum = 100;
+            prgMinor.Value = 0;
             prgMajor.Value = 0;
             if (!Directory.Exists(Paths.WORKING + "\\BACKUP\\")) { Directory.CreateDirectory(Paths.WORKING + "\\BACKUP\\"); }
             List<string> tempBackup = new List<string>(Directory.GetDirectories(Paths.WORKING + "\\BACKUP\\"));
-            prgMajor.Maximum = tempBackup.Count;
             foreach (string s in tempBackup)
             {
                 ind++;
-                prgMajor.Value = ind;
+                prgMajor.Value = (100 * ind / tempBackup.Count);
                 updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (0%)...", LogIcon.Processing);
 
                 updateProgress = (i) => {
@@ -1390,7 +1386,6 @@ namespace AA2Install
 
                 if (imageLoop.Count > 0)
                 {
-                   
                     using (Stream s = new FileStream(imageLoop[0], FileMode.Open))
                         imagePreview.Image = new Bitmap(s);
                 }
@@ -1789,7 +1784,9 @@ namespace AA2Install
         }
 
         public string Filename => Paths.MODS + "\\" + Name;
-        
+
+        public string BackupFilename => Paths.BACKUP + "\\" + Name.Replace(".zip", ".7z");
+
         private bool _Installed = false;
         
         public bool Installed
