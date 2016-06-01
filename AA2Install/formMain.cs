@@ -42,7 +42,9 @@ namespace AA2Install
 #warning actually get a proper memory dump when it crashes
 
         #region Preferences
-
+        /// <summary>
+        /// Updates UI to values in configuration.
+        /// </summary>
         public void loadUIConfiguration()
         {
             btnAA2PLAY.Enabled = txtAA2PLAY.Enabled = checkAA2PLAY.Checked = Configuration.getBool("AA2PLAY");
@@ -188,6 +190,11 @@ namespace AA2Install
             return (string[])alFiles.ToArray(typeof(string));
         }
 
+        /// <summary>
+        /// Converts a length of bytes into a human readable form.
+        /// </summary>
+        /// <param name="bytes">The amount of bytes.</param>
+        /// <returns>A readable form of the length.</returns>
         private string BytesToString(long bytes)
         {
             string[] sizes = { "B", "KB", "MB", "GB" };
@@ -728,6 +735,7 @@ namespace AA2Install
                 ppQueue.Enqueue(new basePP(path, Paths.AA2Edit));
             }
 
+            //Prioritise removing subfiles from mods that are being uninstalled
             while (ppQueue.Count > 0)
             {
                 basePP bp = ppQueue.Dequeue();
@@ -769,7 +777,7 @@ namespace AA2Install
             tempPLAY = new List<string>(Directory.GetDirectories(Paths.TEMP + @"\AA2_PLAY", "jg2*", SearchOption.TopDirectoryOnly));
             tempEDIT = new List<string>(Directory.GetDirectories(Paths.TEMP + @"\AA2_MAKE", "jg2*", SearchOption.TopDirectoryOnly));
 
-
+            //Sort the uninstalled .pp files back into the main queue
             foreach (string path in tempPLAY)
             {
                 var p = new basePP(path, Paths.AA2Play);
@@ -994,6 +1002,9 @@ namespace AA2Install
             return true;
         }
         
+        /// <summary>
+        /// Deletes cache and rebuilds configuration file.
+        /// </summary>
         public void FlushCache()
         {
             imageTimer.Enabled = false;
@@ -1147,6 +1158,10 @@ namespace AA2Install
             }
         }
 
+        /// <summary>
+        /// Prompts and deletes selected mods in the list view.
+        /// </summary>
+        /// <param name="suppressDialogs">Whether or not to suppress dialogs and prompts.</param>
         public void deleteSelectedMods(bool suppressDialogs = false)
         {
             if (lsvMods.SelectedItems.Count > 0)
@@ -1737,6 +1752,9 @@ namespace AA2Install
         #endregion
     }
     #region Structures
+    /// <summary>
+    /// A class for metadata associated with a mod.
+    /// </summary>
     [XmlRoot("mod")]
     [DebuggerDisplay("{Name}")]
     public class Mod : ISerializable, IXmlSerializable
@@ -1903,6 +1921,9 @@ namespace AA2Install
         //This is user-generated data so it can be left alone
         public SerializableDictionary<string, object> Properties = new SerializableDictionary<string, object>();
     }
+    /// <summary>
+    /// Contains generated paths for a PP file.
+    /// </summary>
     public class basePP
     {
         public string ppRAW;
@@ -1918,6 +1939,9 @@ namespace AA2Install
 
         public string ppFile => ppDir + ".pp";
     }
+    /// <summary>
+    /// A list view sorter for comparing mods.
+    /// </summary>
     public class CustomListViewSorter : IComparer
     {
         private int mode = 0;

@@ -60,11 +60,22 @@ public static class TaskbarProgress
         }
     }
 
+    /// <summary>
+    /// Sets the state of the progress bar.
+    /// </summary>
+    /// <param name="windowHandle">The handle of the window.</param>
+    /// <param name="taskbarState">The state to set the progress bar to.</param>
     public static void SetState(IntPtr windowHandle, TaskbarStates taskbarState)
     {
         if (useTaskbar) taskbarInstance.SetProgressState(windowHandle, taskbarState);
     }
 
+    /// <summary>
+    /// Sets the value of the progress bar.
+    /// </summary>
+    /// <param name="windowHandle">The handle of the window.</param>
+    /// <param name="progressValue">The value of the progress bar.</param>
+    /// <param name="progressMax">The maximum value of the progress bar.</param>
     public static void SetValue(IntPtr windowHandle, double progressValue, double progressMax)
     {
         if (useTaskbar) taskbarInstance.SetProgressValue(windowHandle, (ulong)progressValue, (ulong)progressMax);
