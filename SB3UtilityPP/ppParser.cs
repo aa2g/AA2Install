@@ -97,7 +97,7 @@ namespace SB3Utility
 
 						worker.ReportProgress(i * 100 / Subfiles.Count);
 
-                        System.Diagnostics.Trace.WriteLine(Subfiles[i].Name);
+                        //System.Diagnostics.Trace.WriteLine(Subfiles[i].Name);
 
                         if (Subfiles[i] is ppSubfile)
                         {

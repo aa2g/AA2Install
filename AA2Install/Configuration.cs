@@ -35,7 +35,6 @@ namespace AA2Install
                 {
                     if (!File.Exists(Paths.CONFIG + ".gz"))
                         return null;
-                    //json = File.ReadAllText(Paths.CONFIG);
                     json = GZip.DecompressString(File.ReadAllBytes(Paths.CONFIG + ".gz"));
                 }
                 
@@ -43,10 +42,8 @@ namespace AA2Install
 
                 if (!appSettings.ContainsKey(key))
                     return null;
-
-                string result = appSettings[key];
-                Trace.WriteLine(key + " : " + result);
-                return result;
+                
+                return appSettings[key];
             }
             catch (Exception ex)
             {
@@ -66,17 +63,14 @@ namespace AA2Install
             try
             {
                 key = key.ToLower();
-                Trace.WriteLine(key + " : " + value);
                 string json = "";
                 if (File.Exists(Paths.CONFIG + ".gz"))
-                    //json = File.ReadAllText(Paths.CONFIG);
                     json = GZip.DecompressString(File.ReadAllBytes(Paths.CONFIG + ".gz"));
                 var settings = JsonConvert.DeserializeObject<SerializableDictionary<string, string>>(json);
                 if (settings == null)
                     settings = new SerializableDictionary<string, string>();
                 settings[key] = value;
-
-                //File.WriteAllText(Paths.CONFIG, JsonConvert.SerializeObject(settings));
+                
                 File.WriteAllBytes(Paths.CONFIG + ".gz", GZip.CompressString(JsonConvert.SerializeObject(settings)));
                 return true;
             }
@@ -100,7 +94,6 @@ namespace AA2Install
             try
             {
                 key = key.ToLower();
-                Trace.WriteLine(key + " : " + value);
                 string json;
 
                 using (StreamReader sr = new StreamReader(input))

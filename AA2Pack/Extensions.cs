@@ -8,7 +8,7 @@ namespace AA2Pack
 {
     public static class Extensions
     {
-        public static bool ContainsSwitch(this IList<string> list, string command)
+        public static bool ContainsSwitch(this ICollection<string> list, string command)
         {
             return list.Any(x => x.ToLower().TrimStart('-', '/') == command);
         }
