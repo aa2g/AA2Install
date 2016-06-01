@@ -5,7 +5,7 @@ v7
 + Massive optimizations and speedups
 + Completely reworked 7z handling
 ++ Console tab removed since no more use
-+ Experimental RLE compression to decrease size of output .pp files
++ New RLE compression to decrease size of output .pp files
 + Now detects if mods are valid
 ++ Also checks if actual mod is inside 7z
 + Added verification for .pp files and 7z archives
@@ -14,6 +14,7 @@ v7
 + Now checks for free space on required drives
 + Added Vista/XP Compatibility mode
 + Fixed a whole heap of bugs
+++ List sorter works properly now
 + Added a plugin system
 ++ Comes with an experimental .PP content trimmer
 

@@ -36,8 +36,6 @@ namespace AA2Install
 #warning add a new panel for detailed installation info
 #warning add lst preservation option for certian files/check uncheck which subfiles to install
 #warning replace synchronization method with a queue for installs and uninstalls
-#warning replace 7z handling, reload mod metadata everytime it's selected
-#warning investigate filter issues
 #warning display which .pps are going to get changed
 #warning add the ability to cancel during an install by uninstalling using the temp folder
 #warning don't delete the compile folder in case there was a previous installation
@@ -357,7 +355,7 @@ namespace AA2Install
                 {
                     List<string> sfiles;
 
-                    SevenZipNET.SevenZipExtractor sz = new SevenZipNET.SevenZipExtractor(m.Filename);
+                    SevenZipExtractor sz = new SevenZipExtractor(m.Filename);
                     sfiles = sz.Files.Select(s => s.Filename).ToList();
 
                     if (sfiles.Any(s => s.EndsWith(".7z") || s.EndsWith(".zip")))
@@ -389,6 +387,8 @@ namespace AA2Install
                 //modDict[m.Name] = m;
             }
 
+            lsvMods.Sort();
+
             if (!skipReload)
             {
                 Configuration.saveMods(modDict);
@@ -400,7 +400,7 @@ namespace AA2Install
 
 
                 setEnabled(true);
-            }            
+            }
         }
 
         /// <summary>
@@ -1347,6 +1347,7 @@ namespace AA2Install
             Show();
             change = new formChanges(pendingChangesToolStripMenuItem);
             change.Show();
+            change.Activate();
         }
         #endregion
         #region Image and Description
@@ -1920,9 +1921,9 @@ namespace AA2Install
     public class CustomListViewSorter : IComparer
     {
         private int mode = 0;
-        public CustomListViewSorter(int _mode = 0)
+        public CustomListViewSorter(int mode = 0)
         {
-            mode = _mode;
+            this.mode = mode;
         }
         public int Compare(object x, object y)
         {
@@ -1947,9 +1948,9 @@ namespace AA2Install
                     return string.Compare(Lx.Text, Ly.Text);
                 case 1: //Install date sorting
                     if (Lx.Tag == null || !My.Installed)
-                        return 1;
-                    if (Ly.Tag == null || !Mx.Installed)
                         return -1;
+                    if (Ly.Tag == null || !Mx.Installed)
+                        return 1;
                     return (int)(My.InstallTime - Mx.InstallTime).TotalSeconds;
             }
         }
