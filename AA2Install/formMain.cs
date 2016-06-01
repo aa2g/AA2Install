@@ -40,8 +40,6 @@ namespace AA2Install
 #warning investigate filter issues
 #warning display which .pps are going to get changed
 #warning add the ability to cancel during an install by uninstalling using the temp folder
-#warning check 7z integrity before un/install
-#warning run tests on .pp files before un/install
 #warning don't delete the compile folder in case there was a previous installation
 #warning actually get a proper memory dump when it crashes
 
@@ -431,6 +429,7 @@ namespace AA2Install
             updateStatus("Compiling changes...", LogIcon.Processing);
 
             //Compile changes
+            _7z.ProgressUpdatedEventArgs updateProgress;
             List<string> rsub = new List<string>();
             List<Mod> mods = new List<Mod>();
             List<Mod> unmods = new List<Mod>();
@@ -609,15 +608,74 @@ namespace AA2Install
                 }
             }
 
-            //Extract all mods
-
+            //Verify mods
             List<Mod> combined = mods.Concat(unmods).ToList();
+            List<string> estPP = new List<string>();
+
+            foreach (var m in combined)
+            {
+                SevenZipExtractor s;
+                if (m.Installed)
+                    s = new SevenZipExtractor(m.BackupFilename);
+                else
+                    s = new SevenZipExtractor(m.Filename);
+
+                updateStatus("(" + index + "/" + combined.Count + ") Verifying " + m.Name + " (0%)...", LogIcon.Processing, false, true);
+
+                foreach (var d in s.Files)
+                {
+                    if (d.Attributes.HasFlag(Attributes.Directory) && d.Filename.Length > 9)
+                    {
+                        string n = d.Filename.Remove(0, 9);
+
+                        if (d.Filename.StartsWith("AA2_MAKE"))
+                            estPP.Add(Paths.AA2Edit + @"\" + n + ".pp");
+                        else
+                            estPP.Add(Paths.AA2Play + @"\" + n + ".pp");
+                    }
+                }
+
+                SevenZipBase.ProgressUpdatedEventArgs progress = (i) => {
+                    this.prgMinor.GetCurrentParent().Invoke((MethodInvoker)delegate {
+                        prgMinor.Value = i;
+                    });
+                    updateStatus("(" + index + "/" + combined.Count + ") Verifying " + m.Name + " (" + i + "%)...", LogIcon.Processing, false, true);
+                };
+
+                s.ProgressUpdated += progress;
+
+                bool result = s.TestArchive();
+
+                s.ProgressUpdated -= progress;
+
+                if (!result)
+                {
+                    updateStatus("FAILED: " + m.Name + " failed to verify.", LogIcon.Error, false);
+                    Fail();
+                    return false;
+                }
+            }
+
+            //Verify PPs
+            foreach (string p in estPP)
+            {
+                updateStatus("(" + index + "/" + combined.Count + ") Verifying " + p.Remove(0, p.LastIndexOf('\\') + 1) + "...", LogIcon.Processing);
+                if (File.Exists(p))
+                    if (!ppHeader.VerifyHeader(p))
+                    {
+                        updateStatus("FAILED: " + p.Remove(0, p.LastIndexOf('\\') + 1) + " failed to verify.", LogIcon.Error, false);
+                        Fail();
+                        return false;
+                    }
+            }
+
+            //Extract all mods
 
             index = 0;
 
             string name = "";
 
-            _7z.ProgressUpdatedEventArgs updateProgress = (i) => {
+            updateProgress = (i) => {
                 this.Invoke((MethodInvoker)delegate {
                     prgMinor.Value = i;
                 });

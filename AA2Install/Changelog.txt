@@ -8,6 +8,7 @@ v7
 + Experimental RLE compression to decrease size of output .pp files
 + Now detects if mods are valid
 ++ Also checks if actual mod is inside 7z
++ Added verification for .pp files and 7z archives
 + Rewritten preview loading
 + Added modpacks
 + Now checks for free space on required drives
