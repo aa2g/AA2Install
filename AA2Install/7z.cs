@@ -62,10 +62,7 @@ namespace AA2Install.Archives
         {
             Task t = new Task(() => SyncExtract(filename, wildcard, dest)); //I have no idea how async methods work
 
-            t.Start();
-
-            while (!t.IsCompleted)
-                Application.DoEvents();
+            t.SemiAsyncWait();
         }
 
         private static void SyncExtract(string filename, string wildcard, string dest = "")
@@ -98,10 +95,7 @@ namespace AA2Install.Archives
         {
             Task t = new Task(() => SyncCompress(filename, workingdir, directory)); //I have no idea how async methods work
 
-            t.Start();
-
-            while (!t.IsCompleted)
-                Application.DoEvents();
+            t.SemiAsyncWait();
         }
 
         private static void SyncCompress(string filename, string workingdir, string directory)

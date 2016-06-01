@@ -812,11 +812,7 @@ namespace AA2Install
                         });
                     });
 
-                    bb.RunWorkerAsync();
-                    while (bb.IsBusy)
-                    {
-                        Application.DoEvents();
-                    }
+                    bb.SemiAsyncWait();
                 }
                 else
                 {
@@ -913,11 +909,7 @@ namespace AA2Install
                         updateStatus("(" + (index + 1) + "/" + initial + ") Injecting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
                     });
 
-                    bb.RunWorkerAsync();
-                    while (bb.IsBusy)
-                    {
-                        Application.DoEvents();
-                    }
+                    bb.SemiAsyncWait();
                 }
                 else
                 {
