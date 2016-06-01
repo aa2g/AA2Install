@@ -600,19 +600,32 @@ namespace AA2Install
                 requiredSizes[Paths.AA2Play.Remove(1)] = totalAA2PlaySize + 0x40000000; //an approx. extra 1gb for temp files
 
             foreach (var kv in requiredSizes)
-            { 
-                if (!IsEnoughFreeSpace(kv.Key, kv.Value))
+            {
+                bool tryAgain = false;
+                do
                 {
-                    updateStatus("FAILED: There is not enough free space", LogIcon.Error, false);
+                    tryAgain = false;
+                    if (!IsEnoughFreeSpace(kv.Key, kv.Value))
+                    {
+                        updateStatus("FAILED: There is not enough free space", LogIcon.Error, false);
 
-                    string spaces = requiredSizes.Select(x => "Drive " + x.Key + ":\\ : Required " + BytesToString(x.Value) + "; Available: " + BytesToString(new DriveInfo(kv.Key).AvailableFreeSpace))
-                                    .Aggregate((a, b) => a + "\n" + b);
+                        string spaces = requiredSizes.Select(x => "Drive " + x.Key + ":\\ : Required " + BytesToString(x.Value) + "; Available: " + BytesToString(new DriveInfo(kv.Key).AvailableFreeSpace))
+                                        .Aggregate((a, b) => a + "\n" + b);
+                        
+                        var result = currentOwner.InvokeMessageBox("There is not enough free space to allow an approximate safe installation.\n" + spaces, "Not enough free space", MessageBoxButtons.RetryCancel, MessageBoxIcon.Exclamation);
 
-#warning change to a retry cancel ignore dialog
-                    currentOwner.InvokeMessageBox("There is not enough free space to allow an approximate safe installation.\n" + spaces, "Not enough free space", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    Fail();
-                    return false;
-                }
+                        switch(result)
+                        {
+                            case DialogResult.Retry:
+                                tryAgain = true;
+                                break;
+                            case DialogResult.Cancel:
+                            default:
+                                Fail();
+                                return false;
+                        }
+                    }
+                } while (tryAgain);
             }
 
             //Verify mods
