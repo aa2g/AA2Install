@@ -656,7 +656,7 @@ namespace AA2Install
                 }
 
                 SevenZipBase.ProgressUpdatedEventArgs progress = (i) => {
-                    this.prgMinor.GetCurrentParent().Invoke((MethodInvoker)delegate {
+                    this.prgMinor.GetCurrentParent().HybridInvoke(() => {
                         prgMinor.Value = i;
                     });
                     updateStatus("(" + index + "/" + combined.Count + ") Verifying " + m.Name + " (" + i + "%)...", LogIcon.Processing, false, true);
@@ -664,7 +664,7 @@ namespace AA2Install
 
                 s.ProgressUpdated += progress;
 
-                bool result = s.TestArchive();
+                bool result = new Func<bool>(() => s.TestArchive()).SemiAsyncWait();
 
                 s.ProgressUpdated -= progress;
 
@@ -696,7 +696,7 @@ namespace AA2Install
             string name = "";
 
             updateProgress = (i) => {
-                this.Invoke((MethodInvoker)delegate {
+                prgMinor.GetCurrentParent().HybridInvoke(() => {
                     prgMinor.Value = i;
                 });
                 updateStatus("(" + index + "/" + combined.Count + ") Extracting " + name + " (" + i + "%)...", LogIcon.Processing, false, true);
@@ -827,10 +827,10 @@ namespace AA2Install
 
                     bb.ProgressChanged += ((s, e) =>
                     {
-                        this.Invoke((MethodInvoker)delegate {
+                        prgMinor.GetCurrentParent().HybridInvoke(() => {
                             prgMinor.Value = e.ProgressPercentage;
-                            baseUpdateStatus("(" + ii + "/" + ppList.Count + ") Reverting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
                         });
+                        updateStatus("(" + ii + "/" + ppList.Count + ") Reverting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
                     });
 
                     bb.SemiAsyncWait();
@@ -924,7 +924,7 @@ namespace AA2Install
 
                     bb.ProgressChanged += ((s, e) =>
                     {
-                        this.Invoke((MethodInvoker)delegate
+                        prgMinor.GetCurrentParent().HybridInvoke(() =>
                             { prgMinor.Value = e.ProgressPercentage; });
                         
                         updateStatus("(" + (index + 1) + "/" + initial + ") Injecting " + b.ppFile + " (" + e.ProgressPercentage + "%)...", LogIcon.Processing, false, true);
@@ -958,10 +958,10 @@ namespace AA2Install
                 updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (0%)...", LogIcon.Processing);
 
                 updateProgress = (i) => {
-                    this.Invoke((MethodInvoker)delegate {
+                    prgMinor.GetCurrentParent().HybridInvoke(() => {
                         prgMinor.Value = i;
-                        updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (" + i + "%)...", LogIcon.Processing, false, true);
                     });
+                    updateStatus("(" + ind + "/" + tempBackup.Count + ") Archiving backup of " + s + " (" + i + "%)...", LogIcon.Processing, false, true);
                 };
 
                 _7z.ProgressUpdated += updateProgress;
@@ -1702,46 +1702,40 @@ namespace AA2Install
 
         private bool showTime = false;
 
-        private void baseUpdateStatus(string entry, LogIcon icon = LogIcon.Ready, bool displayTime = true, bool onlyStatusBar = false)
+        private void updateStatus(string entry, LogIcon icon = LogIcon.Ready, bool displayTime = true, bool onlyStatusBar = false)
         {
             if (statusUpdated != null)
                 statusUpdated(entry);
             if (onlyStatusBar)
             {
-                labelStatus.Text = entry;
+                labelStatus.GetCurrentParent().HybridInvoke(() => 
+                    labelStatus.Text = entry);
             }
             else
             {
                 Console.ProgramLog.Add(new LogEntry(entry, icon));
-                
-                if (lsvLog.Items.Count > 0 && showTime)
+
+                lsvLog.HybridInvoke(() =>
                 {
-                    lsvLog.Items[lsvLog.Items.Count - 1].SubItems.Add((getTimeSinceLastCheck().TotalMilliseconds / 1000).ToString("F2") + "s");
-                }
-                showTime = displayTime;
-                switch (icon)
-                {
-                    case LogIcon.Error:
-                    case LogIcon.Warning:
-                        lsvLog.Items.Add(entry, (int)icon);
-                        break;
-                    default:
-                        lsvLog.Items.Add(entry, (int)icon);
-                        labelStatus.Text = entry;
-                        break;
-                }
+                    if (lsvLog.Items.Count > 0 && showTime)
+                    {
+                        lsvLog.Items[lsvLog.Items.Count - 1].SubItems.Add((getTimeSinceLastCheck().TotalMilliseconds / 1000).ToString("F2") + "s");
+                    }
+                    showTime = displayTime;
+                    switch (icon)
+                    {
+                        case LogIcon.Error:
+                        case LogIcon.Warning:
+                            lsvLog.Items.Add(entry, (int)icon);
+                            break;
+                        default:
+                            lsvLog.Items.Add(entry, (int)icon);
+                            labelStatus.Text = entry;
+                            break;
+                    }
+                });
             }
 
-        }
-
-        public void updateStatus(string entry, LogIcon icon = LogIcon.Ready, bool displayTime = true, bool onlyStatusBar = false)
-        {
-            if (this.InvokeRequired)
-                this.Invoke((MethodInvoker)delegate {
-                    baseUpdateStatus(entry, icon, displayTime, onlyStatusBar);
-                });
-            else
-                baseUpdateStatus(entry, icon, displayTime, onlyStatusBar);
         }
         #endregion
 

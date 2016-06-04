@@ -33,6 +33,19 @@ namespace AA2Install
         }
 
         /// <summary>
+        /// Invokes a control with a method only if the invoke is required.
+        /// </summary>
+        /// <param name="control">The control to invoke.</param>
+        /// <param name="action">The action to invoke with.</param>
+        public static void HybridInvoke(this Control control, Action action)
+        {
+            if (control.InvokeRequired)
+                control.BeginInvoke(action);
+            else
+                action();
+        }
+
+        /// <summary>
         /// Keeps a thread responsive while waiting for a blocking call.
         /// </summary>
         /// <param name="action">The call to unblock.</param>
@@ -68,6 +81,30 @@ namespace AA2Install
 
             while (!(task.IsCompleted || task.IsCanceled || task.IsFaulted))
                 Application.DoEvents();
+        }
+
+        /// <summary>
+        /// Keeps a thread responsive while waiting for a blocking call.
+        /// </summary>
+        /// <param name="task">The task to wait for.</param>
+        public static T SemiAsyncWait<T>(this Task<T> task)
+        {
+            if (task.Status == TaskStatus.Created)
+                task.Start();
+
+            while (!(task.IsCompleted || task.IsCanceled || task.IsFaulted))
+                Application.DoEvents();
+
+            return task.Result;
+        }
+
+        /// <summary>
+        /// Keeps a thread responsive while waiting for a blocking call.
+        /// </summary>
+        /// <param name="task">The task to wait for.</param>
+        public static T SemiAsyncWait<T>(this Func<T> func)
+        {
+            return new Task<T>(func).SemiAsyncWait();
         }
     }
 }
