@@ -31,7 +31,7 @@ namespace AA2Install
         public ModDictionary modDict = new ModDictionary();
         public formChanges change;
         public List<IPlugin> Plugins = new List<IPlugin>();
-        private Form currentOwner;
+        public Form currentOwner;
 #warning add ordered installation
 #warning add a new panel for detailed installation info
 #warning add lst preservation option for certian files/check uncheck which subfiles to install

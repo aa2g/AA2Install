@@ -46,6 +46,9 @@ namespace PPTrimmerPlugin
 
                 foreach (string pp in pps)
                 {
+                    if (pp.Contains("base.pp"))
+                        continue;
+                    
                     FileInfo fi = new FileInfo(pp);
                     ListViewItem item = lsvPP.Items.Add(Path.GetFileName(pp));
                     item.SubItems.Add(BytesToString(fi.Length));

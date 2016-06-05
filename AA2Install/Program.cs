@@ -8,8 +8,10 @@ using System.Windows.Forms;
 
 namespace AA2Install
 {
-    static class Program
+    public static class Program
     {
+        public static formMain MainForm;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -22,7 +24,8 @@ namespace AA2Install
             Application.ThreadException += new ThreadExceptionEventHandler(Application_ThreadException);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 #endif
-            Application.Run(new formMain());
+            MainForm = new formMain();
+            Application.Run(MainForm);
         }
 
         static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
