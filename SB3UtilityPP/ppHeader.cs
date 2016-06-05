@@ -192,8 +192,8 @@ namespace SB3Utility
                     return false;
                 
                 int version = BitConverter.ToInt32(DecryptHeaderBytes(reader.ReadBytes(4)), 0);
-                if (Version != version)
-                    return false;
+                /*if (Version != version)
+                    return false;*/
 
                 byte first = DecryptHeaderBytes(reader.ReadByte());
                 if (FirstByte != first)
