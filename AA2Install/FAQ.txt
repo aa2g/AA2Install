@@ -2,6 +2,13 @@
 
 Make sure to read this before doing ANYTHING with the program, some issues require you to know about them before you actually deal with them.
 
+
+Q: Where do I place mods?
+
+A: You place them in the /mods/ folder right next to the AA2Install.exe. If it's not there, just run the program once and it will generate it.
+
+
+
 Q: How do I use this? It keeps uninstalling mods when I uncheck them!
 
 A: The way that it works is the easiest way I thought I could implement installations and uninstallations simultaneously.
@@ -24,6 +31,12 @@ There are currently two ways of making this easier; there is a sort by date opti
 If you think you can handle that, go ahead and check "Ignore conflicts" in the preferences tab.
 
 If by the off chance you are using this to find out what mods and files are conflicting on purpose, there will be more details about which files conflict in the Log tab.
+
+
+
+Q: It's telling me that some plugins were not loaded/blocked! What do I do?
+
+A: Some DLL files are blocked. http://www.sevenforums.com/tutorials/124367-open-file-security-warning-unblock-file.html (option 1)
 
 
 
