@@ -1586,6 +1586,11 @@ namespace AA2Install
                 errorProvider.SetError(lblPLAYreg, "Data subdirectory can not be found.");
                 exit = false;
             }
+            else if (!Path.IsPathRooted(playdir))
+            {
+                errorProvider.SetError(lblPLAYreg, "Path does not have a drive letter.");
+                exit = false;
+            }
             else
             {
                 errorProviderOK.SetError(lblPLAYreg, "Detected as OK.");
@@ -1606,6 +1611,11 @@ namespace AA2Install
             else if (!Directory.Exists(editdir + @"data\"))
             {
                 errorProvider.SetError(lblEDITreg, "Data subdirectory can not be found.");
+                exit = false;
+            }
+            else if (!Path.IsPathRooted(editdir))
+            {
+                errorProvider.SetError(lblEDITreg, "Path does not have a drive letter.");
                 exit = false;
             }
             else
