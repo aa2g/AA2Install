@@ -13,7 +13,7 @@ namespace AA2Pack
     {
         static void PrintHelp()
         {
-            ConsoleWriter.WriteFormat("Usage: {0}", "aa2pack ");
+            ConsoleWriter.WriteAlternating("Usage: ", "aa2pack ");
             ConsoleWriter.WriteLine("[switches] [files and/or folders]");
 
             ConsoleWriter.WriteLine();
@@ -27,7 +27,7 @@ namespace AA2Pack
 
         public static bool PromptUser(string prompt)
         {
-            ConsoleWriter.WriteFormat(prompt + " [{0}/{1}]: ", "Y", "N");
+            ConsoleWriter.WriteAlternating(prompt + " [", "Y", "/", "N", "]: ");
             bool result = Console.ReadLine().ToLower().StartsWith("y");
             ConsoleWriter.WriteLine();
             return result;
@@ -39,8 +39,8 @@ namespace AA2Pack
             System.Diagnostics.Debugger.Launch();
 #endif
 
-            ConsoleWriter.WriteLineFormat("AA2Pack v{0}", Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            ConsoleWriter.WriteLineFormat("by {0}", "drpavel");
+            ConsoleWriter.WriteLineAlternating("AA2Pack v", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            ConsoleWriter.WriteLineAlternating("by ", "drpavel");
             ConsoleWriter.WriteLine();
 
             if (args.Length == 0 ||
@@ -61,7 +61,7 @@ namespace AA2Pack
                 if (File.Exists(s))
                 {
                     //extracting a .pp
-                    ConsoleWriter.WriteLineFormat("Processing {0}...", Path.GetFileName(s));
+                    ConsoleWriter.WriteLineAlternating("Processing ", Path.GetFileName(s), "...");
 
                     ppParser pp = new ppParser(s);
 
@@ -83,11 +83,15 @@ namespace AA2Pack
                         using (FileStream fs = new FileStream(path, FileMode.Create))
                             iw.WriteTo(fs);
 
-                        ConsoleWriter.WriteLineFormat("[{0}/{1}] Processed {2}... ({3})",
+                        ConsoleWriter.WriteLineAlternating("[",
                             (++i).ToString(), //processed subfiles
+                            "/",
                             pp.Subfiles.Count.ToString(), //total subfiles
+                            "] Processed ",
                             iw.Name, //current subfile
-                            string.Format("{0}", Math.Round((double)100 * i / pp.Subfiles.Count) + "%"));
+                            "... (",
+                            string.Format("{0}", Math.Round((double)100 * i / pp.Subfiles.Count) + "%"), //percentage
+                            ")");
                     }
 
                     ConsoleWriter.WriteLine();
@@ -119,7 +123,7 @@ namespace AA2Pack
                     bg.ProgressChanged += (sender, e) =>
                     {
                         ConsoleWriter.ClearLine();
-                        ConsoleWriter.WriteFormat("Writing " + ppPath + "... ({0})", e.ProgressPercentage + "%");
+                        ConsoleWriter.WriteAlternating("Writing " + ppPath + "... (", e.ProgressPercentage + "%", ")");
                     };
 
                     bg.RunWorkerAsync();
@@ -128,7 +132,7 @@ namespace AA2Pack
                         System.Threading.Thread.Sleep(50);
 
                     ConsoleWriter.ClearLine();
-                    ConsoleWriter.WriteLineFormat("Writing " + ppPath + "... ({0})", "100%");
+                    ConsoleWriter.WriteLineAlternating("Writing " + ppPath + "... (", "100%", ")");
                 }
             }
 

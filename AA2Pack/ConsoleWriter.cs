@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Colorful;
-using System.Drawing;
 
 namespace AA2Pack
 {
@@ -16,73 +10,89 @@ namespace AA2Pack
         {
             lock (_MessageLock)
             {
-                int currentLineCursor = System.Console.CursorTop;
-                System.Console.SetCursorPosition(0, System.Console.CursorTop);
-                System.Console.Write(new string(' ', System.Console.WindowWidth));
-                System.Console.SetCursorPosition(0, currentLineCursor);
+                int currentLineCursor = Console.CursorTop;
+                Console.SetCursorPosition(0, Console.CursorTop);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(0, currentLineCursor);
             }
         }
 
-        private static Color _baseColor => Color.LightGray;
-        private static Color _accentColor => Color.Purple;
-        private static Color _accent2Color => Color.Gold;
+        private static ConsoleColor _baseColor => ConsoleColor.Gray;
+        private static ConsoleColor _accentColor => ConsoleColor.DarkMagenta;
+        private static ConsoleColor _accent2Color => ConsoleColor.Yellow;
 
-        private static void writePartialLine(string message, Color? color = null)
+        private static void writePartialLine(string message, ConsoleColor? color = null)
         {
             if (color == null)
                 color = _baseColor;
 
             lock (_MessageLock)
             {
-                Colorful.Console.Write(message, color);
+                Console.ForegroundColor = (ConsoleColor)color;
+                Console.Write(message);
             }
         }
 
-        private static void writeLine(string message, Color? color = null)
+        private static void writeLine(string message, ConsoleColor? color = null)
         {
             if (color == null)
                 color = _baseColor;
 
             lock (_MessageLock)
             {
-                Colorful.Console.WriteLine(message, color);
-            }
-        }
-
-        public static void WriteEvent(string eventMessage, string eventArgs)
-        {
-            lock (_MessageLock)
-            {
-                ClearLine();
-                writePartialLine(eventMessage);
-                writeLine(eventArgs, Color.Purple);
+                Console.ForegroundColor = (ConsoleColor)color;
+                Console.Write(message);
             }
         }
 
         public static void Write(string text = "")
         {
-            Colorful.Console.ForegroundColor = _baseColor;
-            Colorful.Console.Write(text);
+            Console.ForegroundColor = _baseColor;
+            Console.Write(text);
         }
 
         public static void WriteLine(string text = "")
         {
             Write(text + Environment.NewLine);
         }
-        
-        public static void WriteFormat(string format, params string[] args)
+
+        public static void WriteAlternating(params string[] args)
         {
-            Colorful.Console.WriteFormatted(format, args, _accent2Color, _baseColor);
+            bool isColored = false;
+            foreach (string text in args)
+            {
+                if (isColored)
+                    Console.ForegroundColor = _accent2Color;
+                else
+                    Console.ForegroundColor = _baseColor;
+
+                isColored = !isColored;
+
+                Console.Write(text);
+            }
         }
 
-        public static void WriteLineFormat(string format, params string[] args)
+        public static void WriteLineAlternating(params string[] args)
         {
-            Colorful.Console.WriteLineFormatted(format, args, _accent2Color, _baseColor);
+            bool isColored = false;
+            foreach (string text in args)
+            {
+                if (isColored)
+                    Console.ForegroundColor = _accent2Color;
+                else
+                    Console.ForegroundColor = _baseColor;
+
+                isColored = !isColored;
+
+                Console.Write(text);
+            }
+
+            Console.WriteLine();
         }
 
         public static void WriteSwitch(string _switch, string description)
         {
-            WriteLineFormat("{0} | " + description, _switch.PadRight(3));
+            WriteLineAlternating(_switch.PadRight(3), " | " + description);
         }
     }
 }

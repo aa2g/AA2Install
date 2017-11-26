@@ -72,10 +72,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Colorful.Console, Version=1.0.5.0, Culture=neutral, PublicKeyToken=cc1f2a0d977b1e28, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colorful.Console.1.0.5\lib\net40\Colorful.Console.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -93,7 +89,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SB3UtilityPP\SB3UtilityPP.csproj">
@@ -115,7 +110,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(ProgramFiles)\Microsoft\Ilmerge\Ilmerge.exe" /targetplatform:"v4,C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" "/out:$(TargetDir)AA2Pack-x86.exe" "$(TargetPath)" "$(TargetDir)SB3UtilityPP.dll" "$(TargetDir)Colorful.Console.dll"</PostBuildEvent>
+    <PostBuildEvent>"$(ProgramFiles)\Microsoft\Ilmerge\Ilmerge.exe" /targetplatform:"v4,C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" "/out:$(TargetDir)AA2Pack-x86.exe" "$(TargetPath)" "$(TargetDir)SB3UtilityPP.dll"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
