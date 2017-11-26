@@ -20,7 +20,6 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Threading;
 using Microsoft.Win32;
-using CG.Web.MegaApiClient;
 using SevenZipNET;
 using PluginLoader;
 
@@ -47,96 +46,13 @@ namespace AA2Install
         /// </summary>
         public void loadUIConfiguration()
         {
-            btnAA2PLAY.Enabled = txtAA2PLAY.Enabled = checkAA2PLAY.Checked = Configuration.getBool("AA2PLAY");
-            txtAA2PLAY.Text = Configuration.ReadSetting("AA2PLAY_Path") ?? "";
-            btnAA2EDIT.Enabled = txtAA2EDIT.Enabled = checkAA2EDIT.Checked = Configuration.getBool("AA2EDIT");
-            txtAA2EDIT.Text = Configuration.ReadSetting("AA2EDIT_Path") ?? "";
             checkConflicts.Checked = Configuration.getBool("CONFLICTS");
             checkSuppress.Checked = Configuration.getBool("SUPPRESS");
             checkCompatibility.Checked = Configuration.getBool("COMPATIBILITY");
 
-            lblEditPath.Text = "Current AA2_EDIT path: " + Paths.AA2Edit;
-            lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
-
             //checkRAW.Checked = Configuration.getBool("PPRAW");
 
             CheckInstalled();
-        }
-
-        private void btnAA2PLAY_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog fold = new FolderBrowserDialog();
-            fold.Description = @"Locate the AA2_PLAY\data folder.";
-            DialogResult result = fold.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                Configuration.WriteSetting("AA2PLAY_Path", fold.SelectedPath);
-                txtAA2PLAY.Text = fold.SelectedPath;
-            }
-        }
-
-        private void txtAA2PLAY_TextChanged(object sender, EventArgs e)
-        {
-            Configuration.WriteSetting("AA2PLAY_Path", txtAA2PLAY.Text);
-
-            lblEditPath.Text = "Current AA2_EDIT path: " + Paths.AA2Edit;
-            lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
-        }
-
-        private void checkAA2PLAY_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkAA2PLAY.Checked)
-            {
-                txtAA2PLAY.Enabled = true;
-                btnAA2PLAY.Enabled = true;
-            }
-            else
-            {
-                txtAA2PLAY.Enabled = false;
-                btnAA2PLAY.Enabled = false;
-            }
-            Configuration.WriteSetting("AA2PLAY", checkAA2PLAY.Checked.ToString());
-
-            lblEditPath.Text = "Current AA2_EDIT path: " + Paths.AA2Edit;
-            lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
-        }
-
-        private void checkAA2EDIT_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkAA2EDIT.Checked)
-            {
-                txtAA2EDIT.Enabled = true;
-                btnAA2EDIT.Enabled = true;
-            }
-            else
-            {
-                txtAA2EDIT.Enabled = false;
-                btnAA2EDIT.Enabled = false;
-            }
-            Configuration.WriteSetting("AA2EDIT", checkAA2EDIT.Checked.ToString());
-
-            lblEditPath.Text = "Current AA2_EDIT path: " + Paths.AA2Edit;
-            lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
-        }
-
-        private void txtAA2EDIT_TextChanged(object sender, EventArgs e)
-        {
-            Configuration.WriteSetting("AA2EDIT_Path", txtAA2EDIT.Text);
-
-            lblEditPath.Text = "Current AA2_EDIT path: " + Paths.AA2Edit;
-            lblPlayPath.Text = "Current AA2_PLAY path: " + Paths.AA2Play;
-        }
-
-        private void btnAA2EDIT_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog fold = new FolderBrowserDialog();
-            fold.Description = @"Locate the AA2_PLAY\data folder.";
-            DialogResult result = fold.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                Configuration.WriteSetting("AA2EDIT_Path", fold.SelectedPath);
-                txtAA2EDIT.Text = fold.SelectedPath;
-            }
         }
 
         private void checkConflicts_CheckedChanged(object sender, EventArgs e)
@@ -164,8 +80,6 @@ namespace AA2Install
         public void setEnabled(bool enabled)
         {
             lsvMods.Enabled = btnApply.Enabled = btnRefresh.Enabled =
-                checkAA2EDIT.Enabled = txtAA2EDIT.Enabled = btnAA2EDIT.Enabled =
-                checkAA2PLAY.Enabled = txtAA2PLAY.Enabled = btnAA2PLAY.Enabled =
                 checkConflicts.Enabled = btnMigrate.Enabled = btnBrowseMigrate.Enabled =
                 txtMigrate.Enabled = txtBrowseMigrate.Enabled = btnCancel.Enabled = 
                 cmbSorting.Enabled = checkSuppress.Enabled = checkCompatibility.Enabled =
@@ -1652,7 +1566,7 @@ namespace AA2Install
                 DialogResult result = fold.ShowDialog();
                 if (result == DialogResult.OK)
                 {
-                    txtPLAYreg.Text = fold.SelectedPath;
+                    txtPLAYreg.Text = fold.SelectedPath.TrimEnd('\\') + "\\";
                 }
             }
             UpdateReg();
@@ -1746,25 +1660,6 @@ namespace AA2Install
                 });
             }
 
-        }
-        #endregion
-
-        #region Modpacks
-        private void btnLoadModpack_Click(object sender, EventArgs e)
-        {
-            string path;
-            using (OpenFileDialog file = new OpenFileDialog())
-            {
-                file.Filter = "AA2 Modpack file (*.a2m)|*.a2m|All Files (*.*)|*.*";
-                if (file.ShowDialog() != DialogResult.OK)
-                    return;
-                path = file.FileName;
-            }
-
-            Modpack pack = new Modpack(path);
-
-            using (formLoadModpack f = new formLoadModpack(pack))
-                f.ShowDialog();
         }
         #endregion
     }

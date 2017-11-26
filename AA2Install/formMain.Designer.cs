@@ -66,10 +66,6 @@
             this.prgMinor = new System.Windows.Forms.ToolStripProgressBar();
             this.prgMajor = new System.Windows.Forms.ToolStripProgressBar();
             this.labelStatus = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.panelTasks = new System.Windows.Forms.Panel();
-            this.toolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.btnLoadModpack = new System.Windows.Forms.ToolStripButton();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.btnRegUpdate = new System.Windows.Forms.Button();
@@ -83,16 +79,6 @@
             this.checkCompatibility = new System.Windows.Forms.CheckBox();
             this.checkSuppress = new System.Windows.Forms.CheckBox();
             this.checkConflicts = new System.Windows.Forms.CheckBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.lblTextures = new System.Windows.Forms.Label();
-            this.lblEditPath = new System.Windows.Forms.Label();
-            this.lblPlayPath = new System.Windows.Forms.Label();
-            this.btnAA2EDIT = new System.Windows.Forms.Button();
-            this.txtAA2EDIT = new System.Windows.Forms.TextBox();
-            this.checkAA2EDIT = new System.Windows.Forms.CheckBox();
-            this.btnAA2PLAY = new System.Windows.Forms.Button();
-            this.txtAA2PLAY = new System.Windows.Forms.TextBox();
-            this.checkAA2PLAY = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.txtMigrate = new System.Windows.Forms.TextBox();
             this.btnMigrate = new System.Windows.Forms.Button();
@@ -122,12 +108,9 @@
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).BeginInit();
             this.statusMain.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.toolStrip2.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
@@ -245,7 +228,6 @@
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Controls.Add(this.tabPage5);
@@ -495,51 +477,10 @@
             this.labelStatus.Size = new System.Drawing.Size(26, 20);
             this.labelStatus.Text = "Idle";
             // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.panelTasks);
-            this.tabPage2.Controls.Add(this.toolStrip2);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(969, 431);
-            this.tabPage2.TabIndex = 5;
-            this.tabPage2.Text = "Modpacks";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // panelTasks
-            // 
-            this.panelTasks.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelTasks.Location = new System.Drawing.Point(3, 28);
-            this.panelTasks.Name = "panelTasks";
-            this.panelTasks.Size = new System.Drawing.Size(963, 400);
-            this.panelTasks.TabIndex = 1;
-            // 
-            // toolStrip2
-            // 
-            this.toolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnLoadModpack});
-            this.toolStrip2.Location = new System.Drawing.Point(3, 3);
-            this.toolStrip2.Name = "toolStrip2";
-            this.toolStrip2.Size = new System.Drawing.Size(963, 25);
-            this.toolStrip2.TabIndex = 0;
-            this.toolStrip2.Text = "toolStrip2";
-            // 
-            // btnLoadModpack
-            // 
-            this.btnLoadModpack.Image = ((System.Drawing.Image)(resources.GetObject("btnLoadModpack.Image")));
-            this.btnLoadModpack.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnLoadModpack.Name = "btnLoadModpack";
-            this.btnLoadModpack.Size = new System.Drawing.Size(106, 22);
-            this.btnLoadModpack.Text = "Load Modpack";
-            this.btnLoadModpack.Click += new System.EventHandler(this.btnLoadModpack_Click);
-            // 
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.groupBox3);
             this.tabPage3.Controls.Add(this.groupBox2);
-            this.tabPage3.Controls.Add(this.groupBox1);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(969, 431);
@@ -558,7 +499,7 @@
             this.groupBox3.Controls.Add(this.txtEDITreg);
             this.groupBox3.Controls.Add(this.btnPLAYreg);
             this.groupBox3.Controls.Add(this.txtPLAYreg);
-            this.groupBox3.Location = new System.Drawing.Point(8, 210);
+            this.groupBox3.Location = new System.Drawing.Point(8, 82);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(953, 139);
             this.groupBox3.TabIndex = 8;
@@ -642,7 +583,7 @@
             this.groupBox2.Controls.Add(this.checkCompatibility);
             this.groupBox2.Controls.Add(this.checkSuppress);
             this.groupBox2.Controls.Add(this.checkConflicts);
-            this.groupBox2.Location = new System.Drawing.Point(8, 134);
+            this.groupBox2.Location = new System.Drawing.Point(8, 6);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(953, 70);
             this.groupBox2.TabIndex = 1;
@@ -681,121 +622,6 @@
             this.checkConflicts.Text = "Ignore conflicts (Uninstallation results will be unpredictable)";
             this.checkConflicts.UseVisualStyleBackColor = true;
             this.checkConflicts.CheckedChanged += new System.EventHandler(this.checkConflicts_CheckedChanged);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.lblTextures);
-            this.groupBox1.Controls.Add(this.lblEditPath);
-            this.groupBox1.Controls.Add(this.lblPlayPath);
-            this.groupBox1.Controls.Add(this.btnAA2EDIT);
-            this.groupBox1.Controls.Add(this.txtAA2EDIT);
-            this.groupBox1.Controls.Add(this.checkAA2EDIT);
-            this.groupBox1.Controls.Add(this.btnAA2PLAY);
-            this.groupBox1.Controls.Add(this.txtAA2PLAY);
-            this.groupBox1.Controls.Add(this.checkAA2PLAY);
-            this.groupBox1.Location = new System.Drawing.Point(8, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(953, 125);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Paths";
-            // 
-            // lblTextures
-            // 
-            this.lblTextures.AutoSize = true;
-            this.lblTextures.Location = new System.Drawing.Point(195, 106);
-            this.lblTextures.Name = "lblTextures";
-            this.lblTextures.Size = new System.Drawing.Size(137, 13);
-            this.lblTextures.TabIndex = 7;
-            this.lblTextures.Text = "Current data\\textures path: ";
-            // 
-            // lblEditPath
-            // 
-            this.lblEditPath.AutoSize = true;
-            this.lblEditPath.Location = new System.Drawing.Point(195, 65);
-            this.lblEditPath.Name = "lblEditPath";
-            this.lblEditPath.Size = new System.Drawing.Size(125, 13);
-            this.lblEditPath.TabIndex = 6;
-            this.lblEditPath.Text = "Current AA2_EDIT path: ";
-            // 
-            // lblPlayPath
-            // 
-            this.lblPlayPath.AutoSize = true;
-            this.lblPlayPath.Location = new System.Drawing.Point(195, 20);
-            this.lblPlayPath.Name = "lblPlayPath";
-            this.lblPlayPath.Size = new System.Drawing.Size(127, 13);
-            this.lblPlayPath.TabIndex = 5;
-            this.lblPlayPath.Text = "Current AA2_PLAY path: ";
-            // 
-            // btnAA2EDIT
-            // 
-            this.btnAA2EDIT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAA2EDIT.Enabled = false;
-            this.btnAA2EDIT.Location = new System.Drawing.Point(923, 81);
-            this.btnAA2EDIT.Name = "btnAA2EDIT";
-            this.btnAA2EDIT.Size = new System.Drawing.Size(24, 23);
-            this.btnAA2EDIT.TabIndex = 4;
-            this.btnAA2EDIT.Text = "...";
-            this.btnAA2EDIT.UseVisualStyleBackColor = true;
-            this.btnAA2EDIT.Click += new System.EventHandler(this.btnAA2EDIT_Click);
-            // 
-            // txtAA2EDIT
-            // 
-            this.txtAA2EDIT.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtAA2EDIT.Enabled = false;
-            this.txtAA2EDIT.Location = new System.Drawing.Point(6, 83);
-            this.txtAA2EDIT.Name = "txtAA2EDIT";
-            this.txtAA2EDIT.Size = new System.Drawing.Size(911, 20);
-            this.txtAA2EDIT.TabIndex = 3;
-            this.txtAA2EDIT.TextChanged += new System.EventHandler(this.txtAA2EDIT_TextChanged);
-            // 
-            // checkAA2EDIT
-            // 
-            this.checkAA2EDIT.AutoSize = true;
-            this.checkAA2EDIT.Location = new System.Drawing.Point(6, 64);
-            this.checkAA2EDIT.Name = "checkAA2EDIT";
-            this.checkAA2EDIT.Size = new System.Drawing.Size(165, 17);
-            this.checkAA2EDIT.TabIndex = 2;
-            this.checkAA2EDIT.Text = "Custom AA2_EDIT\\data path";
-            this.checkAA2EDIT.UseVisualStyleBackColor = true;
-            this.checkAA2EDIT.CheckedChanged += new System.EventHandler(this.checkAA2EDIT_CheckedChanged);
-            // 
-            // btnAA2PLAY
-            // 
-            this.btnAA2PLAY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAA2PLAY.Enabled = false;
-            this.btnAA2PLAY.Location = new System.Drawing.Point(923, 36);
-            this.btnAA2PLAY.Name = "btnAA2PLAY";
-            this.btnAA2PLAY.Size = new System.Drawing.Size(24, 23);
-            this.btnAA2PLAY.TabIndex = 1;
-            this.btnAA2PLAY.Text = "...";
-            this.btnAA2PLAY.UseVisualStyleBackColor = true;
-            this.btnAA2PLAY.Click += new System.EventHandler(this.btnAA2PLAY_Click);
-            // 
-            // txtAA2PLAY
-            // 
-            this.txtAA2PLAY.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtAA2PLAY.Enabled = false;
-            this.txtAA2PLAY.Location = new System.Drawing.Point(6, 38);
-            this.txtAA2PLAY.Name = "txtAA2PLAY";
-            this.txtAA2PLAY.Size = new System.Drawing.Size(911, 20);
-            this.txtAA2PLAY.TabIndex = 1;
-            this.txtAA2PLAY.TextChanged += new System.EventHandler(this.txtAA2PLAY_TextChanged);
-            // 
-            // checkAA2PLAY
-            // 
-            this.checkAA2PLAY.AutoSize = true;
-            this.checkAA2PLAY.Location = new System.Drawing.Point(6, 19);
-            this.checkAA2PLAY.Name = "checkAA2PLAY";
-            this.checkAA2PLAY.Size = new System.Drawing.Size(167, 17);
-            this.checkAA2PLAY.TabIndex = 0;
-            this.checkAA2PLAY.Text = "Custom AA2_PLAY\\data path";
-            this.checkAA2PLAY.UseVisualStyleBackColor = true;
-            this.checkAA2PLAY.CheckedChanged += new System.EventHandler(this.checkAA2PLAY_CheckedChanged);
             // 
             // tabPage4
             // 
@@ -962,17 +788,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.imagePreview)).EndInit();
             this.statusMain.ResumeLayout(false);
             this.statusMain.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            this.toolStrip2.ResumeLayout(false);
-            this.toolStrip2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.tabPage5.ResumeLayout(false);
@@ -997,20 +817,11 @@
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.ToolStripButton btnRefresh;
         private System.Windows.Forms.ToolStripButton btnApply;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnAA2PLAY;
-        private System.Windows.Forms.TextBox txtAA2PLAY;
-        private System.Windows.Forms.CheckBox checkAA2PLAY;
-        private System.Windows.Forms.Button btnAA2EDIT;
-        private System.Windows.Forms.TextBox txtAA2EDIT;
-        private System.Windows.Forms.CheckBox checkAA2EDIT;
         private System.Windows.Forms.ToolStripProgressBar prgMinor;
         private System.Windows.Forms.ToolStripProgressBar prgMajor;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.PictureBox imagePreview;
-        private System.Windows.Forms.Label lblEditPath;
-        private System.Windows.Forms.Label lblPlayPath;
         private System.Windows.Forms.RichTextBox rtbDescription;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -1046,7 +857,6 @@
         private System.Windows.Forms.TextBox txtEDITreg;
         private System.Windows.Forms.Button btnPLAYreg;
         private System.Windows.Forms.TextBox txtPLAYreg;
-        private System.Windows.Forms.Label lblTextures;
         private System.Windows.Forms.ErrorProvider errorProvider;
         private System.Windows.Forms.ErrorProvider errorProviderOK;
         private System.Windows.Forms.ToolStripMenuItem pluginsToolStripMenuItem;
@@ -1056,10 +866,6 @@
         private System.Windows.Forms.CheckBox checkSuppress;
         private System.Windows.Forms.ToolStripMenuItem forceInstallToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Panel panelTasks;
-        private System.Windows.Forms.ToolStrip toolStrip2;
-        private System.Windows.Forms.ToolStripButton btnLoadModpack;
         public System.Windows.Forms.Timer imageTimer;
         private System.Windows.Forms.CheckBox checkCompatibility;
     }
