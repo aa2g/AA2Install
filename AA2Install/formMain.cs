@@ -47,7 +47,6 @@ namespace AA2Install
         public void loadUIConfiguration()
         {
             checkConflicts.Checked = Configuration.getBool("CONFLICTS");
-            checkSuppress.Checked = Configuration.getBool("SUPPRESS");
             checkCompatibility.Checked = Configuration.getBool("COMPATIBILITY");
 
             //checkRAW.Checked = Configuration.getBool("PPRAW");
@@ -58,11 +57,6 @@ namespace AA2Install
         private void checkConflicts_CheckedChanged(object sender, EventArgs e)
         {
             Configuration.WriteSetting("CONFLICTS", checkConflicts.Checked.ToString());
-        }
-
-        private void checkSuppress_CheckedChanged(object sender, EventArgs e)
-        {
-            Configuration.WriteSetting("SUPPRESS", checkSuppress.Checked.ToString());
         }
 
         private void chkCompatibility_CheckedChanged(object sender, EventArgs e)
@@ -82,7 +76,7 @@ namespace AA2Install
             lsvMods.Enabled = btnApply.Enabled = btnRefresh.Enabled =
                 checkConflicts.Enabled = btnMigrate.Enabled = btnBrowseMigrate.Enabled =
                 txtMigrate.Enabled = txtBrowseMigrate.Enabled = btnCancel.Enabled = 
-                cmbSorting.Enabled = checkSuppress.Enabled = checkCompatibility.Enabled =
+                cmbSorting.Enabled = checkCompatibility.Enabled =
                 enabled;
         }
 

@@ -68,6 +68,8 @@
             this.labelStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lblEditError = new System.Windows.Forms.Label();
+            this.lblPlayError = new System.Windows.Forms.Label();
             this.btnRegUpdate = new System.Windows.Forms.Button();
             this.lblEDITreg = new System.Windows.Forms.Label();
             this.lblPLAYreg = new System.Windows.Forms.Label();
@@ -77,7 +79,6 @@
             this.txtPLAYreg = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkCompatibility = new System.Windows.Forms.CheckBox();
-            this.checkSuppress = new System.Windows.Forms.CheckBox();
             this.checkConflicts = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.txtMigrate = new System.Windows.Forms.TextBox();
@@ -91,8 +92,6 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.imageTimer = new System.Windows.Forms.Timer(this.components);
-            this.lblPlayError = new System.Windows.Forms.Label();
-            this.lblEditError = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -499,12 +498,32 @@
             this.groupBox3.Controls.Add(this.txtEDITreg);
             this.groupBox3.Controls.Add(this.btnPLAYreg);
             this.groupBox3.Controls.Add(this.txtPLAYreg);
-            this.groupBox3.Location = new System.Drawing.Point(8, 82);
+            this.groupBox3.Location = new System.Drawing.Point(8, 62);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(953, 139);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Registry Fixer";
+            // 
+            // lblEditError
+            // 
+            this.lblEditError.AutoSize = true;
+            this.lblEditError.ForeColor = System.Drawing.Color.Green;
+            this.lblEditError.Location = new System.Drawing.Point(99, 67);
+            this.lblEditError.Name = "lblEditError";
+            this.lblEditError.Size = new System.Drawing.Size(25, 13);
+            this.lblEditError.TabIndex = 9;
+            this.lblEditError.Text = "OK!";
+            // 
+            // lblPlayError
+            // 
+            this.lblPlayError.AutoSize = true;
+            this.lblPlayError.ForeColor = System.Drawing.Color.Green;
+            this.lblPlayError.Location = new System.Drawing.Point(99, 22);
+            this.lblPlayError.Name = "lblPlayError";
+            this.lblPlayError.Size = new System.Drawing.Size(25, 13);
+            this.lblPlayError.TabIndex = 8;
+            this.lblPlayError.Text = "OK!";
             // 
             // btnRegUpdate
             // 
@@ -581,11 +600,10 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.checkCompatibility);
-            this.groupBox2.Controls.Add(this.checkSuppress);
             this.groupBox2.Controls.Add(this.checkConflicts);
             this.groupBox2.Location = new System.Drawing.Point(8, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(953, 70);
+            this.groupBox2.Size = new System.Drawing.Size(953, 50);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Installation";
@@ -600,17 +618,6 @@
             this.checkCompatibility.Text = "Enable XP/Vista compatibility mode";
             this.checkCompatibility.UseVisualStyleBackColor = true;
             this.checkCompatibility.CheckedChanged += new System.EventHandler(this.chkCompatibility_CheckedChanged);
-            // 
-            // checkSuppress
-            // 
-            this.checkSuppress.AutoSize = true;
-            this.checkSuppress.Location = new System.Drawing.Point(6, 42);
-            this.checkSuppress.Name = "checkSuppress";
-            this.checkSuppress.Size = new System.Drawing.Size(161, 17);
-            this.checkSuppress.TabIndex = 1;
-            this.checkSuppress.Text = "Suppress confirmation dialog";
-            this.checkSuppress.UseVisualStyleBackColor = true;
-            this.checkSuppress.CheckedChanged += new System.EventHandler(this.checkSuppress_CheckedChanged);
             // 
             // checkConflicts
             // 
@@ -745,26 +752,6 @@
             this.imageTimer.Interval = 3000;
             this.imageTimer.Tick += new System.EventHandler(this.imageTimer_Tick);
             // 
-            // lblPlayError
-            // 
-            this.lblPlayError.AutoSize = true;
-            this.lblPlayError.ForeColor = System.Drawing.Color.Green;
-            this.lblPlayError.Location = new System.Drawing.Point(99, 22);
-            this.lblPlayError.Name = "lblPlayError";
-            this.lblPlayError.Size = new System.Drawing.Size(25, 13);
-            this.lblPlayError.TabIndex = 8;
-            this.lblPlayError.Text = "OK!";
-            // 
-            // lblEditError
-            // 
-            this.lblEditError.AutoSize = true;
-            this.lblEditError.ForeColor = System.Drawing.Color.Green;
-            this.lblEditError.Location = new System.Drawing.Point(99, 67);
-            this.lblEditError.Name = "lblEditError";
-            this.lblEditError.Size = new System.Drawing.Size(25, 13);
-            this.lblEditError.TabIndex = 9;
-            this.lblEditError.Text = "OK!";
-            // 
             // formMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -869,7 +856,6 @@
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem windowsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pendingChangesToolStripMenuItem;
-        private System.Windows.Forms.CheckBox checkSuppress;
         private System.Windows.Forms.ToolStripMenuItem forceInstallToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         public System.Windows.Forms.Timer imageTimer;
