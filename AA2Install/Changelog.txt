@@ -1,5 +1,15 @@
 ﻿Changelog
 
+v7.1
++ Removed modpack tab
++ Removed PP Trimmer plugin
++ Removed custom game path (not registry fixer) and suppress dialog options in preferences
++ Made registry fixer more intuitive to use
+++ Added more checks to validate paths
+++ Made errors easier to see
+++ Browse dialog now returns a valid path
++ Added FAQ under help
+
 v7
 + Installation now shows proper percentage progress
 + Massive optimizations and speedups
