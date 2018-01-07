@@ -91,8 +91,8 @@
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.imageTimer = new System.Windows.Forms.Timer(this.components);
-            this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.errorProviderOK = new System.Windows.Forms.ErrorProvider(this.components);
+            this.lblPlayError = new System.Windows.Forms.Label();
+            this.lblEditError = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -113,8 +113,6 @@
             this.groupBox2.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProviderOK)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -492,6 +490,8 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.lblEditError);
+            this.groupBox3.Controls.Add(this.lblPlayError);
             this.groupBox3.Controls.Add(this.btnRegUpdate);
             this.groupBox3.Controls.Add(this.lblEDITreg);
             this.groupBox3.Controls.Add(this.lblPLAYreg);
@@ -745,15 +745,25 @@
             this.imageTimer.Interval = 3000;
             this.imageTimer.Tick += new System.EventHandler(this.imageTimer_Tick);
             // 
-            // errorProvider
+            // lblPlayError
             // 
-            this.errorProvider.ContainerControl = this;
+            this.lblPlayError.AutoSize = true;
+            this.lblPlayError.ForeColor = System.Drawing.Color.Green;
+            this.lblPlayError.Location = new System.Drawing.Point(99, 22);
+            this.lblPlayError.Name = "lblPlayError";
+            this.lblPlayError.Size = new System.Drawing.Size(25, 13);
+            this.lblPlayError.TabIndex = 8;
+            this.lblPlayError.Text = "OK!";
             // 
-            // errorProviderOK
+            // lblEditError
             // 
-            this.errorProviderOK.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
-            this.errorProviderOK.ContainerControl = this;
-            this.errorProviderOK.Icon = ((System.Drawing.Icon)(resources.GetObject("errorProviderOK.Icon")));
+            this.lblEditError.AutoSize = true;
+            this.lblEditError.ForeColor = System.Drawing.Color.Green;
+            this.lblEditError.Location = new System.Drawing.Point(99, 67);
+            this.lblEditError.Name = "lblEditError";
+            this.lblEditError.Size = new System.Drawing.Size(25, 13);
+            this.lblEditError.TabIndex = 9;
+            this.lblEditError.Text = "OK!";
             // 
             // formMain
             // 
@@ -796,8 +806,6 @@
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.tabPage5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.errorProviderOK)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -857,8 +865,6 @@
         private System.Windows.Forms.TextBox txtEDITreg;
         private System.Windows.Forms.Button btnPLAYreg;
         private System.Windows.Forms.TextBox txtPLAYreg;
-        private System.Windows.Forms.ErrorProvider errorProvider;
-        private System.Windows.Forms.ErrorProvider errorProviderOK;
         private System.Windows.Forms.ToolStripMenuItem pluginsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem windowsToolStripMenuItem;
@@ -868,6 +874,8 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         public System.Windows.Forms.Timer imageTimer;
         private System.Windows.Forms.CheckBox checkCompatibility;
+        private System.Windows.Forms.Label lblEditError;
+        private System.Windows.Forms.Label lblPlayError;
     }
 }
 

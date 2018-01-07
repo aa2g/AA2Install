@@ -52,7 +52,7 @@ namespace AA2Install
 
             //checkRAW.Checked = Configuration.getBool("PPRAW");
 
-            CheckInstalled();
+            InstallReg();
         }
 
         private void checkConflicts_CheckedChanged(object sender, EventArgs e)
@@ -1464,14 +1464,8 @@ namespace AA2Install
         }
         #endregion
         #region Registry Fixer
-        public bool isChecking = false;
-        public bool CheckInstalled()
+        public void InstallReg()
         {
-            errorProvider.Clear();
-            errorProviderOK.Clear();
-            bool exit = true;
-            isChecking = true;
-
             RegistryKey play = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Play");
             RegistryKey edit = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Edit");
 
@@ -1483,74 +1477,111 @@ namespace AA2Install
 
             string playdir = txtPLAYreg.Text = (string)play.GetValue("INSTALLDIR", "");
             string editdir = txtEDITreg.Text = (string)edit.GetValue("INSTALLDIR", "");
+        }
+
+        public bool CheckPaths()
+        {
+            bool exit = true;
+
+            RegistryKey play = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Play");
+            RegistryKey edit = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Edit");
+
+            play.SetValue("PRODUCTNAME", "ジンコウガクエン2", RegistryValueKind.String);
+            edit.SetValue("PRODUCTNAME", "ジンコウガクエン2 きゃらめいく", RegistryValueKind.String);
+
+            play.SetValue("VERSION", 0x64, RegistryValueKind.DWord);
+            edit.SetValue("VERSION", 0x64, RegistryValueKind.DWord);
+
+            string playdir = txtPLAYreg.Text;
+            string editdir = txtEDITreg.Text;
 
             if (playdir == "")
             {
-                errorProvider.SetError(lblPLAYreg, "Directory is not set.");
+                lblPlayError.Text = "ERROR: Directory is not set.";
+                lblPlayError.ForeColor = Color.Red;
                 exit = false;
             }
-            else if (!Directory.Exists(playdir) ||
-                !playdir.EndsWith("\\"))
+            else if (!Directory.Exists(playdir))
             {
-                errorProvider.SetError(lblPLAYreg, "Directory can not be found / does not end in a \"\\\".");
+                lblPlayError.Text = "ERROR: Directory does not exist.";
+                lblPlayError.ForeColor = Color.Red;
+                exit = false;
+            }
+            else if (!playdir.EndsWith("\\"))
+            {
+                lblPlayError.Text = "ERROR: Directory does not end in a \"\\\".";
+                lblPlayError.ForeColor = Color.Red;
                 exit = false;
             }
             else if (!Directory.Exists(playdir + @"data\"))
             {
-                errorProvider.SetError(lblPLAYreg, "Data subdirectory can not be found.");
+                lblPlayError.Text = "ERROR: Data subdirectory can not be found.";
+                lblPlayError.ForeColor = Color.Red;
                 exit = false;
             }
             else if (!Path.IsPathRooted(playdir))
             {
-                errorProvider.SetError(lblPLAYreg, "Path does not have a drive letter.");
+                lblPlayError.Text = "ERROR: Path does not have a drive letter.";
+                lblPlayError.ForeColor = Color.Red;
                 exit = false;
             }
             else
             {
-                errorProviderOK.SetError(lblPLAYreg, "Detected as OK.");
+                lblPlayError.Text = "Detected as OK!";
+                lblPlayError.ForeColor = Color.Green;
             }
 
 
             if (editdir == "")
             {
-                errorProvider.SetError(lblEDITreg, "Directory is not set.");
+                lblEditError.Text = "ERROR: Directory is not set.";
+                lblEditError.ForeColor = Color.Red;
                 exit = false;
             }
-            else if (!Directory.Exists(editdir) ||
-                !editdir.EndsWith("\\"))
+            else if (!Directory.Exists(editdir))
             {
-                errorProvider.SetError(lblEDITreg, "Directory can not be found / does not end in a \"\\\".");
+                lblEditError.Text = "ERROR: Directory does not exist.";
+                lblEditError.ForeColor = Color.Red;
+                exit = false;
+            }
+            else if (!editdir.EndsWith("\\"))
+            {
+                lblEditError.Text = "ERROR: Directory does not end in a \"\\\".";
+                lblEditError.ForeColor = Color.Red;
                 exit = false;
             }
             else if (!Directory.Exists(editdir + @"data\"))
             {
-                errorProvider.SetError(lblEDITreg, "Data subdirectory can not be found.");
+                lblEditError.Text = "ERROR: Data subdirectory can not be found.";
+                lblEditError.ForeColor = Color.Red;
                 exit = false;
             }
             else if (!Path.IsPathRooted(editdir))
             {
-                errorProvider.SetError(lblEDITreg, "Path does not have a drive letter.");
+                lblEditError.Text = "ERROR: Path does not have a drive letter.";
+                lblEditError.ForeColor = Color.Red;
                 exit = false;
             }
             else
             {
-                errorProviderOK.SetError(lblEDITreg, "Detected as OK.");
+                lblEditError.Text = "Detected as OK!";
+                lblEditError.ForeColor = Color.Green;
             }
-
-            isChecking = false;
+            
             return exit;
         }
 
         public void UpdateReg(bool checkAfter = true)
         {
+            InstallReg();
+
             RegistryKey play = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Play");
             RegistryKey edit = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\illusion\AA2Edit");
 
             play.SetValue("INSTALLDIR", txtPLAYreg.Text, RegistryValueKind.String);
             edit.SetValue("INSTALLDIR", txtEDITreg.Text, RegistryValueKind.String);
 
-            if (checkAfter)
-                CheckInstalled();
+            MessageBox.Show("Registry updated!");
         }
 
         private void btnRegUpdate_Click(object sender, EventArgs e)
@@ -1569,7 +1600,7 @@ namespace AA2Install
                     txtPLAYreg.Text = fold.SelectedPath.TrimEnd('\\') + "\\";
                 }
             }
-            UpdateReg();
+            CheckPaths();
         }
 
         private void btnEDITreg_Click(object sender, EventArgs e)
@@ -1583,19 +1614,17 @@ namespace AA2Install
                     txtEDITreg.Text = fold.SelectedPath;
                 }
             }
-            UpdateReg();
+            CheckPaths();
         }
 
         private void txtPLAYreg_TextChanged(object sender, EventArgs e)
         {
-            if (!isChecking)
-                UpdateReg();
+            CheckPaths();
         }
 
         private void txtEDITreg_TextChanged(object sender, EventArgs e)
         {
-            if (!isChecking)
-                UpdateReg();
+            CheckPaths();
         }
         #endregion
 
