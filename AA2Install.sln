@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2008
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AA2Install", "AA2Install\AA2Install.csproj", "{A080BED4-153A-425E-94F3-60906AC0EA90}"
 EndProject
@@ -21,8 +21,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginLoader", "Plugins\PluginLoader\PluginLoader.csproj", "{F98B71C8-20A9-4DDA-A56C-A29F6B75D0A9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{8CCC30AE-49F1-4ACD-94A7-2F8AFA9E5B23}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PPTrimmerPlugin", "Plugins\PPTrimmerPlugin\PPTrimmerPlugin.csproj", "{DD0F82E7-0729-46E7-96C2-D6DE34E10435}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstTimeLaunchPlugin", "Plugins\FirstTimeLaunchPlugin\FirstTimeLaunchPlugin.csproj", "{210B7E50-F39E-43E8-A3E5-E806AEEC5010}"
 EndProject
@@ -106,18 +104,6 @@ Global
 		{F98B71C8-20A9-4DDA-A56C-A29F6B75D0A9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F98B71C8-20A9-4DDA-A56C-A29F6B75D0A9}.Release|x86.ActiveCfg = Release|x86
 		{F98B71C8-20A9-4DDA-A56C-A29F6B75D0A9}.Release|x86.Build.0 = Release|x86
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Debug|x86.ActiveCfg = Debug|x86
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Debug|x86.Build.0 = Debug|x86
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Release|x86.ActiveCfg = Release|x86
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435}.Release|x86.Build.0 = Release|x86
 		{210B7E50-F39E-43E8-A3E5-E806AEEC5010}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{210B7E50-F39E-43E8-A3E5-E806AEEC5010}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{210B7E50-F39E-43E8-A3E5-E806AEEC5010}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -136,7 +122,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F98B71C8-20A9-4DDA-A56C-A29F6B75D0A9} = {8CCC30AE-49F1-4ACD-94A7-2F8AFA9E5B23}
-		{DD0F82E7-0729-46E7-96C2-D6DE34E10435} = {8CCC30AE-49F1-4ACD-94A7-2F8AFA9E5B23}
 		{210B7E50-F39E-43E8-A3E5-E806AEEC5010} = {8CCC30AE-49F1-4ACD-94A7-2F8AFA9E5B23}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
