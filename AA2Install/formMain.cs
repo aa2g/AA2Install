@@ -1685,6 +1685,11 @@ namespace AA2Install
 
         }
         #endregion
+
+        private void fAQToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(@"https://raw.githubusercontent.com/aa2g/AA2Install/master/AA2Install/FAQ.txt");
+        }
     }
     #region Structures
     /// <summary>
